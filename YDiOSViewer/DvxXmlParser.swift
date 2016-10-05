@@ -9,12 +9,12 @@
 import Foundation
 
 /* A Generic XML Parser for DVX results */
-class DvxXmlParser: NSObject, NSXMLParserDelegate {
+class DvxXmlParser: NSObject, XMLParserDelegate {
 
     var currentElement:String = ""
     var passData:Bool=false
     var passName:Bool=false
-    var parser = NSXMLParser()
+    var parser = XMLParser()
     var resultArray:[AnyObject] = Array()
     var record:[String: AnyObject] = [:]
     var topLevelElem = ""
@@ -22,12 +22,12 @@ class DvxXmlParser: NSObject, NSXMLParserDelegate {
     var valueName:String = ""
     var separator:String = ""
     
-    func makeRequest(url:String, separator:String) -> Array<AnyObject> {
+    func makeRequest(_ url:String, separator:String) -> Array<AnyObject> {
 
-        let urlToSend: NSURL = NSURL(string: url)!
+        let urlToSend: URL = URL(string: url)!
         self.separator = separator
         // Parse the XML
-        parser = NSXMLParser(contentsOfURL: urlToSend)!
+        parser = XMLParser(contentsOf: urlToSend)!
         parser.delegate = self
         
         let success:Bool = parser.parse()
@@ -42,7 +42,7 @@ class DvxXmlParser: NSObject, NSXMLParserDelegate {
         return Array()
     }
     
-    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         keyName = elementName
         //print("Element's name is \(elementName)")
         //print("Element's attributes are \(attributeDict)")
@@ -50,16 +50,16 @@ class DvxXmlParser: NSObject, NSXMLParserDelegate {
         passName = true
     }
 
-    func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
         if (elementName == self.separator) {
-            resultArray.append(record)
+            resultArray.append(record as AnyObject)
         }
     }
     
-    func parser(parser: NSXMLParser, foundCharacters string: String) {
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
         if(passName){
-            record[keyName] = string
+            record[keyName] = string as AnyObject?
         }
         
         if(passData)
@@ -68,7 +68,7 @@ class DvxXmlParser: NSObject, NSXMLParserDelegate {
         }
     }
     
-    func parser(parser: NSXMLParser, parseErrorOccurred parseError: NSError) {
-        NSLog("Error in parsing XML: %@", parseError)
+    func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
+        print(parseError)
     }
 }

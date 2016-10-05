@@ -14,7 +14,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
 
     let dvxApi = DxvApi()
     var doPlay:Bool = true
-    let audioUrl = NSURL(string: "https://dl.dropboxusercontent.com/u/57189163/testoutput.mp3")
+    //let audioUrl = NSURL(string: "https://dl.dropboxusercontent.com/u/57189163/testoutput.mp3")
+    let audioUrl = URL(string: "http://www.wavsource.com/snds_2016-09-25_6739387469794827/tv/game_of_thrones/got_s1e3_easier_war.wav")
     var audioPlayerItem:AVPlayerItem?
     var audioPlayer:AVPlayer?
     var audioClips: [AnyObject] = []
@@ -51,7 +52,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         let selectedMovies = dvxApi.getMovies(["MediaId": movieText.text!])
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"];
-            let clips = dvxApi.getClips(["Movie": movieId!!.description])
+            let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
             debugView.text = debugView.text + clips.description
@@ -61,39 +62,39 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
 
     func loadAudio() {
         // play the audio link
-        audioPlayerItem = AVPlayerItem(URL: audioUrl!)
+        audioPlayerItem = AVPlayerItem(url: audioUrl!)
         audioPlayer=AVPlayer(playerItem: audioPlayerItem!)
         let playerLayer=AVPlayerLayer(player: audioPlayer!)
-        playerLayer.frame=CGRectMake(0, 0, 300, 50)
+        playerLayer.frame=CGRect(x: 0, y: 0, width: 300, height: 50)
         self.view.layer.addSublayer(playerLayer)
     }
     func playAudio() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playerDidFinishPlaying:", name: AVPlayerItemDidPlayToEndTimeNotification, object: audioPlayer?.currentItem)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.playerDidFinishPlaying(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
         audioPlayer?.play()
     }
-    func playerDidFinishPlaying(note: NSNotification) {
+    func playerDidFinishPlaying(_ note: Notification) {
         print("Resume video playing:")
         youtubePlayer.playVideo()
         activeAudioIndex = activeAudioIndex + 1
         showNextClipStartTime()
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: audioPlayer?.currentItem)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
         loadAudio()
 
     }
     func stopAudio() {
         audioPlayer?.pause()
     }
-    @IBAction func loadMovie(sender: AnyObject) {
+    @IBAction func loadMovie(_ sender: AnyObject) {
         if((movieText.text) != nil) {
             let options = ["playsinline" : 1]
-            youtubePlayer.loadWithVideoId(movieText.text!, playerVars: options)
+            youtubePlayer.load(withVideoId: movieText.text!, playerVars: options)
             // load the clips for this video.
             loadClips()
         } else {
             print("Could not find a valid movie")
         }
     }
-    @IBAction func playPauseAction(sender: AnyObject) {
+    @IBAction func playPauseAction(_ sender: AnyObject) {
         if(doPlay) {
             youtubePlayer.playVideo()
         } else {
@@ -101,7 +102,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         }
     }
 
-    @IBAction func stopAction(sender: AnyObject) {
+    @IBAction func stopAction(_ sender: AnyObject) {
         reset()
     }
 
@@ -112,11 +113,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         activeAudioIndex = 0
         doPlay = true
     }
-    @IBAction func startAction(sender: AnyObject) {
+    @IBAction func startAction(_ sender: AnyObject) {
         // filter the clips according to the authors
         var filteredClips:[AnyObject] = []
         for audioClip in self.audioClips {
-            if (audioClip["clipAuthor"]!!.description == authorText.text) {
+            if ((audioClip["clipAuthor"]!! as AnyObject).description == authorText.text) {
                 filteredClips.append(audioClip)
             }
         }
@@ -126,11 +127,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
     }
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
-            self.nextClipAtLabel.text = self.audioClips[activeAudioIndex]["clipStartTime"]!!.description
+            self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
         }
     }
     // from the YoutubePlayerDelegate TODO: Move to a separate component
-    func playerView(playerView: YTPlayerView, didPlayTime playTime: Float)
+    func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float)
     {
         self.playerLabel.text = "\(playTime)"
         /*if (Int(ceil(playTime)) > 2) {
@@ -141,9 +142,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
             print(self.audioClips[activeAudioIndex])
             print(Float(floor(playTime)))
-            print(Float(self.audioClips[activeAudioIndex]["clipStartTime"]!!.description))
-            if Float(floor(playTime)) == Float(self.audioClips[activeAudioIndex]["clipStartTime"]!!.description) {
-                print("Starting audio at seconds:" + self.audioClips[activeAudioIndex]["clipStartTime"]!!.description)
+            print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
+            if Float(floor(playTime)) == Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description) {
+                print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
                 print("Pausing Video")
                 youtubePlayer.pauseVideo()
                 print("Playing Audio")
@@ -151,24 +152,24 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
             }
         }
     }
-    func playerViewDidBecomeReady(playerView: YTPlayerView) {
+    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         print("The video player is now ready")
     }
     
-    func playerView(playerView: YTPlayerView, didChangeToState state: YTPlayerState) {
+    func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
         // the player changed to state
         print(state.rawValue)
         if (state.rawValue == 2) { // state is 'playing'
             //change the button to text
-            playButton.setTitle("Pause", forState: UIControlState.Normal)
+            playButton.setTitle("Pause", for: UIControlState())
             doPlay = false
         }
         else if (state.rawValue == 3) {
-            playButton.setTitle("Play", forState: UIControlState.Normal)
+            playButton.setTitle("Play", for: UIControlState())
             doPlay = true
         }
         else if (state.rawValue == 5) {
-            playButton.setTitle("Play", forState: UIControlState.Normal)
+            playButton.setTitle("Play", for: UIControlState())
             doPlay = true
         }
     }

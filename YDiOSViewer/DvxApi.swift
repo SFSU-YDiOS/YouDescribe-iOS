@@ -12,7 +12,7 @@ class DxvApi {
     let defaultAppId = "ydesc"
     let apiBaseUrl = "http://dvxtest.ski.org:8080/dvx2Api/"
 
-    func getConstructedUrl(query: String, params:[String: String]) -> String {
+    func getConstructedUrl(_ query: String, params:[String: String]) -> String {
         var url:String = apiBaseUrl + query + "?AppId=ydesc"
         // loop through the arguments and create the url parameters.
         var paramString = ""
@@ -20,7 +20,7 @@ class DxvApi {
         for (k, v) in params {
             paramArray.append(k + "=" + (v ))
         }
-        paramString = paramArray.joinWithSeparator("&")
+        paramString = paramArray.joined(separator: "&")
         
         if (paramString != ""){
             url += "&"+paramString
@@ -28,16 +28,15 @@ class DxvApi {
         return url
     }
 
-    func getMovies(params:[String: String]) -> Array<AnyObject> {
+    func getMovies(_ params:[String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("movie", params: params)
         return DvxXmlParser().makeRequest(url, separator: "movie")
     }
     
-    func getClips(params:[String: String]) -> Array<AnyObject> {
+    func getClips(_ params:[String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("clip/metadata", params: params)
         print("THE URL Is " + url)
         return DvxXmlParser().makeRequest(url, separator: "clip")
     }
-    
     
 }
