@@ -20,10 +20,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
     var audioPlayer:AVPlayer?
     var audioClips: [AnyObject] = []
     var activeAudioIndex:Int = 0
+    var allMovies : [AnyObject] = []
+    var movieID : String?
 
-    @IBOutlet weak var debugView: UITextView!
+    //@IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
-    @IBOutlet weak var movieText: UITextField!
+    //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var authorText: UITextField!
@@ -35,10 +37,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         // Do any additional setup after loading the view, typically from a nib.
         self.youtubePlayer.delegate = self
         
-        let allMovies = dvxApi.getMovies([:])
+        allMovies = dvxApi.getMovies([:])
 
-        //print(allMovies)
-        debugView.text = allMovies.description
+        print("all movies count =")
+        print(allMovies)
+        print(allMovies.count)
+        //debugView.text = allMovies.description
         loadAudio()
     }
 
@@ -49,13 +53,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
 
     func loadClips() {
         // get the movieID of the clip
-        let selectedMovies = dvxApi.getMovies(["MediaId": movieText.text!])
+        let selectedMovies = dvxApi.getMovies(["MediaId": movieID!])
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"];
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
-            debugView.text = debugView.text + clips.description
+            //debugView.text = debugView.text + clips.description
             self.audioClips = clips
         }
     }
@@ -85,9 +89,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         audioPlayer?.pause()
     }
     @IBAction func loadMovie(_ sender: AnyObject) {
-        if((movieText.text) != nil) {
+        if((movieID) != nil) {
             let options = ["playsinline" : 1]
-            youtubePlayer.load(withVideoId: movieText.text!, playerVars: options)
+            youtubePlayer.load(withVideoId: movieID!, playerVars: options)
             // load the clips for this video.
             loadClips()
         } else {
@@ -173,5 +177,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
             doPlay = true
         }
     }
+    
 }
 
