@@ -1,11 +1,3 @@
-//
-//  DvxXmlParser.swift
-//  YDiOSViewer
-//
-//  Created by Rupal Khilari on 9/28/16.
-//  Copyright © 2016 SFSU. All rights reserved.
-//
-
 import Foundation
 
 /* A Generic XML Parser for DVX results */

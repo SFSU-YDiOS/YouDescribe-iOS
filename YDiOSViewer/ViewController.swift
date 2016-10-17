@@ -1,26 +1,24 @@
-//
-//  ViewController.swift
-//  YDiOSViewer
-//
-//  Created by Rupal Khilari on 9/27/16.
-//  Copyright © 2016 SFSU. All rights reserved.
-//
-
 import UIKit
 import AVKit
 import AVFoundation
+import Foundation
 
-class ViewController: UIViewController, YTPlayerViewDelegate  {
+class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate  {
 
     let dvxApi = DxvApi()
     var doPlay:Bool = true
-    //let audioUrl = NSURL(string: "https://dl.dropboxusercontent.com/u/57189163/testoutput.mp3")
-    let audioUrl = URL(string: "http://www.wavsource.com/snds_2016-09-25_6739387469794827/tv/game_of_thrones/got_s1e3_easier_war.wav")
+    var currentAudioUrl = NSURL(string: "")
+    var nextAudioUrl = NSURL(string: "")
+    var downloadAudioUrls:[URL] = []
     var audioPlayerItem:AVPlayerItem?
     var audioPlayer:AVPlayer?
+    var allAudioClips: [AnyObject] = []
     var audioClips: [AnyObject] = []
     var activeAudioIndex:Int = 0
-
+    var Timestamp: String {
+        return "\(NSDate().timeIntervalSince1970 * 1000)"
+    }
+    
     @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     @IBOutlet weak var movieText: UITextField!
@@ -34,12 +32,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.youtubePlayer.delegate = self
-        
+        self.hideKeyboardOnTap()
         let allMovies = dvxApi.getMovies([:])
-
-        //print(allMovies)
         debugView.text = allMovies.description
-        loadAudio()
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,6 +42,17 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         // Dispose of any resources that can be recreated.
     }
 
+    // Functions to dismiss the keyboard on tapping outside
+    func hideKeyboardOnTap() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    // Loads all the audio clips based on the selected MediaId
     func loadClips() {
         // get the movieID of the clip
         let selectedMovies = dvxApi.getMovies(["MediaId": movieText.text!])
@@ -56,34 +62,48 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
             print("The clips are")
             print(clips.description)
             debugView.text = debugView.text + clips.description
-            self.audioClips = clips
+            self.allAudioClips = clips
         }
     }
 
     func loadAudio() {
         // play the audio link
-        audioPlayerItem = AVPlayerItem(url: audioUrl!)
+        audioPlayerItem = AVPlayerItem(url: currentAudioUrl! as URL)
         audioPlayer=AVPlayer(playerItem: audioPlayerItem!)
         let playerLayer=AVPlayerLayer(player: audioPlayer!)
         playerLayer.frame=CGRect(x: 0, y: 0, width: 300, height: 50)
         self.view.layer.addSublayer(playerLayer)
     }
+    
+    // Play the audio - Also tries to precache the next audio clip as the current is playing
     func playAudio() {
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.playerDidFinishPlaying(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
         audioPlayer?.play()
+        
+        // Pre-cache the next clip
+        if self.audioClips.count > 0 && activeAudioIndex < self.audioClips.count-1 {
+            self.nextAudioUrl = self.downloadAudioUrls[activeAudioIndex+1] as NSURL
+        }
     }
+    
+    // Called when the audio clip finishes playing
     func playerDidFinishPlaying(_ note: Notification) {
         print("Resume video playing:")
         youtubePlayer.playVideo()
         activeAudioIndex = activeAudioIndex + 1
         showNextClipStartTime()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
-        loadAudio()
-
+        if self.nextAudioUrl != self.currentAudioUrl {
+            self.currentAudioUrl = self.nextAudioUrl
+            loadAudio()
+        }
     }
+
     func stopAudio() {
         audioPlayer?.pause()
     }
+    
+    // Called when the movie is loaded
     @IBAction func loadMovie(_ sender: AnyObject) {
         if((movieText.text) != nil) {
             let options = ["playsinline" : 1]
@@ -94,6 +114,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
             print("Could not find a valid movie")
         }
     }
+    // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
         if(doPlay) {
             youtubePlayer.playVideo()
@@ -102,46 +123,55 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         }
     }
 
+    // Called on clicking the 'stop' button
     @IBAction func stopAction(_ sender: AnyObject) {
         reset()
     }
 
+    // Resets the state of both the audio and video players
     func reset() {
         youtubePlayer.stopVideo()
         audioPlayer?.pause()
         loadAudio()
         activeAudioIndex = 0
+        self.audioClips = []
         doPlay = true
     }
+    
+    // Filters clips by Author
     @IBAction func startAction(_ sender: AnyObject) {
         // filter the clips according to the authors
         var filteredClips:[AnyObject] = []
-        for audioClip in self.audioClips {
+        for audioClip in self.allAudioClips {
             if ((audioClip["clipAuthor"]!! as AnyObject).description == authorText.text) {
                 filteredClips.append(audioClip)
             }
         }
         self.audioClips = filteredClips
-        showNextClipStartTime()
+        doPlay = true
+        // Load the first clip content of the set of clips
+        if self.audioClips.count > 0 {
+            print("Starting to download all clips from Author:" + authorText.text!)
+            DownloadAudio(delegate: self).prepareAllClipCache(clips: self.audioClips)
+        }
         print("Filtered clips by Author")
     }
+    
+    // Displays the start time of the next audio clip
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
             self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
         }
     }
-    // from the YoutubePlayerDelegate TODO: Move to a separate component
+
+    // Called periodically as the youtube-player plays the video.
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float)
     {
         self.playerLabel.text = "\(playTime)"
-        /*if (Int(ceil(playTime)) > 2) {
-            youtubePlayer.pauseVideo()
-        }*/
-        //youtubePlayer.seekToSeconds(2.2, allowSeekAhead: true);
         // Check if we have reached the point in the video
         if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
             print(self.audioClips[activeAudioIndex])
-            print(Float(floor(playTime)))
+            //print(Float(floor(playTime)))
             print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
             if Float(floor(playTime)) == Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description) {
                 print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
@@ -152,10 +182,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
             }
         }
     }
+
+    // Called when the youtube-player is ready to play the video
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         print("The video player is now ready")
     }
     
+    // Called whenever the youtube-player changes its state.
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
         // the player changed to state
         print(state.rawValue)
@@ -171,6 +204,21 @@ class ViewController: UIViewController, YTPlayerViewDelegate  {
         else if (state.rawValue == 5) {
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
+        }
+    }
+    
+    // Implementation for the DownloadAudioDelegate
+    func readDownloadUrls(urls: [URL]) {
+        self.downloadAudioUrls = urls
+        print(urls)
+    }
+    
+    func readTotalDownloaded(count: Int) {
+        if count == self.audioClips.count {
+            activeAudioIndex = 0
+            self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
+            loadAudio()
+            showNextClipStartTime()
         }
     }
 }
