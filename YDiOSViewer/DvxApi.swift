@@ -1,11 +1,3 @@
-//
-//  DvxApi.swift
-//  YDiOSViewer
-//
-//  Created by Rupal Khilari on 9/28/16.
-//  Copyright © 2016 SFSU. All rights reserved.
-//
-
 import Foundation
 
 class DxvApi {
@@ -18,7 +10,7 @@ class DxvApi {
         var paramString = ""
         var paramArray:[String] = Array()
         for (k, v) in params {
-            paramArray.append(k + "=" + (v ))
+            paramArray.append(k + "=" + (v))
         }
         paramString = paramArray.joined(separator: "&")
         
@@ -35,8 +27,13 @@ class DxvApi {
     
     func getClips(_ params:[String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("clip/metadata", params: params)
-        print("THE URL Is " + url)
         return DvxXmlParser().makeRequest(url, separator: "clip")
     }
-    
+
+    func getAudioClipUrl(_ params:[String: String]) -> String {
+        let url:String = getConstructedUrl("clip", params: params)
+        print("Audio url is " + url)
+        return url
+    }
+
 }

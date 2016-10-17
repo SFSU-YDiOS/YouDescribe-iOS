@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  YDiOSViewer
-//
-//  Created by Rupal Khilari on 9/27/16.
-//  Copyright © 2016 SFSU. All rights reserved.
-//
-
 import UIKit
 import CoreData
 

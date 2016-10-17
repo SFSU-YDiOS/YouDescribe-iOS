@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E5932FB55034D2000E0B69C /* Pods_YDiOSViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */; };
 		8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8913AB531D9C0DD80027213D /* DvxXmlParser.swift */; };
 		897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */; };
 		8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 897570291D9BB53400EAFF49 /* YTPlayerView.m */; };
@@ -20,6 +21,7 @@
 		89859B461D9B9C7E00785D6F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89859B441D9B9C7E00785D6F /* LaunchScreen.storyboard */; };
 		89859B511D9B9C7E00785D6F /* YDiOSViewerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89859B501D9B9C7E00785D6F /* YDiOSViewerTests.swift */; };
 		89859B5C1D9B9C7E00785D6F /* YDiOSViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89859B5B1D9B9C7E00785D6F /* YDiOSViewerUITests.swift */; };
+		8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YDiOSViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		8913AB531D9C0DD80027213D /* DvxXmlParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxXmlParser.swift; sourceTree = "<group>"; };
 		897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeHelperControl.swift; sourceTree = "<group>"; };
 		897570271D9BB53400EAFF49 /* YDiOSViewer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YDiOSViewer-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -61,6 +65,8 @@
 		89859B571D9B9C7E00785D6F /* YDiOSViewerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YDiOSViewerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		89859B5B1D9B9C7E00785D6F /* YDiOSViewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YDiOSViewerUITests.swift; sourceTree = "<group>"; };
 		89859B5D1D9B9C7E00785D6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadAudio.swift; sourceTree = "<group>"; };
+		C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E5932FB55034D2000E0B69C /* Pods_YDiOSViewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +95,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DCC18BFBCE5D19D44361AA7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */,
+				C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		89859B2C1D9B9C7E00785D6F = {
 			isa = PBXGroup;
 			children = (
@@ -99,6 +115,8 @@
 				897570291D9BB53400EAFF49 /* YTPlayerView.m */,
 				897570271D9BB53400EAFF49 /* YDiOSViewer-Bridging-Header.h */,
 				8975702B1D9BB57100EAFF49 /* Assets */,
+				0DCC18BFBCE5D19D44361AA7 /* Pods */,
+				C88513EBDA29335AE9838410 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -121,6 +139,7 @@
 				89859B3C1D9B9C7E00785D6F /* Main.storyboard */,
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
 				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
+				8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */,
 				89859B421D9B9C7E00785D6F /* Assets.xcassets */,
 				89859B441D9B9C7E00785D6F /* LaunchScreen.storyboard */,
 				89859B471D9B9C7E00785D6F /* Info.plist */,
@@ -147,6 +166,14 @@
 			path = YDiOSViewerUITests;
 			sourceTree = "<group>";
 		};
+		C88513EBDA29335AE9838410 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -154,9 +181,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 89859B601D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewer" */;
 			buildPhases = (
+				D76839C3D15221AE112E7A1D /* [CP] Check Pods Manifest.lock */,
 				89859B311D9B9C7E00785D6F /* Sources */,
 				89859B321D9B9C7E00785D6F /* Frameworks */,
 				89859B331D9B9C7E00785D6F /* Resources */,
+				07AE6949B0ECC9A4098F9499 /* [CP] Embed Pods Frameworks */,
+				9C2B7F7D5D4BB6DB14FC8BC4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -278,11 +308,60 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		07AE6949B0ECC9A4098F9499 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9C2B7F7D5D4BB6DB14FC8BC4 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D76839C3D15221AE112E7A1D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		89859B311D9B9C7E00785D6F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
 				89859B3B1D9B9C7E00785D6F /* ViewController.swift in Sources */,
@@ -429,10 +508,12 @@
 		};
 		89859B611D9B9C7E00785D6F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = U2LM586MV2;
 				INFOPLIST_FILE = YDiOSViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -446,10 +527,12 @@
 		};
 		89859B621D9B9C7E00785D6F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = U2LM586MV2;
 				INFOPLIST_FILE = YDiOSViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
