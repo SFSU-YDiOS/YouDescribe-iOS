@@ -58,7 +58,7 @@ class DownloadAudio {
     }
     
     func getDownloadUrl(metadata: AnyObject) -> URL {
-                let clipName: String = ((metadata["clipFilename"]!! as AnyObject).description.replacingOccurrences(of: ".wav", with: ".mp3"))
+        let clipName: String = ((metadata["clipFilename"]!! as AnyObject).description.replacingOccurrences(of: ".wav", with: ".mp3"))
         var documentsURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         documentsURL.appendPathComponent("YouDescribe/" + clipName)
         return documentsURL

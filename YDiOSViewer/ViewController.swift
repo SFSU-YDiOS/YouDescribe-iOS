@@ -15,13 +15,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var allAudioClips: [AnyObject] = []
     var audioClips: [AnyObject] = []
     var activeAudioIndex:Int = 0
-    var Timestamp: String {
-        return "\(NSDate().timeIntervalSince1970 * 1000)"
-    }
-    
-    @IBOutlet weak var debugView: UITextView!
+    var allMovies : [AnyObject] = []
+    var movieID : String?
+
+    //@IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
-    @IBOutlet weak var movieText: UITextField!
+    //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var authorText: UITextField!
@@ -33,8 +32,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         // Do any additional setup after loading the view, typically from a nib.
         self.youtubePlayer.delegate = self
         self.hideKeyboardOnTap()
-        let allMovies = dvxApi.getMovies([:])
-        debugView.text = allMovies.description
+
+        //allMovies = dvxApi.getMovies([:])
+
+        //print("all movies count =")
+        //print(allMovies)
+        //print(allMovies.count)
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,13 +58,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Loads all the audio clips based on the selected MediaId
     func loadClips() {
         // get the movieID of the clip
-        let selectedMovies = dvxApi.getMovies(["MediaId": movieText.text!])
+        let selectedMovies = dvxApi.getMovies(["MediaId": movieID!])
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"];
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
-            debugView.text = debugView.text + clips.description
             self.allAudioClips = clips
         }
     }
@@ -105,9 +107,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     
     // Called when the movie is loaded
     @IBAction func loadMovie(_ sender: AnyObject) {
-        if((movieText.text) != nil) {
+        if((movieID) != nil) {
             let options = ["playsinline" : 1]
-            youtubePlayer.load(withVideoId: movieText.text!, playerVars: options)
+            youtubePlayer.load(withVideoId: movieID!, playerVars: options)
             // load the clips for this video.
             loadClips()
         } else {
@@ -206,7 +208,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             doPlay = true
         }
     }
-    
+
     // Implementation for the DownloadAudioDelegate
     func readDownloadUrls(urls: [URL]) {
         self.downloadAudioUrls = urls
@@ -221,5 +223,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             showNextClipStartTime()
         }
     }
+
 }
 
