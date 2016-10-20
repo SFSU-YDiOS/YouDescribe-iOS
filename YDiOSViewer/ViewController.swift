@@ -17,6 +17,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var activeAudioIndex:Int = 0
     var allMovies : [AnyObject] = []
     var movieID : String?
+    var isAudioPlaying: Bool = false
 
     //@IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
@@ -81,15 +82,18 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func playAudio() {
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.playerDidFinishPlaying(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
         audioPlayer?.play()
-        
+        self.isAudioPlaying = true
+
         // Pre-cache the next clip
         if self.audioClips.count > 0 && activeAudioIndex < self.audioClips.count-1 {
             self.nextAudioUrl = self.downloadAudioUrls[activeAudioIndex+1] as NSURL
         }
     }
     
+
     // Called when the audio clip finishes playing
     func playerDidFinishPlaying(_ note: Notification) {
+        self.isAudioPlaying = false
         print("Resume video playing:")
         youtubePlayer.playVideo()
         activeAudioIndex = activeAudioIndex + 1
@@ -170,17 +174,27 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float)
     {
         self.playerLabel.text = "\(playTime)"
-        // Check if we have reached the point in the video
-        if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
-            print(self.audioClips[activeAudioIndex])
-            //print(Float(floor(playTime)))
-            print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
-            if Float(floor(playTime)) == Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description) {
-                print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
-                print("Pausing Video")
-                youtubePlayer.pauseVideo()
-                print("Playing Audio")
-                playAudio()
+        if !self.isAudioPlaying {
+            // Check if we have reached the point in the video
+            if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
+                print(self.audioClips[activeAudioIndex])
+                //print(Float(floor(playTime)))
+                print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
+                if (self.audioClips[activeAudioIndex]["clipFunction"]!! as! String) == "desc_extended" {
+                    if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
+                        print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
+                        print("Pausing Video")
+                        youtubePlayer.pauseVideo()
+                        print("Playing Audio")
+                        playAudio()
+                    }
+                }
+                else {
+                    if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
+                        print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
+                        playAudio()
+                    }
+                }
             }
         }
     }
@@ -224,5 +238,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
     }
 
+    func registerNewDownload(url: URL) {
+        print("Finished downloading URL : " + url.absoluteString)
+    }
 }
 

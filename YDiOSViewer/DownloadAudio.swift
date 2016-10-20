@@ -28,6 +28,10 @@ class AtomicCounter {
         pthread_mutex_destroy(&mutex)
     }
     
+    func getCounter() -> UInt {
+        return counter
+    }
+
     func incrementAndGet() -> UInt {
         pthread_mutex_lock(&mutex)
         defer {
@@ -41,6 +45,7 @@ class AtomicCounter {
 protocol DownloadAudioDelegate {
     func readDownloadUrls(urls: [URL])
     func readTotalDownloaded(count: Int)
+    func registerNewDownload(url: URL)
 }
 
 class DownloadAudio {
@@ -48,6 +53,7 @@ class DownloadAudio {
     var downloadFileUrls: [URL] = []
     let mycounter = AtomicCounter()
     var delegate:DownloadAudioDelegate
+    var downloadState: Int = 0
 
     init(delegate:DownloadAudioDelegate) {
         self.delegate = delegate
@@ -75,14 +81,20 @@ class DownloadAudio {
     func prepareAllClipCache(clips: [AnyObject]) {
         // Asynchronously prepare the cache
         var myDownloadUrls: [URL] = []
-        for clip in clips {
-            let audioUrl:String = dvxApi.getAudioClipUrl(
-                ["ClipId": (clip["clipId"]!! as AnyObject).description,
-                 "Movie":(clip["movieFk"]!! as AnyObject).description])
-            myDownloadUrls.append(self.getDownloadUrl(metadata: clip)) // Should download the clips in order
-            doDownload(URL(string: audioUrl)!, metadata: clip)
+
+        // Perform a download only if it is not already in progress
+        if self.downloadState != 2 {
+            for clip in clips {
+                let audioUrl:String = dvxApi.getAudioClipUrl(
+                    ["ClipId": (clip["clipId"]!! as AnyObject).description,
+                     "Movie":(clip["movieFk"]!! as AnyObject).description])
+                myDownloadUrls.append(self.getDownloadUrl(metadata: clip)) // Should download the clips in order
+                self.downloadState = 2
+                doDownload(URL(string: audioUrl)!, metadata: clip)
+            }
+            self.delegate.readDownloadUrls(urls: myDownloadUrls)
+            self.downloadFileUrls = myDownloadUrls
         }
-        self.delegate.readDownloadUrls(urls: myDownloadUrls)
     }
 
     func prepareClipCache(clips: [AnyObject], index: Int) -> String {
@@ -115,6 +127,11 @@ class DownloadAudio {
                 print("The destination URL is ")
                 print(response.destinationURL?.path)
                 self.delegate.readTotalDownloaded(count: Int(self.mycounter.incrementAndGet()))
+                self.delegate.registerNewDownload(url: response.destinationURL!)
+                if (Int(self.mycounter.getCounter()) == self.downloadFileUrls.count) {
+                    print("Completed all downloads.")
+                    self.downloadState = 1 // completed all downloads
+                }
         }
     }
 }
