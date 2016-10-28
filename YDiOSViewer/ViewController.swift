@@ -3,7 +3,7 @@ import AVKit
 import AVFoundation
 import Foundation
 
-class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate  {
+class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate, UIPickerViewDelegate, UIPickerViewDataSource  {
 
     let dvxApi = DxvApi()
     var doPlay:Bool = true
@@ -18,20 +18,27 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var allMovies : [AnyObject] = []
     var movieID : String?
     var isAudioPlaying: Bool = false
+    var authorIdList: [String] = []
+    var currentAuthorId: String?
+    var currentMovie: AnyObject?
 
     //@IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var authorText: UITextField!
+    //@IBOutlet weak var authorText: UITextField!
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var nextClipAtLabel: UILabel!
-    
+    @IBOutlet weak var authorPickerView: UIPickerView!
+    @IBOutlet weak var detailView: UITextView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.youtubePlayer.delegate = self
+        self.authorPickerView.delegate = self
+        self.authorPickerView.dataSource = self
         self.hideKeyboardOnTap()
 
         //allMovies = dvxApi.getMovies([:])
@@ -66,7 +73,25 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             print("The clips are")
             print(clips.description)
             self.allAudioClips = clips
+            self.authorIdList = getAllAuthors()
+            authorPickerView.reloadAllComponents()
         }
+    }
+
+    func getAllAuthors() -> [String] {
+        var authorIds:[String] = []
+        if (self.allAudioClips.count > 0) {
+            for audioClip in self.allAudioClips {
+                let authorId:String = audioClip["clipAuthor"] as! String
+                if !authorIds.contains(authorId) {
+                    authorIds.append(authorId)
+                }
+            }
+        }
+        if (authorIds.count > 0) {
+            self.currentAuthorId = authorIds[0]
+        }
+        return authorIds
     }
 
     func loadAudio() {
@@ -109,6 +134,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         audioPlayer?.pause()
     }
     
+    func loadMovieDescription() {
+        var detailString:String = ""
+        detailString = detailString + "Title:" + (self.currentMovie!["movieName"] as! String)
+        detailString = detailString + "\nDescription: " + (self.currentMovie!["movieDescription"] as! String)
+        detailView.text = detailString
+    }
+
     // Called when the movie is loaded
     @IBAction func loadMovie(_ sender: AnyObject) {
         if((movieID) != nil) {
@@ -149,7 +181,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         // filter the clips according to the authors
         var filteredClips:[AnyObject] = []
         for audioClip in self.allAudioClips {
-            if ((audioClip["clipAuthor"]!! as AnyObject).description == authorText.text) {
+            if ((audioClip["clipAuthor"]!! as AnyObject).description == self.currentAuthorId) {
                 filteredClips.append(audioClip)
             }
         }
@@ -157,7 +189,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         doPlay = true
         // Load the first clip content of the set of clips
         if self.audioClips.count > 0 {
-            print("Starting to download all clips from Author:" + authorText.text!)
+            print("Starting to download all clips from Author:" + self.currentAuthorId!)
             DownloadAudio(delegate: self).prepareAllClipCache(clips: self.audioClips)
         }
         print("Filtered clips by Author")
@@ -241,5 +273,23 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func registerNewDownload(url: URL) {
         print("Finished downloading URL : " + url.absoluteString)
     }
+
+    // Author picker interface delegate methods
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.authorIdList.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return self.authorIdList[row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.currentAuthorId = self.authorIdList[row]
+    }
+
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
 }
 
