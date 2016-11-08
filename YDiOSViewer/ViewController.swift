@@ -19,6 +19,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var movieID : String?
     var isAudioPlaying: Bool = false
     var authorIdList: [String] = []
+    var allAuthors: [AnyObject] = []
+    var authorMap: [String:String] = [:]
     var currentAuthorId: String?
     var currentMovie: AnyObject?
 
@@ -41,6 +43,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.authorPickerView.dataSource = self
         self.hideKeyboardOnTap()
 
+        self.allAuthors = dvxApi.getUsers([:])
+        self.authorMap = getAuthorMap()
+        print(self.authorMap)
         //allMovies = dvxApi.getMovies([:])
 
         //print("all movies count =")
@@ -92,6 +97,15 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.currentAuthorId = authorIds[0]
         }
         return authorIds
+    }
+
+    func getAuthorMap() -> [String:String] {
+        if (self.allAuthors.count > 0) {
+            for author in self.allAuthors {
+                self.authorMap[author["userId"] as! String] = author["userHandle"] as? String
+            }
+        }
+        return self.authorMap
     }
 
     func loadAudio() {
@@ -280,7 +294,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return self.authorIdList[row]
+        return self.authorMap[self.authorIdList[row] as String]
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
