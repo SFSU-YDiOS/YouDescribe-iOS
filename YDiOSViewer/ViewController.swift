@@ -17,8 +17,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var activeAudioIndex:Int = 0
     var allMovies : [AnyObject] = []
     var movieID : String?
+    
 
-    //@IBOutlet weak var debugView: UITextView!
+    @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
@@ -33,10 +34,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.youtubePlayer.delegate = self
         self.hideKeyboardOnTap()
 
-        //allMovies = dvxApi.getMovies([:])
+        loadMovie(self)
+        allMovies = dvxApi.getMovies([:])
 
         //print("all movies count =")
-        //print(allMovies)
+        print(allMovies)
         //print(allMovies.count)
     }
 
@@ -64,6 +66,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
+            debugView.text = clips.description
             self.allAudioClips = clips
         }
     }
