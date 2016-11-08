@@ -113,7 +113,7 @@ class DownloadAudio {
     
     
     func doDownload(_ audioDataUrl: URL, metadata: AnyObject) {
-        
+
         let destination = getDownloadFileDestination(metadata: metadata)
         print(destination)
         print("The cache directory is ")

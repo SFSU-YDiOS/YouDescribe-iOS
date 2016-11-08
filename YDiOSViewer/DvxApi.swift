@@ -36,4 +36,8 @@ class DxvApi {
         return url
     }
 
+    func getUsers(_ params:[String: String]) -> Array<AnyObject> {
+        let url:String! = getConstructedUrl("user", params: params)
+        return DvxXmlParser().makeRequest(url, separator: "user")
+    }
 }
