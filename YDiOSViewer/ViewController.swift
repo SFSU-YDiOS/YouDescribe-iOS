@@ -24,7 +24,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var currentAuthorId: String?
     var currentMovie: AnyObject?
 
-    //@IBOutlet weak var debugView: UITextView!
+    @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
@@ -33,7 +33,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
-    @IBOutlet weak var detailView: UITextView!
+    //@IBOutlet weak var detailView: UITextView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,13 +43,16 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.authorPickerView.dataSource = self
         self.hideKeyboardOnTap()
 
+        loadMovie(self)
+        allMovies = dvxApi.getMovies([:])
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
         print(self.authorMap)
         //allMovies = dvxApi.getMovies([:])
 
+
         //print("all movies count =")
-        //print(allMovies)
+        print(allMovies)
         //print(allMovies.count)
     }
 
@@ -77,6 +80,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
+            debugView.text = clips.description
             self.allAudioClips = clips
             self.authorIdList = getAllAuthors()
             authorPickerView.reloadAllComponents()
@@ -152,7 +156,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         var detailString:String = ""
         detailString = detailString + "Title:" + (self.currentMovie!["movieName"] as! String)
         detailString = detailString + "\nDescription: " + (self.currentMovie!["movieDescription"] as! String)
-        detailView.text = detailString
+        //detailView.text = detailString
     }
 
     // Called when the movie is loaded

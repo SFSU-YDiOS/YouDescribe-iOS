@@ -10,6 +10,7 @@ import UIKit
 
 class VideoTableViewCell: UITableViewCell {
     @IBOutlet var videoLabel: UILabel!
+    @IBOutlet var videoThumbnail: UIImageView!
 
     override func awakeFromNib() {
         super.awakeFromNib()

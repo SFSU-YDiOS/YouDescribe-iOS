@@ -10,20 +10,33 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class VideoTableViewController: UITableViewController, YTPlayerViewDelegate {
+class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UISearchResultsUpdating {
     
     let dvxApi = DxvApi()
     var allMovies : [AnyObject] = []
+    var filteredMovies : [AnyObject] = []
+    var resultSearchController = UISearchController(searchResultsController: nil)
+    var thumbnailUrl: String = ""
+    var videoName : AnyObject?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.estimatedRowHeight = 400
         
         allMovies = dvxApi.getMovies([:])
+        tableView.estimatedRowHeight = CGFloat(allMovies.count)
         
-        print("all movies count =")
-        print(allMovies)
-        print(allMovies.count)
+        //print("\n\nestimated row height\n\n")
+        //print(tableView.estimatedRowHeight)
+        //print("all movies count =")
+        //print(allMovies[1]["movieMediaId"])
+        //print(allMovies.count)
+        
+        resultSearchController.searchResultsUpdater = self
+        resultSearchController.dimsBackgroundDuringPresentation = false
+        definesPresentationContext = true
+        self.resultSearchController.searchBar.sizeToFit()
+        self.tableView.tableHeaderView = resultSearchController.searchBar
+        self.tableView.reloadData()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -46,33 +59,82 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return allMovies.count
+        if self.resultSearchController.isActive{
+            return self.filteredMovies.count
+        }
+        else{
+            return self.allMovies.count
+        }
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VideoTableCell", for: indexPath) as! VideoTableViewCell
 
+        //var data = NSData(contentsOfURL:url!)
+        
         // Configure the cell...
         
-        //let row = indexPath.row
-        let videoName = allMovies[indexPath.row]
+        if self.resultSearchController.isActive{
+            videoName = filteredMovies[indexPath.row]
+        }
+        else{
+            videoName = allMovies[indexPath.row]
+        }
+        
         cell.videoLabel.font =
             UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
-        cell.videoLabel.text = videoName["movieMediaId"] as? String
+        cell.videoLabel.text = videoName?["movieName"] as? String
+        //cell.videoLabel.text = videoName?["movieName"] as? String
+        let movieMediaId = videoName?["movieMediaId"] as! String
+        
+        thumbnailUrl = "http://img.youtube.com/vi/"
+        thumbnailUrl = thumbnailUrl.appending(movieMediaId)
+        thumbnailUrl = thumbnailUrl.appending("/0.jpg")
+        
+        var url = URL(string: thumbnailUrl)
+        if (url == nil){
+            url = URL(string: "https://www.youtube.com/yt/brand/media/image/YouTube-logo-full_color.png")
+            var data = NSData(contentsOf:url!)
+            if (data != nil) {
+                cell.videoThumbnail.image = UIImage(data:data! as Data)
+            }
+        }
+        else{
+            var data = NSData(contentsOf:url!)
+            if (data != nil) {
+                cell.videoThumbnail.image = UIImage(data:data! as Data)
+            }
+            else{
+                url = URL(string: "https://www.youtube.com/yt/brand/media/image/YouTube-logo-full_color.png")
+                var data = NSData(contentsOf:url!)
+                if (data != nil) {
+                    cell.videoThumbnail.image = UIImage(data:data! as Data)
+                }
+            }
+        }
+        
+        
         return cell
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "PlaySelectedVideo" {
-            let detailViewController = segue.destination
+            let videoViewController = segue.destination
                 as! ViewController
             
             let myIndexPath = self.tableView.indexPathForSelectedRow
-            let row = allMovies[(myIndexPath?.row)!]
-            detailViewController.movieID = row["movieMediaId"] as? String
-            //detailViewController.webSite = webAddresses[row!]
+            let row : AnyObject?
+            
+            if resultSearchController.isActive && resultSearchController.searchBar.text != "" {
+                row = filteredMovies[(myIndexPath?.row)!]
+            } else {
+                row = allMovies[(myIndexPath?.row)!]
+            }
+            
+            videoViewController.movieID = row?["movieMediaId"] as? String
+            //videoViewController.loadMovie(videoViewController)
         }
     }
 
@@ -121,4 +183,18 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate {
     }
     */
 
+    func updateSearchResults(for searchController: UISearchController) {
+        self.filteredMovies.removeAll(keepingCapacity: false)
+        let selfPredicate = NSPredicate(format: "SELF.movieName CONTAINS[c] %@", searchController.searchBar.text!)
+        let array = (self.allMovies as NSArray).filtered(using: selfPredicate)
+        self.filteredMovies = array as [AnyObject]
+        //let text = searchController.searchBar.text!
+        //let movieName = "movieName"
+        //self.filteredMovies = allMovies.filter(){ (Container) -> Bool in
+        
+        //self.filteredMovies = self.allMovies.filter({ $0["movieName"] as? String == text})
+        //let searchText = searchController.searchBar.text!.lowercased()
+        //self.filteredMovies = self.allMovies.filter({$0["movieName"].rangeOfString(searchText) != nil})
+        self.tableView.reloadData()
+    }
 }
