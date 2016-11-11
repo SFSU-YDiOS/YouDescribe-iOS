@@ -23,6 +23,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var authorMap: [String:String] = [:]
     var currentAuthorId: String?
     var currentMovie: AnyObject?
+    var doAsyncDownload: Bool = false
+    var isFirstDownloaded: Bool = false
+    var currentDownloadIndex: Int = 0
+    var didAuthorReset: Bool = true
 
     @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
@@ -54,6 +58,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         //print("all movies count =")
         print(allMovies)
         //print(allMovies.count)
+        self.doAsyncDownload = false
+        self.isFirstDownloaded = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -173,6 +179,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
         if(doPlay) {
+            if self.didAuthorReset {
+                self.filterAndDownloadAudioClips()
+                self.didAuthorReset = false
+            }
             youtubePlayer.playVideo()
         } else {
             youtubePlayer.pauseVideo()
@@ -196,6 +206,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     
     // Filters clips by Author
     @IBAction func startAction(_ sender: AnyObject) {
+
+    }
+    
+    func filterAndDownloadAudioClips() {
         // filter the clips according to the authors
         var filteredClips:[AnyObject] = []
         for audioClip in self.allAudioClips {
@@ -208,14 +222,25 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         // Load the first clip content of the set of clips
         if self.audioClips.count > 0 {
             print("Starting to download all clips from Author:" + self.currentAuthorId!)
-            DownloadAudio(delegate: self).prepareAllClipCache(clips: self.audioClips)
+            if self.doAsyncDownload {
+                DownloadAudio(delegate: self).prepareAllClipCache(clips: self.audioClips)
+            }
+            else {
+                print("Downloading file...")
+                self.downloadAudioUrls = []
+                self.downloadAudioUrls.append(DownloadAudio(delegate: self).getDownloadUrl(metadata: self.audioClips[0]))
+                let audioUrl:String = DownloadAudio(delegate: self).prepareClipCache(clips: self.audioClips, index: 0)
+                print(audioUrl)
+                self.isFirstDownloaded = true
+                self.currentDownloadIndex = 0
+            }
         }
         print("Filtered clips by Author")
     }
-    
     // Displays the start time of the next audio clip
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
+            print("Getting called")
             self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
         }
     }
@@ -285,6 +310,28 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
             loadAudio()
             showNextClipStartTime()
+        } else {
+            // Attempt to serially download the others
+            if !self.doAsyncDownload {
+                if self.currentDownloadIndex < self.audioClips.count-1 {
+                    print("Downloading the next one")
+                    self.currentDownloadIndex = self.currentDownloadIndex + 1
+                    print(self.currentDownloadIndex)
+                    self.downloadAudioUrls.append(DownloadAudio(delegate: self).getDownloadUrl(metadata: self.audioClips[self.currentDownloadIndex]))
+                    let audioUrl:String = DownloadAudio(delegate: self).prepareClipCache(clips: self.audioClips, index: self.currentDownloadIndex)
+                    print(audioUrl)
+                    if (self.isFirstDownloaded) {
+                        activeAudioIndex = 0
+                        self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
+                        loadAudio()
+                        showNextClipStartTime()
+                        self.isFirstDownloaded = false
+                    }
+                }
+                else {
+                    print("Finally finished downloading all audio clips sequencially")
+                }
+            }
         }
     }
 
@@ -302,6 +349,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.didAuthorReset = true
         self.currentAuthorId = self.authorIdList[row]
     }
 
