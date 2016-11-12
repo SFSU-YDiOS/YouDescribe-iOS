@@ -9,15 +9,21 @@
 import UIKit
 import AVKit
 import AVFoundation
+import SwiftyJSON
 
 class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UISearchResultsUpdating {
     
     let dvxApi = DxvApi()
     var allMovies : [AnyObject] = []
     var filteredMovies : [AnyObject] = []
+    var youTubeSearchMovies = [String: String]()
     var resultSearchController = UISearchController(searchResultsController: nil)
     var thumbnailUrl: String = ""
     var videoName : AnyObject?
+    var apiKey = "AIzaSyAI9H-v1Zyt1bN6W7fSz-Zl0jrfU0UYzho"
+    var maxYouTubeResults = 5
+    var videoIdYT : String = ""
+    var titleYT : String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,8 +76,6 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VideoTableCell", for: indexPath) as! VideoTableViewCell
-
-        //var data = NSData(contentsOfURL:url!)
         
         // Configure the cell...
         
@@ -81,11 +85,9 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
         else{
             videoName = allMovies[indexPath.row]
         }
-        
         cell.videoLabel.font =
             UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
         cell.videoLabel.text = videoName?["movieName"] as? String
-        //cell.videoLabel.text = videoName?["movieName"] as? String
         let movieMediaId = videoName?["movieMediaId"] as! String
         
         thumbnailUrl = "http://img.youtube.com/vi/"
@@ -134,7 +136,6 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
             }
             
             videoViewController.movieID = row?["movieMediaId"] as? String
-            //videoViewController.loadMovie(videoViewController)
         }
     }
 
@@ -188,13 +189,29 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
         let selfPredicate = NSPredicate(format: "SELF.movieName CONTAINS[c] %@", searchController.searchBar.text!)
         let array = (self.allMovies as NSArray).filtered(using: selfPredicate)
         self.filteredMovies = array as [AnyObject]
-        //let text = searchController.searchBar.text!
-        //let movieName = "movieName"
-        //self.filteredMovies = allMovies.filter(){ (Container) -> Bool in
         
-        //self.filteredMovies = self.allMovies.filter({ $0["movieName"] as? String == text})
-        //let searchText = searchController.searchBar.text!.lowercased()
-        //self.filteredMovies = self.allMovies.filter({$0["movieName"].rangeOfString(searchText) != nil})
+        //search using YouTube API
+        if (self.resultSearchController.searchBar.text != ""){
+            let youTubeSearchString = self.resultSearchController.searchBar.text?.replacingOccurrences(of: " ", with: ",")
+            let config = URLSessionConfiguration.default
+            let url = URL(string: "https://www.googleapis.com/youtube/v3/search?part=snippet&fields=items(id,snippet(title,channelTitle))&q=\(youTubeSearchString!)&type=video&maxResults=\(maxYouTubeResults)&key=\(apiKey)")
+            print("\n\nURL\n\n: ",url)
+            let task = URLSession.shared.dataTask(with: url! as URL) {(data, response, error) in
+                let json = JSON(data: data!)
+                if let items = json["items"].array{
+                    for item in items{
+                        self.videoIdYT = item["id"]["videoId"].stringValue
+                        self.titleYT = item["snippet"]["title"].stringValue
+                        self.youTubeSearchMovies["movieMediaId"] = self.videoIdYT
+                        self.youTubeSearchMovies["movieName"] = self.titleYT
+                        self.filteredMovies.append(self.youTubeSearchMovies as AnyObject)
+                    }
+                    print("\n\nSearched list of videos: ",self.filteredMovies)
+                    self.tableView.reloadData()
+                }
+            }
+            task.resume()
+        }
         self.tableView.reloadData()
     }
 }
