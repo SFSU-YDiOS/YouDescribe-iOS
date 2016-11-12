@@ -81,6 +81,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func loadClips() {
         // get the movieID of the clip
         let selectedMovies = dvxApi.getMovies(["MediaId": movieID!])
+        
+        //For Youtube videos
+        debugView.text = " "
+        
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"];
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
