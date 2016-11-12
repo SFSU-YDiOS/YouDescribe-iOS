@@ -113,10 +113,6 @@
                                 <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lYh-XM-1LL">
-                                <frame key="frameInset" minX="220" minY="392" height="68" maxX="22"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            </pickerView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="8Yg-B4-sxY">
                                 <frame key="frameInset" minX="16" minY="492" width="343" height="155"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -124,15 +120,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0pM-Ts-IqH">
-                                <frame key="frameInset" minX="281" minY="430" width="65" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                <state key="normal" title="Author"/>
-                                <connections>
-                                    <action selector="startAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ctQ-fk-DpT"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mGM-Aq-D10">
                                 <frame key="frameInset" minX="143" minY="400" width="65" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -151,17 +138,20 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
                             </textView>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lYh-XM-1LL">
+                                <frame key="frameInset" minX="216" minY="414" height="68" maxX="26"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </pickerView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" title="Play Video" id="DNI-vI-h8k"/>
                     <connections>
-                        <outlet property="debugView" destination="mgY-3S-EoT" id="DLc-D5-rE0"/>
                         <outlet property="authorPickerView" destination="lYh-XM-1LL" id="TN6-O2-xGY"/>
+                        <outlet property="debugView" destination="mgY-3S-EoT" id="DLc-D5-rE0"/>
                         <outlet property="nextClipAtLabel" destination="eaD-lc-4hD" id="PKk-r7-Rph"/>
                         <outlet property="playButton" destination="xLK-ia-C5h" id="xOx-YP-XgT"/>
                         <outlet property="playerLabel" destination="4B4-JU-0mW" id="m7i-8K-m73"/>
-                        <outlet property="startButton" destination="0pM-Ts-IqH" id="3IU-jX-tTy"/>
                         <outlet property="youtubePlayer" destination="ZD0-re-c29" id="F7t-wP-ytY"/>
                     </connections>
                 </viewController>

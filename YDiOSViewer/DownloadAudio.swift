@@ -111,7 +111,7 @@ class DownloadAudio {
         return ""
     }
     
-    
+
     func doDownload(_ audioDataUrl: URL, metadata: AnyObject) {
 
         let destination = getDownloadFileDestination(metadata: metadata)
