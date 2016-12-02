@@ -40,4 +40,5 @@ class DxvApi {
         let url:String! = getConstructedUrl("user", params: params)
         return DvxXmlParser().makeRequest(url, separator: "user")
     }
+
 }

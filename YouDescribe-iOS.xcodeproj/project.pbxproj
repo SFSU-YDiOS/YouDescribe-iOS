@@ -24,6 +24,11 @@
 		89859B511D9B9C7E00785D6F /* YDiOSViewerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89859B501D9B9C7E00785D6F /* YDiOSViewerTests.swift */; };
 		89859B5C1D9B9C7E00785D6F /* YDiOSViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89859B5B1D9B9C7E00785D6F /* YDiOSViewerUITests.swift */; };
 		8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */; };
+		89DA3AB31DEA9BB1002719BA /* VideoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA3AB21DEA9BB1002719BA /* VideoItemTableViewCell.swift */; };
+		89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA3AB41DEABD23002719BA /* VideoItemTableViewController.swift */; };
+		89DA3AB71DEB8E0B002719BA /* SearchResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA3AB61DEB8E0B002719BA /* SearchResultsTableViewController.swift */; };
+		89DA3AB91DEB90C6002719BA /* SearchResultsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA3AB81DEB90C6002719BA /* SearchResultsTableViewCell.swift */; };
+		89DA3ABB1DEBBD1A002719BA /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DA3ABA1DEBBD1A002719BA /* SearchResultsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,7 +60,7 @@
 		897570291D9BB53400EAFF49 /* YTPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YTPlayerView.m; sourceTree = "<group>"; };
 		8975702B1D9BB57100EAFF49 /* Assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Assets; sourceTree = "<group>"; };
 		8975702D1D9C0AE300EAFF49 /* DvxApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxApi.swift; sourceTree = "<group>"; };
-		89859B351D9B9C7E00785D6F /* YDiOSViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YDiOSViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		89859B351D9B9C7E00785D6F /* YouDescribe-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YouDescribe-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		89859B381D9B9C7E00785D6F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89859B3A1D9B9C7E00785D6F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		89859B3D1D9B9C7E00785D6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -63,13 +68,18 @@
 		89859B421D9B9C7E00785D6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		89859B451D9B9C7E00785D6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89859B471D9B9C7E00785D6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		89859B4C1D9B9C7E00785D6F /* YDiOSViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YDiOSViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		89859B4C1D9B9C7E00785D6F /* YouDescribe-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "YouDescribe-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		89859B501D9B9C7E00785D6F /* YDiOSViewerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YDiOSViewerTests.swift; sourceTree = "<group>"; };
 		89859B521D9B9C7E00785D6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		89859B571D9B9C7E00785D6F /* YDiOSViewerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YDiOSViewerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		89859B571D9B9C7E00785D6F /* YouDescribe-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "YouDescribe-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		89859B5B1D9B9C7E00785D6F /* YDiOSViewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YDiOSViewerUITests.swift; sourceTree = "<group>"; };
 		89859B5D1D9B9C7E00785D6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadAudio.swift; sourceTree = "<group>"; };
+		89DA3AB21DEA9BB1002719BA /* VideoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoItemTableViewCell.swift; sourceTree = "<group>"; };
+		89DA3AB41DEABD23002719BA /* VideoItemTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoItemTableViewController.swift; sourceTree = "<group>"; };
+		89DA3AB61DEB8E0B002719BA /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewController.swift; sourceTree = "<group>"; };
+		89DA3AB81DEB90C6002719BA /* SearchResultsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewCell.swift; sourceTree = "<group>"; };
+		89DA3ABA1DEBBD1A002719BA /* SearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
 		C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -111,9 +121,9 @@
 		89859B2C1D9B9C7E00785D6F = {
 			isa = PBXGroup;
 			children = (
-				89859B371D9B9C7E00785D6F /* YDiOSViewer */,
-				89859B4F1D9B9C7E00785D6F /* YDiOSViewerTests */,
-				89859B5A1D9B9C7E00785D6F /* YDiOSViewerUITests */,
+				89859B371D9B9C7E00785D6F /* YouDescribe-iOS */,
+				89859B4F1D9B9C7E00785D6F /* YouDescribe-iOSTests */,
+				89859B5A1D9B9C7E00785D6F /* YouDescribe-iOSUITests */,
 				89859B361D9B9C7E00785D6F /* Products */,
 				897570281D9BB53400EAFF49 /* YTPlayerView.h */,
 				897570291D9BB53400EAFF49 /* YTPlayerView.m */,
@@ -127,14 +137,14 @@
 		89859B361D9B9C7E00785D6F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				89859B351D9B9C7E00785D6F /* YDiOSViewer.app */,
-				89859B4C1D9B9C7E00785D6F /* YDiOSViewerTests.xctest */,
-				89859B571D9B9C7E00785D6F /* YDiOSViewerUITests.xctest */,
+				89859B351D9B9C7E00785D6F /* YouDescribe-iOS.app */,
+				89859B4C1D9B9C7E00785D6F /* YouDescribe-iOSTests.xctest */,
+				89859B571D9B9C7E00785D6F /* YouDescribe-iOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		89859B371D9B9C7E00785D6F /* YDiOSViewer */ = {
+		89859B371D9B9C7E00785D6F /* YouDescribe-iOS */ = {
 			isa = PBXGroup;
 			children = (
 				89859B381D9B9C7E00785D6F /* AppDelegate.swift */,
@@ -146,29 +156,37 @@
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
 				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
 				8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */,
+				89DA3AB21DEA9BB1002719BA /* VideoItemTableViewCell.swift */,
+				89DA3AB41DEABD23002719BA /* VideoItemTableViewController.swift */,
+				89DA3AB81DEB90C6002719BA /* SearchResultsTableViewCell.swift */,
+				89DA3AB61DEB8E0B002719BA /* SearchResultsTableViewController.swift */,
+				89DA3ABA1DEBBD1A002719BA /* SearchResultsViewController.swift */,
 				89859B421D9B9C7E00785D6F /* Assets.xcassets */,
 				89859B441D9B9C7E00785D6F /* LaunchScreen.storyboard */,
 				89859B471D9B9C7E00785D6F /* Info.plist */,
 				89859B3F1D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld */,
 			);
+			name = "YouDescribe-iOS";
 			path = YDiOSViewer;
 			sourceTree = "<group>";
 		};
-		89859B4F1D9B9C7E00785D6F /* YDiOSViewerTests */ = {
+		89859B4F1D9B9C7E00785D6F /* YouDescribe-iOSTests */ = {
 			isa = PBXGroup;
 			children = (
 				89859B501D9B9C7E00785D6F /* YDiOSViewerTests.swift */,
 				89859B521D9B9C7E00785D6F /* Info.plist */,
 			);
+			name = "YouDescribe-iOSTests";
 			path = YDiOSViewerTests;
 			sourceTree = "<group>";
 		};
-		89859B5A1D9B9C7E00785D6F /* YDiOSViewerUITests */ = {
+		89859B5A1D9B9C7E00785D6F /* YouDescribe-iOSUITests */ = {
 			isa = PBXGroup;
 			children = (
 				89859B5B1D9B9C7E00785D6F /* YDiOSViewerUITests.swift */,
 				89859B5D1D9B9C7E00785D6F /* Info.plist */,
 			);
+			name = "YouDescribe-iOSUITests";
 			path = YDiOSViewerUITests;
 			sourceTree = "<group>";
 		};
@@ -183,9 +201,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		89859B341D9B9C7E00785D6F /* YDiOSViewer */ = {
+		89859B341D9B9C7E00785D6F /* YouDescribe-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 89859B601D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewer" */;
+			buildConfigurationList = 89859B601D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOS" */;
 			buildPhases = (
 				D76839C3D15221AE112E7A1D /* [CP] Check Pods Manifest.lock */,
 				89859B311D9B9C7E00785D6F /* Sources */,
@@ -198,14 +216,14 @@
 			);
 			dependencies = (
 			);
-			name = YDiOSViewer;
+			name = "YouDescribe-iOS";
 			productName = YDiOSViewer;
-			productReference = 89859B351D9B9C7E00785D6F /* YDiOSViewer.app */;
+			productReference = 89859B351D9B9C7E00785D6F /* YouDescribe-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		89859B4B1D9B9C7E00785D6F /* YDiOSViewerTests */ = {
+		89859B4B1D9B9C7E00785D6F /* YouDescribe-iOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 89859B631D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewerTests" */;
+			buildConfigurationList = 89859B631D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOSTests" */;
 			buildPhases = (
 				89859B481D9B9C7E00785D6F /* Sources */,
 				89859B491D9B9C7E00785D6F /* Frameworks */,
@@ -216,14 +234,14 @@
 			dependencies = (
 				89859B4E1D9B9C7E00785D6F /* PBXTargetDependency */,
 			);
-			name = YDiOSViewerTests;
+			name = "YouDescribe-iOSTests";
 			productName = YDiOSViewerTests;
-			productReference = 89859B4C1D9B9C7E00785D6F /* YDiOSViewerTests.xctest */;
+			productReference = 89859B4C1D9B9C7E00785D6F /* YouDescribe-iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		89859B561D9B9C7E00785D6F /* YDiOSViewerUITests */ = {
+		89859B561D9B9C7E00785D6F /* YouDescribe-iOSUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 89859B661D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewerUITests" */;
+			buildConfigurationList = 89859B661D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOSUITests" */;
 			buildPhases = (
 				89859B531D9B9C7E00785D6F /* Sources */,
 				89859B541D9B9C7E00785D6F /* Frameworks */,
@@ -234,9 +252,9 @@
 			dependencies = (
 				89859B591D9B9C7E00785D6F /* PBXTargetDependency */,
 			);
-			name = YDiOSViewerUITests;
+			name = "YouDescribe-iOSUITests";
 			productName = YDiOSViewerUITests;
-			productReference = 89859B571D9B9C7E00785D6F /* YDiOSViewerUITests.xctest */;
+			productReference = 89859B571D9B9C7E00785D6F /* YouDescribe-iOSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -251,7 +269,7 @@
 				TargetAttributes = {
 					89859B341D9B9C7E00785D6F = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = U2LM586MV2;
+						DevelopmentTeam = B75RY7LA89;
 						LastSwiftMigration = 0800;
 					};
 					89859B4B1D9B9C7E00785D6F = {
@@ -266,7 +284,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 89859B301D9B9C7E00785D6F /* Build configuration list for PBXProject "YDiOSViewer" */;
+			buildConfigurationList = 89859B301D9B9C7E00785D6F /* Build configuration list for PBXProject "YouDescribe-iOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -279,9 +297,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				89859B341D9B9C7E00785D6F /* YDiOSViewer */,
-				89859B4B1D9B9C7E00785D6F /* YDiOSViewerTests */,
-				89859B561D9B9C7E00785D6F /* YDiOSViewerUITests */,
+				89859B341D9B9C7E00785D6F /* YouDescribe-iOS */,
+				89859B4B1D9B9C7E00785D6F /* YouDescribe-iOSTests */,
+				89859B561D9B9C7E00785D6F /* YouDescribe-iOSUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -367,15 +385,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89DA3AB31DEA9BB1002719BA /* VideoItemTableViewCell.swift in Sources */,
 				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
+				89DA3ABB1DEBBD1A002719BA /* SearchResultsViewController.swift in Sources */,
 				89859B3B1D9B9C7E00785D6F /* ViewController.swift in Sources */,
+				89DA3AB71DEB8E0B002719BA /* SearchResultsTableViewController.swift in Sources */,
 				89859B391D9B9C7E00785D6F /* AppDelegate.swift in Sources */,
 				8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */,
 				897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */,
 				8975702E1D9C0AE300EAFF49 /* DvxApi.swift in Sources */,
 				5FC4948A1DB48122002EF963 /* VideoTableViewController.swift in Sources */,
+				89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */,
+				89DA3AB91DEB90C6002719BA /* SearchResultsTableViewCell.swift in Sources */,
 				5FC4948C1DB48198002EF963 /* VideoTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,12 +424,12 @@
 /* Begin PBXTargetDependency section */
 		89859B4E1D9B9C7E00785D6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 89859B341D9B9C7E00785D6F /* YDiOSViewer */;
+			target = 89859B341D9B9C7E00785D6F /* YouDescribe-iOS */;
 			targetProxy = 89859B4D1D9B9C7E00785D6F /* PBXContainerItemProxy */;
 		};
 		89859B591D9B9C7E00785D6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 89859B341D9B9C7E00785D6F /* YDiOSViewer */;
+			target = 89859B341D9B9C7E00785D6F /* YouDescribe-iOS */;
 			targetProxy = 89859B581D9B9C7E00785D6F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -527,11 +550,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = U2LM586MV2;
+				DEVELOPMENT_TEAM = B75RY7LA89;
 				INFOPLIST_FILE = YDiOSViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YDiOSViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YouDescribeiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "YDiOSViewer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -547,11 +570,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = U2LM586MV2;
+				DEVELOPMENT_TEAM = B75RY7LA89;
 				INFOPLIST_FILE = YDiOSViewer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YDiOSViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YouDescribeiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "YDiOSViewer-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -567,7 +590,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YDiOSViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YDiOSViewer.app/YDiOSViewer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouDescribe-iOS.app/YouDescribe-iOS";
 			};
 			name = Debug;
 		};
@@ -580,7 +603,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.youdescribe.YDiOSViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YDiOSViewer.app/YDiOSViewer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouDescribe-iOS.app/YouDescribe-iOS";
 			};
 			name = Release;
 		};
@@ -611,7 +634,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		89859B301D9B9C7E00785D6F /* Build configuration list for PBXProject "YDiOSViewer" */ = {
+		89859B301D9B9C7E00785D6F /* Build configuration list for PBXProject "YouDescribe-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				89859B5E1D9B9C7E00785D6F /* Debug */,
@@ -620,7 +643,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		89859B601D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewer" */ = {
+		89859B601D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				89859B611D9B9C7E00785D6F /* Debug */,
@@ -629,7 +652,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		89859B631D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewerTests" */ = {
+		89859B631D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				89859B641D9B9C7E00785D6F /* Debug */,
@@ -638,7 +661,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		89859B661D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YDiOSViewerUITests" */ = {
+		89859B661D9B9C7E00785D6F /* Build configuration list for PBXNativeTarget "YouDescribe-iOSUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				89859B671D9B9C7E00785D6F /* Debug */,

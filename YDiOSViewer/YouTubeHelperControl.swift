@@ -13,4 +13,4 @@ class YouTubeHelperControl: UIView {
     override var intrinsicContentSize : CGSize {
         return CGSize(width: 560, height: 258)
     }
-}   
+}
