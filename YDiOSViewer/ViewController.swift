@@ -6,6 +6,9 @@ import Foundation
 class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate, UIPickerViewDelegate, UIPickerViewDataSource  {
 
     let dvxApi = DxvApi()
+    let audioIndexThreshold:Int = 3
+    let skipButtonFrameCount:Float = 10
+
     var doPlay:Bool = true
     var currentAudioUrl = NSURL(string: "")
     var nextAudioUrl = NSURL(string: "")
@@ -27,6 +30,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var isFirstDownloaded: Bool = false
     var currentDownloadIndex: Int = 0
     var didAuthorReset: Bool = true
+    var previousTime: Float = 0
 
     @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
@@ -34,10 +38,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var playButton: UIButton!
     //@IBOutlet weak var authorText: UITextField!
-    @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
     //@IBOutlet weak var detailView: UITextView!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +90,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         debugView.text = " "
         
         if(selectedMovies.count >= 1) {
-            let movieId = selectedMovies[0]["movieId"];
+            let movieId = selectedMovies[0]["movieId"]
+            self.currentMovie = selectedMovies[0]
+            print("Selected movies are ")
+            print(self.currentMovie)
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
@@ -94,6 +101,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.allAudioClips = clips
             self.authorIdList = getAllAuthors()
             authorPickerView.reloadAllComponents()
+            self.loadMovieDescription()
         }
     }
 
@@ -164,9 +172,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     
     func loadMovieDescription() {
         var detailString:String = ""
-        detailString = detailString + "Title:" + (self.currentMovie!["movieName"] as! String)
-        detailString = detailString + "\nDescription: " + (self.currentMovie!["movieDescription"] as! String)
-        //detailView.text = detailString
+        print("CurrentMovie is ")
+        print(currentMovie)
+        detailString = detailString + "Media ID: " + (self.currentMovie!["movieMediaId"] as! String)
+        detailString = detailString + "\nMovie ID:" + (self.currentMovie!["movieId"] as! String)
+        debugView.text = detailString
     }
 
     // Called when the movie is loaded
@@ -180,6 +190,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             print("Could not find a valid movie")
         }
     }
+    
     // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
         if(doPlay) {
@@ -206,13 +217,43 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         activeAudioIndex = 0
         self.audioClips = []
         doPlay = true
+        resetActiveAudioIndex()
+        showNextClipStartTime()
     }
-    
-    // Filters clips by Author
-    @IBAction func startAction(_ sender: AnyObject) {
 
+    @IBAction func skipBackAction(_ sender: AnyObject) {
+        // Seek to 0
+        if (youtubePlayer.currentTime() - skipButtonFrameCount < 0) {
+            youtubePlayer.seek(toSeconds: 0, allowSeekAhead: true)
+        }
+        else if (youtubePlayer.currentTime() >= 0) {
+            youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() - skipButtonFrameCount, allowSeekAhead: true)
+        }
     }
     
+    @IBAction func skipForwardAction(_ sender: AnyObject) {
+        youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() + skipButtonFrameCount, allowSeekAhead: true)
+        resetActiveAudioIndex()
+    }
+    
+    // Re-calculate the activeAudioIndex based on the current frame playing
+    func resetActiveAudioIndex() {
+        if self.audioClips.count > 0 {
+            // find the appropriate start index and assign it to activeAudioIndex.
+            var index:Int = 0
+            for _ in self.audioClips {
+                if Float((self.audioClips[index]["clipStartTime"]!! as AnyObject).description)! >= Float(youtubePlayer.currentTime()) {
+                    activeAudioIndex = index
+                    showNextClipStartTime()
+                    self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
+                    loadAudio()
+                    break
+                }
+                index = index + 1
+            }
+        }
+    }
+
     func filterAndDownloadAudioClips() {
         // filter the clips according to the authors
         var filteredClips:[AnyObject] = []
@@ -221,6 +262,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 filteredClips.append(audioClip)
             }
         }
+        // sort the filteredClips by startTime
+        //let mysortedResult = filteredClips.sorted(by: { ($0["clipStartTime"] as! Float) < ($1["clipStartTime"] as! Float) })
+        //print("My SORTED RESULT IS ")
+        //print(mysortedResult)
         self.audioClips = filteredClips
         doPlay = true
         // Load the first clip content of the set of clips
@@ -244,7 +289,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Displays the start time of the next audio clip
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
-            print("Getting called")
             self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
         }
     }
@@ -252,13 +296,18 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Called periodically as the youtube-player plays the video.
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float)
     {
+        if abs(self.previousTime - youtubePlayer.currentTime()) > 5 {
+            print("DETECTED JUMP !!!")
+            stopAudio()
+            resetActiveAudioIndex()
+        }
         self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
             if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
-                print(self.audioClips[activeAudioIndex])
+                //print(self.audioClips[activeAudioIndex])
                 //print(Float(floor(playTime)))
-                print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
+                //print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
                 if (self.audioClips[activeAudioIndex]["clipFunction"]!! as! String) == "desc_extended" {
                     if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
@@ -276,8 +325,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 }
             }
         }
+        self.previousTime = youtubePlayer.currentTime()
     }
-
+    
     // Called when the youtube-player is ready to play the video
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         print("The video player is now ready")
@@ -292,13 +342,18 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             playButton.setTitle("Pause", for: UIControlState())
             doPlay = false
         }
-        else if (state.rawValue == 3) {
+        else if (state.rawValue == 3) { // buffering
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
         }
         else if (state.rawValue == 5) {
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
+        }
+        else if (state.rawValue == 0) {
+            playButton.setTitle("Play", for: UIControlState())
+            doPlay = true
+            reset()
         }
     }
 

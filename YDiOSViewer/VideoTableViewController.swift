@@ -30,7 +30,7 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
         
         allMovies = dvxApi.getMovies([:])
         tableView.estimatedRowHeight = CGFloat(allMovies.count)
-        
+
         //print("\n\nestimated row height\n\n")
         //print(tableView.estimatedRowHeight)
         //print("all movies count =")
@@ -93,7 +93,7 @@ class VideoTableViewController: UITableViewController, YTPlayerViewDelegate, UIS
         thumbnailUrl = "http://img.youtube.com/vi/"
         thumbnailUrl = thumbnailUrl.appending(movieMediaId)
         thumbnailUrl = thumbnailUrl.appending("/0.jpg")
-        
+
         var url = URL(string: thumbnailUrl)
         if (url == nil){
             url = URL(string: "https://www.youtube.com/yt/brand/media/image/YouTube-logo-full_color.png")
