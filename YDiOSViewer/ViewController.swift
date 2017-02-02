@@ -2,6 +2,7 @@ import UIKit
 import AVKit
 import AVFoundation
 import Foundation
+import Social
 
 class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate, UIPickerViewDelegate, UIPickerViewDataSource  {
 
@@ -20,11 +21,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var activeAudioIndex:Int = 0
     var allMovies : [AnyObject] = []
     var movieID : String?
+    var currentAuthor: String?
     var isAudioPlaying: Bool = false
     var authorIdList: [String] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
     var currentAuthorId: String?
+    var currentMovieTitle: String?
     var currentMovie: AnyObject?
     var doAsyncDownload: Bool = false
     var isFirstDownloaded: Bool = false
@@ -32,7 +35,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var didAuthorReset: Bool = true
     var previousTime: Float = 0
 
-    @IBOutlet weak var debugView: UITextView!
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
@@ -41,6 +43,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
     //@IBOutlet weak var detailView: UITextView!
+    @IBOutlet weak var tabViewContainer: UIView!
     
 
     override func viewDidLoad() {
@@ -49,21 +52,23 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.youtubePlayer.delegate = self
         self.authorPickerView.delegate = self
         self.authorPickerView.dataSource = self
-        self.hideKeyboardOnTap()
+        //self.hideKeyboardOnTap()
 
+        //DownloadAudio(delegate: self).doSimpleDownload()
         loadMovie(self)
-        allMovies = dvxApi.getMovies([:])
+        //  allMovies = dvxApi.getMovies([:])
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
-        print(self.authorMap)
         //allMovies = dvxApi.getMovies([:])
 
 
         //print("all movies count =")
-        print(allMovies)
+        //print(allMovies)
         //print(allMovies.count)
         self.doAsyncDownload = false
         self.isFirstDownloaded = false
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -87,21 +92,16 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         let selectedMovies = dvxApi.getMovies(["MediaId": movieID!])
         
         //For Youtube videos
-        debugView.text = " "
         
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
             self.currentMovie = selectedMovies[0]
-            print("Selected movies are ")
-            print(self.currentMovie)
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print("The clips are")
             print(clips.description)
-            debugView.text = clips.description
             self.allAudioClips = clips
             self.authorIdList = getAllAuthors()
             authorPickerView.reloadAllComponents()
-            self.loadMovieDescription()
         }
     }
 
@@ -117,6 +117,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
         if (authorIds.count > 0) {
             self.currentAuthorId = authorIds[0]
+            self.currentAuthor = self.authorMap[currentAuthorId!]
         }
         return authorIds
     }
@@ -168,15 +169,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     func stopAudio() {
         audioPlayer?.pause()
-    }
-    
-    func loadMovieDescription() {
-        var detailString:String = ""
-        print("CurrentMovie is ")
-        print(currentMovie)
-        detailString = detailString + "Media ID: " + (self.currentMovie!["movieMediaId"] as! String)
-        detailString = detailString + "\nMovie ID:" + (self.currentMovie!["movieId"] as! String)
-        debugView.text = detailString
     }
 
     // Called when the movie is loaded
@@ -360,7 +352,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Implementation for the DownloadAudioDelegate
     func readDownloadUrls(urls: [URL]) {
         self.downloadAudioUrls = urls
-        print(urls)
+        //print(urls)
     }
     
     func readTotalDownloaded(count: Int) {
@@ -373,10 +365,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             // Attempt to serially download the others
             if !self.doAsyncDownload {
                 if self.currentDownloadIndex < self.audioClips.count-1 {
-                    print("Downloading the next one")
+                    print("Downloading the next one ")
+                    print(self.currentDownloadIndex)
                     self.currentDownloadIndex = self.currentDownloadIndex + 1
                     print(self.currentDownloadIndex)
                     self.downloadAudioUrls.append(DownloadAudio(delegate: self).getDownloadUrl(metadata: self.audioClips[self.currentDownloadIndex]))
+                    //print("Sleeping..")
+                    //sleep(4)
                     let audioUrl:String = DownloadAudio(delegate: self).prepareClipCache(clips: self.audioClips, index: self.currentDownloadIndex)
                     print(audioUrl)
                     if (self.isFirstDownloaded) {
@@ -416,5 +411,20 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         return 1
     }
     
+    // Prepare for Segue
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "EmbeddedTabViewController" {
+            let tabBarController = segue.destination as! TabBarViewController
+            if (self.currentAuthorId != nil) {
+                tabBarController.preferredAuthor = self.authorMap[self.currentAuthorId!]!
+            }
+            else {
+                tabBarController.preferredAuthor = "None"
+            }
+            tabBarController.mediaId = self.movieID!
+            tabBarController.myString = "Testing"
+            tabBarController.movieTitle = self.currentMovieTitle!
+        }
+    }
 }
 

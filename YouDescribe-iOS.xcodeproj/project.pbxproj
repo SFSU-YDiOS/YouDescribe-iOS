@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5FC4948A1DB48122002EF963 /* VideoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC494891DB48122002EF963 /* VideoTableViewController.swift */; };
-		5FC4948C1DB48198002EF963 /* VideoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC4948B1DB48198002EF963 /* VideoTableViewCell.swift */; };
-		6E5932FB55034D2000E0B69C /* Pods_YDiOSViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */; };
+		1C93546B8E8CE93EF990BDF5 /* Pods_YouDescribe_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */; };
+		1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */; };
+		1FCBC5371E32E73A00FE1749 /* DetailInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */; };
+		1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */; };
+		1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5581E32FDCA00FE1749 /* DetailShareViewController.swift */; };
+		1FE8CAF31E03146E00B15309 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE8CAF21E03146D00B15309 /* Alamofire.framework */; };
 		8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8913AB531D9C0DD80027213D /* DvxXmlParser.swift */; };
 		897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */; };
 		8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 897570291D9BB53400EAFF49 /* YTPlayerView.m */; };
@@ -49,9 +52,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YDiOSViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5FC494891DB48122002EF963 /* VideoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewController.swift; sourceTree = "<group>"; };
-		5FC4948B1DB48198002EF963 /* VideoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTableViewCell.swift; sourceTree = "<group>"; };
+		1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailInfoViewController.swift; sourceTree = "<group>"; };
+		1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailRequestViewController.swift; sourceTree = "<group>"; };
+		1FCBC5581E32FDCA00FE1749 /* DetailShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailShareViewController.swift; sourceTree = "<group>"; };
+		1FE8CAF21E03146D00B15309 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../Library/Developer/Xcode/DerivedData/YouDescribe-iOS-gbykshtkifyvxnbsvhiqvdqjdjcx/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDescribe_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		8913AB531D9C0DD80027213D /* DvxXmlParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxXmlParser.swift; sourceTree = "<group>"; };
 		897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeHelperControl.swift; sourceTree = "<group>"; };
@@ -80,7 +86,9 @@
 		89DA3AB61DEB8E0B002719BA /* SearchResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewController.swift; sourceTree = "<group>"; };
 		89DA3AB81DEB90C6002719BA /* SearchResultsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewCell.swift; sourceTree = "<group>"; };
 		89DA3ABA1DEBBD1A002719BA /* SearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
+		8BD6DE35D43E89DBF8E73F2D /* Pods-YouDescribe-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDescribe-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouDescribe-iOS/Pods-YouDescribe-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.release.xcconfig"; sourceTree = "<group>"; };
+		D341D65F6B0D08A6B2C0C1C2 /* Pods-YouDescribe-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDescribe-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouDescribe-iOS/Pods-YouDescribe-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +96,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E5932FB55034D2000E0B69C /* Pods_YDiOSViewer.framework in Frameworks */,
+				1FE8CAF31E03146E00B15309 /* Alamofire.framework in Frameworks */,
+				1C93546B8E8CE93EF990BDF5 /* Pods_YouDescribe_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +123,8 @@
 			children = (
 				6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */,
 				C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */,
+				D341D65F6B0D08A6B2C0C1C2 /* Pods-YouDescribe-iOS.debug.xcconfig */,
+				8BD6DE35D43E89DBF8E73F2D /* Pods-YouDescribe-iOS.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -149,13 +160,15 @@
 			children = (
 				89859B381D9B9C7E00785D6F /* AppDelegate.swift */,
 				89859B3A1D9B9C7E00785D6F /* ViewController.swift */,
+				1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */,
 				897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */,
 				89859B3C1D9B9C7E00785D6F /* Main.storyboard */,
-				5FC494891DB48122002EF963 /* VideoTableViewController.swift */,
-				5FC4948B1DB48198002EF963 /* VideoTableViewCell.swift */,
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
 				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
 				8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */,
+				1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */,
+				1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */,
+				1FCBC5581E32FDCA00FE1749 /* DetailShareViewController.swift */,
 				89DA3AB21DEA9BB1002719BA /* VideoItemTableViewCell.swift */,
 				89DA3AB41DEABD23002719BA /* VideoItemTableViewController.swift */,
 				89DA3AB81DEB90C6002719BA /* SearchResultsTableViewCell.swift */,
@@ -193,7 +206,8 @@
 		C88513EBDA29335AE9838410 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5CF40BEA272EA19CE31E02CC /* Pods_YDiOSViewer.framework */,
+				1FE8CAF21E03146D00B15309 /* Alamofire.framework */,
+				4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -345,7 +359,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YouDescribe-iOS/Pods-YouDescribe-iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9C2B7F7D5D4BB6DB14FC8BC4 /* [CP] Copy Pods Resources */ = {
@@ -360,7 +374,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-YouDescribe-iOS/Pods-YouDescribe-iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D76839C3D15221AE112E7A1D /* [CP] Check Pods Manifest.lock */ = {
@@ -390,16 +404,18 @@
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
 				89DA3ABB1DEBBD1A002719BA /* SearchResultsViewController.swift in Sources */,
+				1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */,
 				89859B3B1D9B9C7E00785D6F /* ViewController.swift in Sources */,
 				89DA3AB71DEB8E0B002719BA /* SearchResultsTableViewController.swift in Sources */,
+				1FCBC5371E32E73A00FE1749 /* DetailInfoViewController.swift in Sources */,
+				1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */,
 				89859B391D9B9C7E00785D6F /* AppDelegate.swift in Sources */,
 				8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */,
 				897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */,
 				8975702E1D9C0AE300EAFF49 /* DvxApi.swift in Sources */,
-				5FC4948A1DB48122002EF963 /* VideoTableViewController.swift in Sources */,
 				89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */,
 				89DA3AB91DEB90C6002719BA /* SearchResultsTableViewCell.swift in Sources */,
-				5FC4948C1DB48198002EF963 /* VideoTableViewCell.swift in Sources */,
+				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,7 +560,7 @@
 		};
 		89859B611D9B9C7E00785D6F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */;
+			baseConfigurationReference = D341D65F6B0D08A6B2C0C1C2 /* Pods-YouDescribe-iOS.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -564,7 +580,7 @@
 		};
 		89859B621D9B9C7E00785D6F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C48EC02892F1A51ADE2AD8C7 /* Pods-YDiOSViewer.release.xcconfig */;
+			baseConfigurationReference = 8BD6DE35D43E89DBF8E73F2D /* Pods-YouDescribe-iOS.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

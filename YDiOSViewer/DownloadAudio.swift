@@ -48,7 +48,12 @@ protocol DownloadAudioDelegate {
     func registerNewDownload(url: URL)
 }
 
-class DownloadAudio {
+class DownloadAudio: NSObject, URLSessionDownloadDelegate {
+
+    var downloadTask: URLSessionDownloadTask!
+    var backgroundSession: Foundation.URLSession!
+    var downloadUrlMap: [String:Any] = [:]
+
     let dvxApi = DxvApi()
     var downloadFileUrls: [URL] = []
     let mycounter = AtomicCounter()
@@ -57,6 +62,9 @@ class DownloadAudio {
 
     init(delegate:DownloadAudioDelegate) {
         self.delegate = delegate
+        super.init()
+        let backgroundSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "backgroundSession")
+        backgroundSession = Foundation.URLSession(configuration: backgroundSessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
     }
 
     var Timestamp: String {
@@ -70,6 +78,11 @@ class DownloadAudio {
         return documentsURL
     }
 
+    public func doSimpleDownload() {
+        let url = URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip?AppId=ydesc&ClipId=2110&Movie=1087")!
+        downloadTask = backgroundSession.downloadTask(with: url)
+        downloadTask.resume()
+    }
     func getDownloadFileDestination(metadata: AnyObject) -> DownloadRequest.DownloadFileDestination {
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in
             let documentsURL = self.getDownloadUrl(metadata: metadata)
@@ -78,6 +91,9 @@ class DownloadAudio {
         return destination
     }
 
+    /*
+     NOTE: This is currently not being used in favor of synchonous downloading.
+     */
     func prepareAllClipCache(clips: [AnyObject]) {
         // Asynchronously prepare the cache
         var myDownloadUrls: [URL] = []
@@ -90,7 +106,9 @@ class DownloadAudio {
                      "Movie":(clip["movieFk"]!! as AnyObject).description])
                 myDownloadUrls.append(self.getDownloadUrl(metadata: clip)) // Should download the clips in order
                 self.downloadState = 2
-                doDownload(URL(string: audioUrl)!, metadata: clip)
+                //doDownload(URL(string: audioUrl)!, metadata: clip)
+                // doDownload(URL(string: "http://www.sample-videos.com/audio/mp3/wave.mp3")!, metadata: clip)
+
             }
             self.delegate.readDownloadUrls(urls: myDownloadUrls)
             self.downloadFileUrls = myDownloadUrls
@@ -101,37 +119,134 @@ class DownloadAudio {
         // Download the current clip if not already downloaded
         if index < clips.count {
             let clip = clips[index]
+            //let clip = clips[0]
             let audioUrl:String = dvxApi.getAudioClipUrl(
                 ["ClipId": (clip["clipId"]!! as AnyObject).description,
                  "Movie":(clip["movieFk"]!! as AnyObject).description])
+            //print("Sleeping..")
+            //sleep(4)
             doDownload(URL(string: audioUrl)!, metadata: clip)
+            //doDownload(URL(string: "http://www.sample-videos.com/audio/mp3/wave.mp3")!, metadata: clip)
+            //doDownload(URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip?AppId=ydesc&ClipId=2580&Movie=1059")!, metadata: clip)
+            print("The new place " + audioUrl)
+            //doDownloadURLSession(URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip?AppId=ydesc&ClipId=2110&Movie=1087")!, metadata: clip)
             print(audioUrl)
             return audioUrl
         }
         return ""
     }
     
+    func doDownloadURLSession(_ audioDataUrl: URL, metadata: AnyObject) {
+        downloadUrlMap[audioDataUrl.absoluteString] = metadata
+        downloadTask = backgroundSession.downloadTask(with: audioDataUrl)
+        downloadTask.resume()
+    }
 
     func doDownload(_ audioDataUrl: URL, metadata: AnyObject) {
+
 
         let destination = getDownloadFileDestination(metadata: metadata)
         print(destination)
         print("The cache directory is ")
         print(FileManager.cachesDir())
-        Alamofire.download(audioDataUrl, to: destination)
-            .downloadProgress { progress in
-                print("Download Progress: \(progress.completedUnitCount)")
-            }
-            .responseData { response in
-                print(response)
-                print("The destination URL is ")
-                print(response.destinationURL?.path)
-                self.delegate.readTotalDownloaded(count: Int(self.mycounter.incrementAndGet()))
-                self.delegate.registerNewDownload(url: response.destinationURL!)
-                if (Int(self.mycounter.getCounter()) == self.downloadFileUrls.count) {
-                    print("Completed all downloads.")
-                    self.downloadState = 1 // completed all downloads
+        print("The REAL URL is ")
+        print(audioDataUrl)
+        print("DATA URL ENDED")
+        //let myurl:URL = URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip")!
+        //let myparameters: Parameters = ["AppId" : "ydesc", "ClipId":"2580", "Movie":"1059" ]
+        
+        //let myurl:URL = URL(string: "http://s.w.org/images/core/3.9/JellyRollMorton-BuddyBoldensBlues.mp3")!
+        //let myparameters: Parameters = ["play" : "1"]
+        // Alamofire.download(myurl, method: .get, parameters: myparameters, encoding: JSONEncoding.default, to: destination)
+        
+        let urlRequest = URLRequest(url: audioDataUrl)
+        do {
+            //var encodedURLRequest = try URLEncoding.queryString.encode(urlRequest, with: myparameters)
+            
+            print("THE ENCODED URL IS ")
+            //print(encodedURLRequest)
+            //encodedURLRequest.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4", forHTTPHeaderField: "User-Agent")
+            //encodedURLRequest.setValue("*/*", forHTTPHeaderField: "Accept")
+            //encodedURLRequest.setValue("application/zip", forHTTPHeaderField: "Content-Type")
+            Alamofire.download(audioDataUrl, to: destination)
+            //Alamofire.download(encodedURLRequest, to: destination)
+                .downloadProgress { progress in
+                    print("Download Progress: \(progress.completedUnitCount)")
                 }
+                .responseData { response in
+                    print(response)
+                    print("The destination URL is ")
+                    print(response.destinationURL?.path)
+                    print(response.debugDescription)
+                    print(response.result)
+                    self.delegate.readTotalDownloaded(count: Int(self.mycounter.incrementAndGet()))
+                    self.delegate.registerNewDownload(url: response.destinationURL!)
+                    if (Int(self.mycounter.getCounter()) == self.downloadFileUrls.count) {
+                        print("Completed all downloads.")
+                        self.downloadState = 1 // completed all downloads
+                    }
+                    //print(encodedURLRequest.allHTTPHeaderFields?.count)
+            }
+            
+        } catch _ {
+            print("ERROR#@$@#$@#$")
+        }
+
+    }
+    
+    // URL Session classes
+    // 1
+    func urlSession(_ session: URLSession,
+                    downloadTask: URLSessionDownloadTask,
+                    didFinishDownloadingTo location: URL){
+        print("Finally got here")
+        print(downloadTask.currentRequest?.url?.absoluteString)
+        let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        let documentDirectoryPath:String = path[0]
+        let fileManager = FileManager()
+        //let destination = getDownloadFileDestination(metadata: downloadUrlMap[(downloadTask.currentRequest?.url?.absoluteString)!] as AnyObject)
+        //print("The destination is ")
+        //print(destination)
+        //let destinationURLForFile = URL(fileURLWithPath: documentDirectoryPath + "/file.pdf")
+        let destinationURLForFile = URL(fileURLWithPath: documentDirectoryPath + "/media.mp3")
+        print("Document Directory Path")
+        print(documentDirectoryPath)
+        if fileManager.fileExists(atPath: destinationURLForFile.path){
+            //showFileWithPath(destinationURLForFile.path)
+            print("Completed")
+        }
+        else{
+            do {
+                try fileManager.moveItem(at: location, to: destinationURLForFile)
+                print("Completed")
+                // show file
+                //showFileWithPath(destinationURLForFile.path)
+            }catch{
+                print("An error occurred while moving file to destination url")
+            }
         }
     }
+    // 2
+    func urlSession(_ session: URLSession,
+                    downloadTask: URLSessionDownloadTask,
+                    didWriteData bytesWritten: Int64,
+                    totalBytesWritten: Int64,
+                    totalBytesExpectedToWrite: Int64){
+        //progressView.setProgress(Float(totalBytesWritten)/Float(totalBytesExpectedToWrite), animated: true)
+    }
+    
+    
+    func urlSession(_ session: URLSession,
+                    task: URLSessionTask,
+                    didCompleteWithError error: Error?){
+        downloadTask = nil
+        //progressView.setProgress(0.0, animated: true)
+        if (error != nil) {
+            print("ERROR!!!")
+            print(error)
+        }else{
+            print("The task finished transferring data successfully")
+        }
+    }
+
 }

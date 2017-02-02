@@ -3,7 +3,7 @@ import Foundation
 class DxvApi {
     let defaultAppId = "ydesc"
     let apiBaseUrl = "http://dvxtest.ski.org:8080/dvx2Api/"
-
+    
     func getConstructedUrl(_ query: String, params:[String: String]) -> String {
         var url:String = apiBaseUrl + query + "?AppId=ydesc"
         // loop through the arguments and create the url parameters.

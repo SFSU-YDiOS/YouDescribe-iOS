@@ -19,8 +19,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.allMovies = dvxApi.getMovies([:])
+        self.allMovies.reverse()
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
         print(self.authorMap)
@@ -94,7 +94,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
         else {
             cell.describerLabel.text = "No description"
         }
-        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
+        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
 
         if thumbnailUrl == nil {
             thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
@@ -177,10 +177,12 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
             let selectedRow = self.tableView.indexPathForSelectedRow
             let row : AnyObject? = self.allMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
+            videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
         } else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchString = searchBar.text!
             searchResultsViewController.allMovies = allMovies
+            searchResultsViewController.authorMap = authorMap
         }
     }
  

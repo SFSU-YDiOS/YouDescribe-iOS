@@ -29,22 +29,26 @@ extension String {
 }
 
 
-class SearchResultsViewController: UIViewController {
+protocol SearchResultsViewControllerDelegate {
+    func readAndUpdateFilteredClips(newFilteredClips: [AnyObject])
+}
+
+class SearchResultsViewController: UIViewController, UISearchBarDelegate {
 
 
     @IBOutlet weak var searchResultsContainer: UIView!
     @IBOutlet weak var searchHeader: UIView!
     var searchString: String = ""
     var allMovies : [AnyObject] = []
+    var authorMap: [String:String] = [:]
     var filteredMovies: [AnyObject] = []
     lazy var searchBar = UISearchBar()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.createSearchBar()
         self.navigationItem.title = "Search Results"
-        self.performSearch()
+        //self.performSearch()
         // call the segue
         
         // Do any additional setup after loading the view.
@@ -63,6 +67,7 @@ class SearchResultsViewController: UIViewController {
         searchBar.showsScopeBar = true
         searchBar.scopeButtonTitles = ["All", "Described"]
         searchHeader.addSubview(searchBar)
+        searchBar.delegate = self
     }
     
     func performSearch() {
@@ -75,9 +80,9 @@ class SearchResultsViewController: UIViewController {
                 print(movieClip["movieName"])
             }
         }
-        let srtvc:SearchResultsTableViewController  =  self.childViewControllers.last as! SearchResultsTableViewController
-        srtvc.filteredMovies = self.filteredMovies
-        srtvc.loadView()
+        //let srtvc:SearchResultsTableViewController  =  self.childViewControllers.last as! SearchResultsTableViewController
+        //srtvc.filteredMovies = self.filteredMovies
+        //srtvc.loadView()
         //performSegue(withIdentifier: "EmbeddedSearchResultSegue", sender: nil)
     }
 
@@ -89,11 +94,21 @@ class SearchResultsViewController: UIViewController {
         
         //segue.destinationViewController
         // Pass the selected object to the new view controller.
+        print("Coming into prepare for segue")
         if segue.identifier == "EmbeddedSearchResultSegue" {
-            //let resultTableViewController = segue.destination as! SearchResultsTableViewController
-            //resultTableViewController.filteredMovies = self.filteredMovies
+            let resultTableViewController = segue.destination as! SearchResultsTableViewController
+            self.performSearch()
+            resultTableViewController.allMovies = self.filteredMovies
+            resultTableViewController.filteredMovies = self.filteredMovies
+            resultTableViewController.authorMap = self.authorMap
+            resultTableViewController.searchString = self.searchString
         }
     }
 
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        print("This is being called")
+        print(selectedScope)
+        
+    }
 
 }
