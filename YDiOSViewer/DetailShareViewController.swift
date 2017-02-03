@@ -32,11 +32,11 @@ class DetailShareViewController: UIViewController {
 
     @IBAction func onShareClicked(_ sender: Any) {
         //Set the default sharing message.
-        let message = "Message goes here."
+        let message = "Watch \(self.movieTitle!) with description on YouDescribe! "
         //Set the link to share.
-        if let link = NSURL(string: "http://yoururl.com")
+        if let link = NSURL(string: self.getShareCode())
         {
-            let objectsToShare = [message,link] as [Any]
+            let objectsToShare = [message + link.absoluteString!] as [Any]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             activityVC.excludedActivityTypes = [UIActivityType.airDrop,
             UIActivityType.addToReadingList]

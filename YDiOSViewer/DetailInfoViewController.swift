@@ -25,12 +25,7 @@ class DetailInfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        print("This is the video ID ")
-        print(mediaId)
-        //
-        //
-        //
-        
+    
         getInfo()
     }
 
