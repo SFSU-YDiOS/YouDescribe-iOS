@@ -1,3 +1,3 @@
-# YDiOSViewer
+# YouDescribe-iOS
 
-YouDescribe viewer app prototype for iOS
+YouDescribe viewer and recorder for iOS

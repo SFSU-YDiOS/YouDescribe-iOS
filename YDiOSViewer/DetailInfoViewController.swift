@@ -21,13 +21,16 @@ class DetailInfoViewController: UIViewController {
     @IBOutlet weak var viewsCount: UILabel!
     @IBOutlet weak var likesCount: UILabel!
     @IBOutlet weak var dislikesCount: UILabel!
-    @IBOutlet weak var descriptionTextView: UITextView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         print("This is the video ID ")
         print(mediaId)
+        //
+        //
+        //
+        
         getInfo()
     }
 
@@ -55,8 +58,12 @@ class DetailInfoViewController: UIViewController {
                     self.ytItem["movieStatDislikeCount"] = item["statistics"]["dislikeCount"].stringValue
                     DispatchQueue.main.async() {
                         self.titleName.text = self.ytItem["movieName"]
-                        //self.descriptionContent.text = self.ytItem["movieDescription"]
-                        self.descriptionTextView.text = self.ytItem["movieDescription"]
+                        self.descriptionContent.text = self.ytItem["movieDescription"]
+                        self.descriptionContent.lineBreakMode = .byWordWrapping
+                        self.descriptionContent.numberOfLines = 0
+                        self.descriptionContent.adjustsFontSizeToFitWidth = true
+                        // self.descriptionContent.sizeToFit()
+                        //self.descriptionTextView.text = self.ytItem["movieDescription"]
                         self.videoAuthorName.text = self.ytItem["movieCreator"]
                         self.viewsCount.text = self.ytItem["movieStatViewCount"]
                         self.likesCount.text = self.ytItem["movieStatLikeCount"]

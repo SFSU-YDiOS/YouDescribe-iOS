@@ -14,6 +14,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var currentAudioUrl = NSURL(string: "")
     var nextAudioUrl = NSURL(string: "")
     var downloadAudioUrls:[URL] = []
+    var failedAudioUrls:[URL] = []
     var audioPlayerItem:AVPlayerItem?
     var audioPlayer:AVPlayer?
     var allAudioClips: [AnyObject] = []
@@ -33,6 +34,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var isFirstDownloaded: Bool = false
     var currentDownloadIndex: Int = 0
     var didAuthorReset: Bool = true
+    var doShowMissingAudioWarning: Bool = false
     var previousTime: Float = 0
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
@@ -56,19 +58,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
         //DownloadAudio(delegate: self).doSimpleDownload()
         loadMovie(self)
-        //  allMovies = dvxApi.getMovies([:])
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
-        //allMovies = dvxApi.getMovies([:])
-
-
-        //print("all movies count =")
-        //print(allMovies)
-        //print(allMovies.count)
         self.doAsyncDownload = false
         self.isFirstDownloaded = false
-        
-        
+        self.doShowMissingAudioWarning = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -133,7 +127,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     func loadAudio() {
         // play the audio link
-        audioPlayerItem = AVPlayerItem(url: currentAudioUrl! as URL)
+        if self.failedAudioUrls.contains(currentAudioUrl! as URL) {
+            let myUrl = URL(string: "https://dl.dropboxusercontent.com/u/57189163/point1sec.mp3")
+            audioPlayerItem = AVPlayerItem(url: myUrl!)
+        }
+        else {
+            audioPlayerItem = AVPlayerItem(url: currentAudioUrl! as URL)
+        }
         audioPlayer=AVPlayer(playerItem: audioPlayerItem!)
         let playerLayer=AVPlayerLayer(player: audioPlayer!)
         playerLayer.frame=CGRect(x: 0, y: 0, width: 300, height: 50)
@@ -207,10 +207,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         audioPlayer?.pause()
         loadAudio()
         activeAudioIndex = 0
-        self.audioClips = []
+        //self.audioClips = []
         doPlay = true
         resetActiveAudioIndex()
         showNextClipStartTime()
+        self.nextClipAtLabel.text = ""
     }
 
     @IBAction func skipBackAction(_ sender: AnyObject) {
@@ -221,6 +222,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         else if (youtubePlayer.currentTime() >= 0) {
             youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() - skipButtonFrameCount, allowSeekAhead: true)
         }
+        
+        if self.downloadAudioUrls.count == 0 {
+            filterAndDownloadAudioClips()
+        }
+        
     }
     
     @IBAction func skipForwardAction(_ sender: AnyObject) {
@@ -254,15 +260,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 filteredClips.append(audioClip)
             }
         }
-        // sort the filteredClips by startTime
-        //let mysortedResult = filteredClips.sorted(by: { ($0["clipStartTime"] as! Float) < ($1["clipStartTime"] as! Float) })
-        //print("My SORTED RESULT IS ")
-        //print(mysortedResult)
+
         self.audioClips = filteredClips
         doPlay = true
         // Load the first clip content of the set of clips
         if self.audioClips.count > 0 {
             print("Starting to download all clips from Author:" + self.currentAuthorId!)
+            self.failedAudioUrls = []
             if self.doAsyncDownload {
                 DownloadAudio(delegate: self).prepareAllClipCache(clips: self.audioClips)
             }
@@ -297,9 +301,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
             if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
-                //print(self.audioClips[activeAudioIndex])
-                //print(Float(floor(playTime)))
-                //print(Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description))
                 if (self.audioClips[activeAudioIndex]["clipFunction"]!! as! String) == "desc_extended" {
                     if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
@@ -338,7 +339,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
         }
-        else if (state.rawValue == 5) {
+        else if (state.rawValue == 5) { // stop
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
         }
@@ -370,8 +371,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                     self.currentDownloadIndex = self.currentDownloadIndex + 1
                     print(self.currentDownloadIndex)
                     self.downloadAudioUrls.append(DownloadAudio(delegate: self).getDownloadUrl(metadata: self.audioClips[self.currentDownloadIndex]))
-                    //print("Sleeping..")
-                    //sleep(4)
                     let audioUrl:String = DownloadAudio(delegate: self).prepareClipCache(clips: self.audioClips, index: self.currentDownloadIndex)
                     print(audioUrl)
                     if (self.isFirstDownloaded) {
@@ -384,13 +383,34 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 }
                 else {
                     print("Finally finished downloading all audio clips sequencially")
+                    if self.failedAudioUrls.count > 0 {
+                        showMissingAudioWarning()
+                    }
                 }
             }
         }
     }
 
-    func registerNewDownload(url: URL) {
+    func showMissingAudioWarning() {
+        let alertController = UIAlertController(title: "Warning!", message: "One or more audio descriptions for this video are corrupt or missing. These will be skipped during playback.", preferredStyle: .alert)
+        
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
+            self.youtubePlayer.playVideo()
+            self.showNextClipStartTime()
+        }
+        
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
+        self.youtubePlayer.pauseVideo()
+    }
+
+    func registerNewDownload(url: URL, success: Int) {
         print("Finished downloading URL : " + url.absoluteString)
+        if success != 0 && !failedAudioUrls.contains(url) {
+            print("Found a bad URL :", url.absoluteString)
+            self.failedAudioUrls.append(url)
+            self.loadAudio()
+        }
     }
 
     // Author picker interface delegate methods
