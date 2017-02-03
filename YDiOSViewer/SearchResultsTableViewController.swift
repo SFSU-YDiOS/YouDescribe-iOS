@@ -167,6 +167,7 @@ class SearchResultsTableViewController: UITableViewController {
             let row : AnyObject? = self.filteredMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+            videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
         }
     }
     
