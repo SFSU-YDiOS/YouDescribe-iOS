@@ -45,7 +45,7 @@ class AtomicCounter {
 protocol DownloadAudioDelegate {
     func readDownloadUrls(urls: [URL])
     func readTotalDownloaded(count: Int)
-    func registerNewDownload(url: URL)
+    func registerNewDownload(url: URL, success: Int)
 }
 
 class DownloadAudio: NSObject, URLSessionDownloadDelegate {
@@ -128,7 +128,7 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
             doDownload(URL(string: audioUrl)!, metadata: clip)
             //doDownload(URL(string: "http://www.sample-videos.com/audio/mp3/wave.mp3")!, metadata: clip)
             //doDownload(URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip?AppId=ydesc&ClipId=2580&Movie=1059")!, metadata: clip)
-            print("The new place " + audioUrl)
+
             //doDownloadURLSession(URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip?AppId=ydesc&ClipId=2110&Movie=1087")!, metadata: clip)
             print(audioUrl)
             return audioUrl
@@ -142,28 +142,22 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
         downloadTask.resume()
     }
 
+    // Attempt to download the clip and return the status code.
     func doDownload(_ audioDataUrl: URL, metadata: AnyObject) {
 
-
         let destination = getDownloadFileDestination(metadata: metadata)
-        print(destination)
-        print("The cache directory is ")
-        print(FileManager.cachesDir())
-        print("The REAL URL is ")
-        print(audioDataUrl)
-        print("DATA URL ENDED")
         //let myurl:URL = URL(string: "http://dvxtest.ski.org:8080/dvx2Api/clip")!
         //let myparameters: Parameters = ["AppId" : "ydesc", "ClipId":"2580", "Movie":"1059" ]
         
         //let myurl:URL = URL(string: "http://s.w.org/images/core/3.9/JellyRollMorton-BuddyBoldensBlues.mp3")!
         //let myparameters: Parameters = ["play" : "1"]
         // Alamofire.download(myurl, method: .get, parameters: myparameters, encoding: JSONEncoding.default, to: destination)
-        
         let urlRequest = URLRequest(url: audioDataUrl)
         do {
             //var encodedURLRequest = try URLEncoding.queryString.encode(urlRequest, with: myparameters)
             
             print("THE ENCODED URL IS ")
+            
             //print(encodedURLRequest)
             //encodedURLRequest.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4", forHTTPHeaderField: "User-Agent")
             //encodedURLRequest.setValue("*/*", forHTTPHeaderField: "Accept")
@@ -180,18 +174,21 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
                     print(response.debugDescription)
                     print(response.result)
                     self.delegate.readTotalDownloaded(count: Int(self.mycounter.incrementAndGet()))
-                    self.delegate.registerNewDownload(url: response.destinationURL!)
+                    var success = 0
+                    if response.response?.statusCode != 200 {
+                        success = -1
+                    }
+                    self.delegate.registerNewDownload(url: response.destinationURL!, success: success)
                     if (Int(self.mycounter.getCounter()) == self.downloadFileUrls.count) {
                         print("Completed all downloads.")
                         self.downloadState = 1 // completed all downloads
                     }
-                    //print(encodedURLRequest.allHTTPHeaderFields?.count)
+                //print(encodedURLRequest.allHTTPHeaderFields?.count)
             }
             
         } catch _ {
             print("ERROR#@$@#$@#$")
         }
-
     }
     
     // URL Session classes
