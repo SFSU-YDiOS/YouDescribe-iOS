@@ -36,6 +36,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var didAuthorReset: Bool = true
     var doShowMissingAudioWarning: Bool = false
     var previousTime: Float = 0
+    var displayAuthor: String?
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
@@ -439,7 +440,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 tabBarController.preferredAuthor = self.authorMap[self.currentAuthorId!]!
             }
             else {
-                tabBarController.preferredAuthor = "None"
+                tabBarController.preferredAuthor = self.displayAuthor!
             }
             tabBarController.mediaId = self.movieID!
             tabBarController.myString = "Testing"

@@ -178,6 +178,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
             let row : AnyObject? = self.allMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+            videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
         } else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchString = searchBar.text!
