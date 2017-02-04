@@ -440,7 +440,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 tabBarController.preferredAuthor = self.authorMap[self.currentAuthorId!]!
             }
             else {
-                tabBarController.preferredAuthor = self.displayAuthor!
+                if self.displayAuthor != nil {
+                    tabBarController.preferredAuthor = self.displayAuthor!
+                }
+                else {
+                    tabBarController.preferredAuthor = "None"
+                }
             }
             tabBarController.mediaId = self.movieID!
             tabBarController.myString = "Testing"
