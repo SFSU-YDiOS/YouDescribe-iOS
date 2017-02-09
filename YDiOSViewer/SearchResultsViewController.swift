@@ -77,13 +77,9 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
             if ((movieClip["movieName"] as! String).matchPattern(patStr: searchString)==true)
             {
                 self.filteredMovies.append(movieClip)
-                print(movieClip["movieName"])
+                print(movieClip["movieName"]!!)
             }
         }
-        //let srtvc:SearchResultsTableViewController  =  self.childViewControllers.last as! SearchResultsTableViewController
-        //srtvc.filteredMovies = self.filteredMovies
-        //srtvc.loadView()
-        //performSegue(withIdentifier: "EmbeddedSearchResultSegue", sender: nil)
     }
 
     // MARK: - Navigation
@@ -91,24 +87,24 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using 
-        
-        //segue.destinationViewController
-        // Pass the selected object to the new view controller.
-        print("Coming into prepare for segue")
+
         if segue.identifier == "EmbeddedSearchResultSegue" {
             let resultTableViewController = segue.destination as! SearchResultsTableViewController
             self.performSearch()
-            resultTableViewController.allMovies = self.filteredMovies
             resultTableViewController.filteredMovies = self.filteredMovies
+            resultTableViewController.youDescribeMovies = self.filteredMovies
+            resultTableViewController.displayMovies = self.filteredMovies
             resultTableViewController.authorMap = self.authorMap
             resultTableViewController.searchString = self.searchString
         }
     }
 
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        print("This is being called")
-        print(selectedScope)
-        
+        NotificationCenter.default.post(name: NSNotification.Name("SearchFilterNotification"), object: selectedScope)
     }
 
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // TODO: Refresh the search
+        print("Searched from the local search")
+    }
 }

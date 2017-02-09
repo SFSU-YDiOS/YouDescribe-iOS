@@ -17,6 +17,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
     var tableSize: Int = 25
     lazy var searchBar = UISearchBar()
 
+
+    @IBOutlet weak var searchBarHeader: UIView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.allMovies = dvxApi.getMovies([:])
@@ -24,7 +27,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
         print(self.authorMap)
-        self.createSearchBar()
+        self.createSearchBar1()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -55,10 +58,18 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
         // Add in the search bar
         searchBar.placeholder = "Search"
         searchBar.showsSearchResultsButton = true
-        navigationItem.titleView = searchBar
+        searchBarHeader.addSubview(searchBar)
         searchBar.delegate = self
     }
-
+    func createSearchBar1() {
+        // Add in the search bar
+        searchBar.placeholder = "Search"
+        searchBar.showsSearchResultsButton = true
+        searchBar.sizeToFit()
+        searchBar.text = "Testing"
+        searchBarHeader.addSubview(searchBar)
+        searchBar.delegate = self
+    }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.searchBar.endEditing(true)
         performSegue(withIdentifier: "DisplaySearchResultsSegue", sender: nil)
@@ -130,6 +141,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
             }
         }
     }
+    
+    
+    @IBAction func showItemMenuAction(_ sender: Any) {
+        
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -186,6 +202,4 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
             searchResultsViewController.authorMap = authorMap
         }
     }
- 
-
 }

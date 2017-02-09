@@ -12,15 +12,28 @@ import SwiftyJSON
 class SearchResultsTableViewController: UITableViewController {
 
     var searchString: String = ""
-    var allMovies : [AnyObject] = []
     var filteredMovies: [AnyObject] = []
-    var youtubeSearchMoveis: [AnyObject] = []
+    var youDescribeMovies: [AnyObject] = []
+    var displayMovies: [AnyObject] = []
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getYouTubeResults()
+        
+        // setup the notification observer
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("SearchFilterNotification"), object: nil, queue: nil) { notification in
+            // Cache the filteredMovies before overwriting it.
+            
+            if notification.object as! Int == 1 {
+                self.filteredMovies = self.youDescribeMovies
+            }
+            else {
+                self.filteredMovies = self.displayMovies
+            }
+            self.tableView.reloadData()
+        }
         //self.createSearchController()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -29,7 +42,6 @@ class SearchResultsTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -111,6 +123,7 @@ class SearchResultsTableViewController: UITableViewController {
                         ytItem["movieCreator"] = item["snippet"]["channelTitle"].stringValue
                         ytItem["movieAuthor"] = ""
                         self.filteredMovies.append(ytItem as AnyObject)
+                        self.displayMovies.append(ytItem as AnyObject)
                     }
                     print("\n\nSearched list of videos: ",self.filteredMovies)
                     self.tableView.reloadData()
@@ -169,11 +182,6 @@ class SearchResultsTableViewController: UITableViewController {
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
         }
-    }
-    
-    func readAndUpdateFilteredClips(selectedOption: Int) {
-        print("The selected option is ")
-        print(selectedOption)
     }
     
 }

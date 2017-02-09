@@ -12,6 +12,10 @@
 		1FCBC5371E32E73A00FE1749 /* DetailInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */; };
 		1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */; };
 		1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5581E32FDCA00FE1749 /* DetailShareViewController.swift */; };
+		1FCCD8981E47131A008FEC85 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD8971E47131A008FEC85 /* MainTabBarController.swift */; };
+		1FCCD89A1E47F710008FEC85 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD8991E47F710008FEC85 /* RegisterViewController.swift */; };
+		1FCCD89C1E494AB0008FEC85 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD89B1E494AB0008FEC85 /* LoginViewController.swift */; };
+		1FCCD8A01E4C6BE7008FEC85 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */; };
 		1FE8CAF31E03146E00B15309 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE8CAF21E03146D00B15309 /* Alamofire.framework */; };
 		8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8913AB531D9C0DD80027213D /* DvxXmlParser.swift */; };
 		897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */; };
@@ -56,6 +60,10 @@
 		1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailInfoViewController.swift; sourceTree = "<group>"; };
 		1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailRequestViewController.swift; sourceTree = "<group>"; };
 		1FCBC5581E32FDCA00FE1749 /* DetailShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailShareViewController.swift; sourceTree = "<group>"; };
+		1FCCD8971E47131A008FEC85 /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		1FCCD8991E47F710008FEC85 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		1FCCD89B1E494AB0008FEC85 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		1FE8CAF21E03146D00B15309 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../Library/Developer/Xcode/DerivedData/YouDescribe-iOS-gbykshtkifyvxnbsvhiqvdqjdjcx/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDescribe_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -160,7 +168,11 @@
 			children = (
 				89859B381D9B9C7E00785D6F /* AppDelegate.swift */,
 				89859B3A1D9B9C7E00785D6F /* ViewController.swift */,
+				1FCCD8971E47131A008FEC85 /* MainTabBarController.swift */,
 				1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */,
+				1FCCD89B1E494AB0008FEC85 /* LoginViewController.swift */,
+				1FCCD8991E47F710008FEC85 /* RegisterViewController.swift */,
+				1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */,
 				897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */,
 				89859B3C1D9B9C7E00785D6F /* Main.storyboard */,
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
@@ -401,10 +413,13 @@
 			files = (
 				89DA3AB31DEA9BB1002719BA /* VideoItemTableViewCell.swift in Sources */,
 				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
+				1FCCD8981E47131A008FEC85 /* MainTabBarController.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
+				1FCCD89A1E47F710008FEC85 /* RegisterViewController.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
 				89DA3ABB1DEBBD1A002719BA /* SearchResultsViewController.swift in Sources */,
 				1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */,
+				1FCCD89C1E494AB0008FEC85 /* LoginViewController.swift in Sources */,
 				89859B3B1D9B9C7E00785D6F /* ViewController.swift in Sources */,
 				89DA3AB71DEB8E0B002719BA /* SearchResultsTableViewController.swift in Sources */,
 				1FCBC5371E32E73A00FE1749 /* DetailInfoViewController.swift in Sources */,
@@ -416,6 +431,7 @@
 				89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */,
 				89DA3AB91DEB90C6002719BA /* SearchResultsTableViewCell.swift in Sources */,
 				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
+				1FCCD8A01E4C6BE7008FEC85 /* SettingsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
