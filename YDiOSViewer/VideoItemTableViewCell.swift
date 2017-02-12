@@ -8,12 +8,20 @@
 
 import UIKit
 
+protocol VideoItemTableViewCellDelegate {
+    func showCellDetailMenu(mediaId: String)
+}
+
 class VideoItemTableViewCell: UITableViewCell {
 
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var describerLabel: UILabel!
+    @IBOutlet weak var btnDetail: UIButton!
+    var mediaId: String!
+    var delegate: VideoItemTableViewCellDelegate!
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -25,4 +33,8 @@ class VideoItemTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func showDetailAction(_ sender: Any) {
+        self.delegate.showCellDetailMenu(mediaId: self.mediaId)
+        print("Clicked here")
+    }
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
+class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate {
 
     let dvxApi = DxvApi()
     var allMovies: [AnyObject] = []
@@ -28,7 +28,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
         self.authorMap = getAuthorMap()
         print(self.authorMap)
         self.createSearchBar1()
-        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -66,7 +65,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
         searchBar.placeholder = "Search"
         searchBar.showsSearchResultsButton = true
         searchBar.sizeToFit()
-        searchBar.text = "Testing"
+        searchBar.text = ""
         searchBarHeader.addSubview(searchBar)
         searchBar.delegate = self
     }
@@ -90,14 +89,16 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Table view cells are reused and should be dequeued using a cell identifier.
         let cellIdentifier = "VideoItemTableViewCell"
+
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! VideoItemTableViewCell
-        
+        cell.delegate = self
         // Populating the items
         let videoItem: AnyObject  = self.allMovies[indexPath.row]
         cell.nameLabel.text = videoItem["movieName"] as? String
         var mediaId = ""
         mediaId = videoItem["movieMediaId"] as! String
         cell.descriptionLabel.text = "Media ID: " + mediaId
+        cell.mediaId = mediaId
         let movieAuthor = videoItem["movieAuthor"] as? String
         if (movieAuthor != nil && self.authorMap[movieAuthor!] != nil) {
             cell.describerLabel.text = "by " + self.authorMap[movieAuthor!]!
@@ -143,9 +144,38 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
     }
     
     
-    @IBAction func showItemMenuAction(_ sender: Any) {
+    func showItemMenu(mediaId: String) {
+        let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: {
+            (alert: UIAlertAction) -> Void in
+        })
         
+        let createDescriptionAction = UIAlertAction(
+            title: "Create description",
+            style: .default,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+                self.performSegue(withIdentifier: "CreateDescriptionSegue", sender: nil)
+        })
+        
+        let viewAuthorsVideosAction = UIAlertAction(title: "View videos described by author", style: .default, handler: {
+            (alert: UIAlertAction) -> Void in
+        })
+
+        optionMenu.addAction(cancelAction)
+        // show only if the user is logged in
+        let preferences = UserDefaults.standard
+        if preferences.object(forKey: "session") != nil {
+            optionMenu.addAction(createDescriptionAction)
+        }
+        optionMenu.addAction(viewAuthorsVideosAction)
+
+        self.present(optionMenu, animated: true, completion: nil)
     }
+
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -181,7 +211,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
     }
     */
 
-    
+
+    func showCellDetailMenu(mediaId: String) {
+        print("The media ID from the cell is \(mediaId)")
+        self.showItemMenu(mediaId: mediaId)
+    }
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -200,6 +234,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate {
             searchResultsViewController.searchString = searchBar.text!
             searchResultsViewController.allMovies = allMovies
             searchResultsViewController.authorMap = authorMap
+        } else if segue.identifier == "CreateDescriptionSegue" {
+            let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
         }
     }
+    
 }

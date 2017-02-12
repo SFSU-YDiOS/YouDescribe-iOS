@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import YDiOSViewer
+// @testable import YouDescribe-iOS
 
 class YDiOSViewerTests: XCTestCase {
     
