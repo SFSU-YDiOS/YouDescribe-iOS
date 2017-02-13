@@ -28,6 +28,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         self.authorMap = getAuthorMap()
         print(self.authorMap)
         self.createSearchBar()
+
+        if self.allMovies.count == 0 {
+            // Display an error
+            self.showDVXError()
+        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -40,6 +45,15 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         self.allMovies.sort{ (($0["movieCreated"] as! NSString) as! Int) > (($1["movieCreated"] as! NSString) as! Int) }
     }
 
+    func showDVXError() {
+        let alertController = UIAlertController(title: "Error connecting to the server!", message: "Unable to retrieve YouDescribe data from the server. The server may be down. Exiting for now. Please try again later.", preferredStyle: .alert)
+
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
+            UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
+        }
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
     func getAuthorMap() -> [String:String] {
         if (self.allAuthors.count > 0) {
             for author in self.allAuthors {

@@ -432,6 +432,15 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         return 1
     }
     
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let pickerLabel = UILabel()
+        pickerLabel.textColor = UIColor.black
+        pickerLabel.text = self.authorMap[self.authorIdList[row] as String]
+        pickerLabel.font = UIFont(name: pickerLabel.font.fontName, size: 15)
+        //pickerLabel.font = UIFont(name: "Arial-BoldMT", size: 15) // In this use your custom font
+        pickerLabel.textAlignment = NSTextAlignment.center
+        return pickerLabel
+    }
     // Prepare for Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "EmbeddedTabViewController" {
