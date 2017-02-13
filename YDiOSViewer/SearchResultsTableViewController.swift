@@ -180,7 +180,13 @@ class SearchResultsTableViewController: UITableViewController {
             let row : AnyObject? = self.filteredMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
-            videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
+            if (self.authorMap.index(forKey: (row?["movieAuthor"] as? String)!) != nil) {
+                videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
+            }
+            else {
+                videoDetailViewController.displayAuthor = "None"
+            }
+
         }
     }
     

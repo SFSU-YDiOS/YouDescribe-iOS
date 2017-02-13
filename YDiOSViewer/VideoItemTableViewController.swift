@@ -27,7 +27,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         self.allAuthors = dvxApi.getUsers([:])
         self.authorMap = getAuthorMap()
         print(self.authorMap)
-        self.createSearchBar1()
+        self.createSearchBar()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -57,16 +57,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         // Add in the search bar
         searchBar.placeholder = "Search"
         searchBar.showsSearchResultsButton = true
-        searchBarHeader.addSubview(searchBar)
-        searchBar.delegate = self
-    }
-    func createSearchBar1() {
-        // Add in the search bar
-        searchBar.placeholder = "Search"
-        searchBar.showsSearchResultsButton = true
         searchBar.sizeToFit()
-        searchBar.text = ""
-        searchBarHeader.addSubview(searchBar)
+        searchBar.searchBarStyle = .default
         searchBar.delegate = self
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -123,6 +115,13 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         return cell
     }
  
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return self.searchBar
+    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        //return self.searchBarHeader.frame.height
+        return self.searchBar.frame.height
+    }
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // make sure the content scrolls dynamically.
         // load 15 more records when the bottom is reached.
@@ -238,5 +237,13 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
         }
     }
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        print("Rotated")
+        //self.searchBarHeader.setNeedsDisplay(self.searchBarHeader.frame)
+        //self.searchBarHeader.setNeedsLayout()
+        //self.searchBar.sizeToFit()
+    }
+
     
 }
