@@ -107,4 +107,10 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         // TODO: Refresh the search
         print("Searched from the local search")
     }
+    
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        DispatchQueue.main.async {
+            self.searchBar.sizeToFit()
+        }
+    }
 }

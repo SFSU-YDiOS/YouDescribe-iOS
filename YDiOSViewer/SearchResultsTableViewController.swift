@@ -189,5 +189,6 @@ class SearchResultsTableViewController: UITableViewController {
 
         }
     }
+
     
 }

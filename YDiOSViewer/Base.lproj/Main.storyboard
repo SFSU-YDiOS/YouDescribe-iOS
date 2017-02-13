@@ -269,7 +269,7 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xLK-ia-C5h">
@@ -348,7 +348,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7D8-Fx-vzo">
-                                <rect key="frame" x="0.0" y="203" width="375" height="267"/>
+                                <rect key="frame" x="0.0" y="400" width="375" height="267"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="gh4-hK-cAo" kind="embed" identifier="EmbeddedTabViewController" id="MDB-of-FTh"/>
@@ -661,7 +661,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FNM-RB-g4G" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-524" y="-835"/>
+            <point key="canvasLocation" x="-514" y="-1075"/>
         </scene>
         <!--Login/Register-->
         <scene sceneID="9Pe-hm-yhR">
@@ -983,7 +983,7 @@
         <image name="Video" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="YHP-bY-ih5"/>
+        <segue reference="tRT-l9-ODk"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.097015251650071188" green="0.4402525920883168" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>
