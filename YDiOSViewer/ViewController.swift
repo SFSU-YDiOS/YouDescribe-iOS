@@ -6,7 +6,7 @@ import Social
 
 class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate, UIPickerViewDelegate, UIPickerViewDataSource  {
 
-    let dvxApi = DxvApi()
+    let dvxApi = DvxApi()
     let audioIndexThreshold:Int = 3
     let skipButtonFrameCount:Float = 10
 
@@ -49,6 +49,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var tabViewContainer: UIView!
     
     @IBOutlet weak var stackViewMain: UIStackView!
+    var tester: Int = 0
+
+    var playerLayer = AVPlayerLayer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,6 +68,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.doAsyncDownload = false
         self.isFirstDownloaded = false
         self.doShowMissingAudioWarning = false
+
+        //audioPlayerItem = nil
+        audioPlayer=AVPlayer()
+        playerLayer=AVPlayerLayer(player: audioPlayer!)
+        playerLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
+        self.view.layer.addSublayer(playerLayer)
 
     }
 
@@ -157,10 +166,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         else {
             audioPlayerItem = AVPlayerItem(url: currentAudioUrl! as URL)
         }
-        audioPlayer=AVPlayer(playerItem: audioPlayerItem!)
-        let playerLayer=AVPlayerLayer(player: audioPlayer!)
-        playerLayer.frame=CGRect(x: 0, y: 0, width: 300, height: 50)
-        self.view.layer.addSublayer(playerLayer)
+        audioPlayer?.replaceCurrentItem(with: audioPlayerItem)
     }
     
     // Play the audio - Also tries to precache the next audio clip as the current is playing
@@ -190,6 +196,17 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
     }
 
+    func resetAudio() {
+        self.isAudioPlaying = false
+        youtubePlayer.playVideo()
+        showNextClipStartTime()
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
+        if self.nextAudioUrl != self.currentAudioUrl {
+            self.currentAudioUrl = self.nextAudioUrl
+            loadAudio()
+        }
+    }
+
     func stopAudio() {
         audioPlayer?.pause()
     }
@@ -208,6 +225,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     
     // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
+        self.startPlay()
+    }
+
+    func startPlay() {
         if(doPlay) {
             if self.didAuthorReset {
                 self.filterAndDownloadAudioClips()
@@ -218,7 +239,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             youtubePlayer.pauseVideo()
         }
     }
-
     // Called on clicking the 'stop' button
     @IBAction func stopAction(_ sender: AnyObject) {
         reset()
@@ -238,30 +258,27 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     }
 
     @IBAction func skipBackAction(_ sender: AnyObject) {
+
         // Seek to 0
-        /*DispatchQueue.main.async {
-            self.stopAudio()
-        }*/
-        //self.stopAudio()
         if (youtubePlayer.currentTime() - skipButtonFrameCount < 0) {
             youtubePlayer.seek(toSeconds: 0, allowSeekAhead: true)
         }
         else if (youtubePlayer.currentTime() >= 0) {
             youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() - skipButtonFrameCount, allowSeekAhead: true)
         }
-        
+
+        self.stopAudio()
         if self.downloadAudioUrls.count == 0 {
             filterAndDownloadAudioClips()
         }
-
+        youtubePlayer?.playVideo()
     }
     
     @IBAction func skipForwardAction(_ sender: AnyObject) {
-       /* DispatchQueue.main.async {
-            self.stopAudio()
-        }*/
         youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() + skipButtonFrameCount, allowSeekAhead: true)
+        youtubePlayer?.playVideo()
         resetActiveAudioIndex()
+        self.stopAudio()
     }
     
     // Re-calculate the activeAudioIndex based on the current frame playing
@@ -325,9 +342,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     {
         if abs(self.previousTime - youtubePlayer.currentTime()) > 5 {
             print("DETECTED JUMP !!!")
-            self.stopAudio()
+            //self.stopAudio()
+            self.resetAudio()
             resetActiveAudioIndex()
+
         }
+
+
         self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
@@ -361,7 +382,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
         // the player changed to state
         print(state.rawValue)
-        if (state.rawValue == 2) { // state is 'playing'
+        if (state.rawValue == 4) {
+            self.startPlay()
+        }
+        else if (state.rawValue == 2) { // state is 'playing'
             //change the button to text
             playButton.setTitle("Pause", for: UIControlState())
             doPlay = false
@@ -377,7 +401,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         else if (state.rawValue == 0) {
             playButton.setTitle("Play", for: UIControlState())
             doPlay = true
-            reset()
+            self.reset()
+        }
+        else if (state.rawValue == 1) { // movie ended
+            playButton.setTitle("Play", for: UIControlState())
+            doPlay = true
+            self.reset()
         }
     }
 

@@ -10,13 +10,13 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
 
-
     var loginSession:String = ""
     var loggedInViewControllers : [UIViewController]?
     var loggedOutViewControllers: [UIViewController]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         loggedInViewControllers = self.viewControllers
         loggedOutViewControllers = self.viewControllers
         loggedInViewControllers?.remove(at: 1)

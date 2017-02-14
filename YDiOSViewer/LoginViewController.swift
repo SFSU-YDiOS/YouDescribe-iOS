@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var txtUserName: UITextField!
     @IBOutlet weak var txtPassword: UITextField!
 
-    let dvxApi = DxvApi()
+    let dvxApi = DvxApi()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.

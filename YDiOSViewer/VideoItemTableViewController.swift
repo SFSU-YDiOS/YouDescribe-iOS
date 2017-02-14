@@ -10,7 +10,7 @@ import UIKit
 
 class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate {
 
-    let dvxApi = DxvApi()
+    let dvxApi = DvxApi()
     var allMovies: [AnyObject] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
@@ -20,6 +20,16 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
     @IBOutlet weak var searchBarHeader: UIView!
 
+    override func loadView(){
+        super.loadView()
+        do {
+            try dvxApi.getUsers([:])
+        }
+        catch is Error {
+            print ("Could not connect to the server and parse.")
+            self.showDVXError()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.allMovies = dvxApi.getMovies([:])
@@ -28,16 +38,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         self.authorMap = getAuthorMap()
         print(self.authorMap)
         self.createSearchBar()
-
-        if self.allMovies.count == 0 {
-            // Display an error
-            self.showDVXError()
-        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     func sortMovies() {
@@ -50,6 +55,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
         let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
             UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
+            // Close the app here
+            exit(0)
         }
         alertController.addAction(OKAction)
         self.present(alertController, animated: true, completion: nil)

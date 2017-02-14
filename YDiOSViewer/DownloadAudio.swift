@@ -54,7 +54,7 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
     var backgroundSession: Foundation.URLSession!
     var downloadUrlMap: [String:Any] = [:]
 
-    let dvxApi = DxvApi()
+    let dvxApi = DvxApi()
     var downloadFileUrls: [URL] = []
     let mycounter = AtomicCounter()
     var delegate:DownloadAudioDelegate

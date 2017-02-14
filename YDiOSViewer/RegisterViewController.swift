@@ -15,7 +15,7 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var txtRepeatPassword: UITextField!
     @IBOutlet weak var txtEmail: UITextField!
 
-    let dvxApi = DxvApi()
+    let dvxApi = DvxApi()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.

@@ -1,6 +1,6 @@
 import Foundation
 
-class DxvApi {
+class DvxApi {
     let defaultAppId = "ydesc"
     let apiBaseUrl = "http://dvxtest.ski.org:8080/dvx2Api/"
     
