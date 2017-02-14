@@ -43,11 +43,20 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
     var authorMap: [String:String] = [:]
     var filteredMovies: [AnyObject] = []
     lazy var searchBar = UISearchBar()
-    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.createSearchBar()
         self.navigationItem.title = "Search Results"
+        
+        // Setup notifications for the activity indicator
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityInProgressNotification"), object: nil, queue: nil) { notification in
+            self.activityIndicator.startAnimating()
+        }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityCompletedNotification"), object: nil, queue: nil) { notification in
+            self.activityIndicator.stopAnimating()
+        }
         //self.performSearch()
         // call the segue
         
@@ -105,7 +114,14 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // TODO: Refresh the search
-        print("Searched from the local search")
+        self.searchString = self.searchBar.text!
+        self.performSearch()
+        var searchObject: [AnyObject] = []
+        searchObject = self.filteredMovies
+        var searchItem:[String:String] = [:]
+        searchItem["searchString"] = self.searchString
+        searchObject.append(searchItem as AnyObject)
+        NotificationCenter.default.post(name: NSNotification.Name("SearchAgainNotification"), object: searchObject)
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {

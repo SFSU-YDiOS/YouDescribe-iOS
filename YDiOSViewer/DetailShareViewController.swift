@@ -23,6 +23,15 @@ class DetailShareViewController: UIViewController {
         // Do any additional setup after loading the view.
         embedCode.text = self.getEmbedCode()
         shareVideo.text = self.getShareCode()
+        
+        // set up required notifications
+        // Change the embed and share code when the author changes.
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("AuthorChangeNotification"), object: nil, queue: nil) { notification in
+            
+            self.preferredAuthor = (notification.object as! String)
+            self.embedCode.text = self.getEmbedCode()
+            self.shareVideo.text = self.getShareCode()
+        }
     }
 
     override func didReceiveMemoryWarning() {

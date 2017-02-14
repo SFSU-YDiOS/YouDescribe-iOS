@@ -17,10 +17,21 @@ class SearchResultsTableViewController: UITableViewController {
     var displayMovies: [AnyObject] = []
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getYouTubeResults()
+
+        // Search from the second screen (using the same logic)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("SearchAgainNotification"), object: nil, queue: nil) { notification in
+            var myObject = notification.object as! [AnyObject]
+            let lastItem = myObject.removeLast()
+            self.filteredMovies = myObject
+            self.searchString = lastItem["searchString"] as! String
+            self.youDescribeMovies = myObject
+            self.displayMovies = myObject
+            self.getYouTubeResults()
+        }
         
         // setup the notification observer
         NotificationCenter.default.addObserver(forName: NSNotification.Name("SearchFilterNotification"), object: nil, queue: nil) { notification in
@@ -102,10 +113,12 @@ class SearchResultsTableViewController: UITableViewController {
     }
     
     func getYouTubeResults() {
+
         if (self.searchString != "") {
+            NotificationCenter.default.post(name: NSNotification.Name("ActivityInProgressNotification"), object: nil)
             let youTubeSearchString = self.searchString.replacingOccurrences(of: " ", with: ",")
-            let maxYouTubeResults:Int = 15
-            
+            let maxYouTubeResults:Int = 20
+
             let config = URLSessionConfiguration.default
             let url = URL(string: "https://www.googleapis.com/youtube/v3/search?part=snippet&fields=items(id,snippet(title,channelTitle,description,publishedAt))&q=\(youTubeSearchString)&type=video&maxResults=\(maxYouTubeResults)&key=\(apiKey)")
             print("\n\nURL\n\n: ",url)
@@ -125,8 +138,9 @@ class SearchResultsTableViewController: UITableViewController {
                         self.filteredMovies.append(ytItem as AnyObject)
                         self.displayMovies.append(ytItem as AnyObject)
                     }
-                    print("\n\nSearched list of videos: ",self.filteredMovies)
+                    print("\n\nSearched list of videos: ",self.filteredMovies)  
                     self.tableView.reloadData()
+                    NotificationCenter.default.post(name: NSNotification.Name("ActivityCompletedNotification"), object: nil)
                 }
             }
             task.resume()

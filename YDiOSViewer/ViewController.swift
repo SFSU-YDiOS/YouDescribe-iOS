@@ -48,6 +48,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     //@IBOutlet weak var detailView: UITextView!
     @IBOutlet weak var tabViewContainer: UIView!
     
+    @IBOutlet weak var stackViewMain: UIStackView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,8 +65,15 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.doAsyncDownload = false
         self.isFirstDownloaded = false
         self.doShowMissingAudioWarning = false
+
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParentViewController {
+            self.reset()
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -92,7 +100,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             let movieId = selectedMovies[0]["movieId"]
             self.currentMovie = selectedMovies[0]
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
-            print("The clips are")
             print(clips.description)
             self.allAudioClips = clips
             self.authorIdList = getAllAuthors()
@@ -114,7 +121,22 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.currentAuthorId = authorIds[0]
             self.currentAuthor = self.authorMap[currentAuthorId!]
         }
+        else {
+            if self.movieID != nil {
+                self.showMissingAuthors()
+            }
+        }
         return authorIds
+    }
+
+    func showMissingAuthors() {
+        let alertController = UIAlertController(title: "Warning!", message: "Cannot find any audio clip metadata for this video although it appears to have been described previously.", preferredStyle: .alert)
+        
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
+        }
+        
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
     }
 
     func getAuthorMap() -> [String:String] {
@@ -217,6 +239,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     @IBAction func skipBackAction(_ sender: AnyObject) {
         // Seek to 0
+        /*DispatchQueue.main.async {
+            self.stopAudio()
+        }*/
+        //self.stopAudio()
         if (youtubePlayer.currentTime() - skipButtonFrameCount < 0) {
             youtubePlayer.seek(toSeconds: 0, allowSeekAhead: true)
         }
@@ -227,10 +253,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         if self.downloadAudioUrls.count == 0 {
             filterAndDownloadAudioClips()
         }
-        
+
     }
     
     @IBAction func skipForwardAction(_ sender: AnyObject) {
+       /* DispatchQueue.main.async {
+            self.stopAudio()
+        }*/
         youtubePlayer.seek(toSeconds: youtubePlayer.currentTime() + skipButtonFrameCount, allowSeekAhead: true)
         resetActiveAudioIndex()
     }
@@ -283,6 +312,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
         print("Filtered clips by Author")
     }
+
     // Displays the start time of the next audio clip
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
@@ -295,7 +325,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     {
         if abs(self.previousTime - youtubePlayer.currentTime()) > 5 {
             print("DETECTED JUMP !!!")
-            stopAudio()
+            self.stopAudio()
             resetActiveAudioIndex()
         }
         self.playerLabel.text = "\(playTime)"
@@ -439,6 +469,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         pickerLabel.font = UIFont(name: pickerLabel.font.fontName, size: 15)
         //pickerLabel.font = UIFont(name: "Arial-BoldMT", size: 15) // In this use your custom font
         pickerLabel.textAlignment = NSTextAlignment.center
+        
+        // Post about the author change.
+        NotificationCenter.default.post(name: NSNotification.Name("AuthorChangeNotification"), object: pickerLabel.text)
         return pickerLabel
     }
     // Prepare for Segue
@@ -461,5 +494,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             tabBarController.movieTitle = self.currentMovieTitle!
         }
     }
+    
+    // TODO: Orientation change.
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        print("Transitioning....")
+    }
+
 }
 

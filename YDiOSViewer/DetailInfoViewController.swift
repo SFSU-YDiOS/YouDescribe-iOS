@@ -21,7 +21,8 @@ class DetailInfoViewController: UIViewController {
     @IBOutlet weak var viewsCount: UILabel!
     @IBOutlet weak var likesCount: UILabel!
     @IBOutlet weak var dislikesCount: UILabel!
-
+    @IBOutlet weak var scrollableView: UIView!
+    @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -54,15 +55,13 @@ class DetailInfoViewController: UIViewController {
                     DispatchQueue.main.async() {
                         self.titleName.text = self.ytItem["movieName"]
                         self.descriptionContent.text = self.ytItem["movieDescription"]
-                        self.descriptionContent.lineBreakMode = .byWordWrapping
-                        self.descriptionContent.numberOfLines = 0
-                        self.descriptionContent.adjustsFontSizeToFitWidth = true
-                        // self.descriptionContent.sizeToFit()
-                        //self.descriptionTextView.text = self.ytItem["movieDescription"]
                         self.videoAuthorName.text = self.ytItem["movieCreator"]
                         self.viewsCount.text = self.ytItem["movieStatViewCount"]
                         self.likesCount.text = self.ytItem["movieStatLikeCount"]
                         self.dislikesCount.text = self.ytItem["movieStatDislikeCount"]
+                        self.heightConstraint.constant = self.heightConstraint.constant + CGFloat((self.descriptionContent.text?.characters.count)!)
+                            self.updateViewConstraints()
+                        print(self.heightConstraint.constant)
                     }
                     
                 }
