@@ -519,7 +519,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 }
             }
             tabBarController.mediaId = self.movieID!
-            tabBarController.myString = "Testing"
+            tabBarController.myString = "Testing" // TODO: Remove this test
             tabBarController.movieTitle = self.currentMovieTitle!
         }
     }

@@ -9,11 +9,11 @@
 import Foundation
 
 class AudioClip {
-    var audioFilePath: String!
-    var isUploaded: Bool!
+    var audioFile: URL!
+    var isUploaded: Bool! = false
     var startTime: Float!
     var duration: Float!
-    var isInline: Bool!
+    var isInline: Bool! = false
     var volume: Int!
     var userId: Int!
     var movieId: Int!
@@ -22,5 +22,11 @@ class AudioClip {
     var chapter: String!
     var function: String!
     var index: Int!
+    var isDeleted: Bool! = false
+    var clipView: UIView!
+    var timeLabelView: UILabel!
+    var startHour: Int!
+    var startMinutes: Int!
+    var startSeconds: Float!
 }
 

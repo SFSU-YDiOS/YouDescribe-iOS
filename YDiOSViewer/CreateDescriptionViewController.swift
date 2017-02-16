@@ -25,12 +25,14 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     @IBOutlet weak var btnPlayPause: UIButton!
     @IBOutlet weak var btnStop: UIButton!
     @IBOutlet weak var btnRecord: UIButton!
-    @IBOutlet weak var btnUpload: UIButton!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var btnQueue: UIButton!
+    @IBOutlet weak var btnUpload: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        youtubePlayer.load(withVideoId: mediaId)
+        let options = ["playsinline" : 1]
+        youtubePlayer.load(withVideoId: mediaId, playerVars: options)
         // Do any additional setup after loading the view.
         
         audioPlayer?.delegate = self
@@ -41,6 +43,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         // Set up the audio recorder
         setUpAudioRecord()
         self.yPos = 0
+        self.audioClips = []
     }
 
     override func didReceiveMemoryWarning() {
@@ -82,7 +85,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         if let player = audioPlayer {
             if player.isPlaying {
                 player.stop()
-                btnPlayPause.setTitle("Play", for: UIControlState())
                 return
             }
         }
@@ -93,7 +95,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                     audioPlayer = try AVAudioPlayer(contentsOf: recorder.url)
                     audioPlayer?.prepareToPlay()
                     audioPlayer?.play()
-                    btnPlayPause.setTitle("Play", for: UIControlState()) // Change this when we listen for events
                     print("Playing the audio url")
                 } catch let error {
                     print(error)
@@ -104,14 +105,11 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     
     // to be called when the cancel button is pressed.
     func cancel() {
-        // stop the audio recorder
-        audioRecorder?.stop()
-        
-        // deactivate the audio session
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-        } catch let error {
-            print(error)
+        if let player = audioPlayer {
+            if player.isPlaying {
+                player.stop()
+                return
+            }
         }
     }
     
@@ -124,6 +122,9 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                 btnPlayPause.setTitle("Play", for: UIControlState())
             }
         }
+        
+        // pause the video if it is playing
+        youtubePlayer.pauseVideo()
         
         // if we are not recording then start recording!
         if let recorder = audioRecorder {
@@ -143,11 +144,25 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                 recorder.stop()
                 btnRecord.setTitle("Record", for: UIControlState())
                 print("Stopped recording...")
+                // deactivate the audio session
+                do {
+                    try AVAudioSession.sharedInstance().setActive(false)
+                } catch let error {
+                    print(error)
+                }
             }
         }
     }
 
-    
+    func uploadClips() {
+        // send the required audio clips to the upload module
+        for audioClip in self.audioClips {
+            if !audioClip.isDeleted {
+                print("Uploading clip: \(audioClip.index)")
+            }
+        }
+    }
+
     @IBAction func playPauseAction(_ sender: Any) {
         self.play()
     }
@@ -160,110 +175,225 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         self.record()
     }
     
+    @IBAction func queueAction(_ sender: Any) {
+        self.queueClip()
+    }
     @IBAction func uploadAction(_ sender: Any) {
+        self.uploadClips()
+    }
+    
+    func queueClip() {
+        // prepare the AudioClip object
         var newClip: AudioClip!
         newClip = AudioClip()
         newClip.startTime? = 45.56
-        newClip.audioFilePath? = self.currentAudioFileDirectory.appendingPathComponent(self.sessionRecordingName).absoluteString
         newClip.index = self.totalUploadedClips
-        self.audioClips.append(newClip)
-
+        newClip.audioFile = self.saveClipLocally(newClip)
+        
         // create a new view
         //let clipView = UIStackView(frame: CGRect(x: 5, y: self.yPos, width: 480, height: 50))
-        let clipView = UIView(frame: CGRect(x: 5, y: self.yPos, width: 400, height: 50))
+        let clipView = UIView(frame: CGRect(x: 5, y: self.yPos, width: 370, height: 50))
         clipView.backgroundColor = UIColor.lightGray
         clipView.contentMode = .left
-
-
+        
+        
         // create the play button
         let playButton = UIButton(frame: CGRect(x:5, y:15, width:50, height:20))
         playButton.backgroundColor = UIColor.darkGray
         playButton.setTitle("Play", for: .normal)
-        playButton.tag = self.totalUploadedClips
-        playButton.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        playButton.tag = newClip.index
+        playButton.addTarget(self, action: #selector(CreateDescriptionViewController.playClip(_:)), for: .touchDown)
         clipView.addSubview(playButton)
-
+        
         // create the nudge buttons
         let btnNudgeLeftSecs = UIButton(frame: CGRect(x:65, y:15, width:30, height:20))
         btnNudgeLeftSecs.backgroundColor = UIColor.darkGray
         btnNudgeLeftSecs.setTitle("<<", for: .normal)
-        btnNudgeLeftSecs.tag = self.totalUploadedClips
-        btnNudgeLeftSecs.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        btnNudgeLeftSecs.tag = newClip.index
+        btnNudgeLeftSecs.addTarget(self, action: #selector(CreateDescriptionViewController.nudgeLeftSecClip(_:)), for: .touchDown)
         clipView.addSubview(btnNudgeLeftSecs)
-
+        
         // create the nudge buttons
-        let btnNudgeLeftMillisecs = UIButton(frame: CGRect(x:95, y:15, width:20, height:20))
+        let btnNudgeLeftMillisecs = UIButton(frame: CGRect(x:105, y:15, width:15, height:20))
         btnNudgeLeftMillisecs.backgroundColor = UIColor.darkGray
         btnNudgeLeftMillisecs.setTitle("<", for: .normal)
-        btnNudgeLeftMillisecs.tag = self.totalUploadedClips
-        btnNudgeLeftMillisecs.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        btnNudgeLeftMillisecs.tag = newClip.index
+        btnNudgeLeftMillisecs.addTarget(self, action: #selector(CreateDescriptionViewController.nudgeLeftMillisecClip(_:)), for: .touchDown)
         clipView.addSubview(btnNudgeLeftMillisecs)
-
+        
         // create the time label
         let timeLabel = UILabel(frame: CGRect(x:115, y:15, width:100, height:20))
         let currentMarkerTime: Float = youtubePlayer.currentTime()
         let hours = (Int(currentMarkerTime)) / (3600) as Int
         let mins = (Int(currentMarkerTime) / 60) % 60
-        let secs:Float = (currentMarkerTime.truncatingRemainder(dividingBy: 60)).truncatingRemainder(dividingBy: 60)
-        let millisecs:Float = (currentMarkerTime) - floor(currentMarkerTime)
+        let secs:Float = Float(Int(Int(currentMarkerTime) % 60) % 60)
+        var millisecs:Float = (currentMarkerTime) - floor(currentMarkerTime)
+        millisecs = Float(String(format: "%.2f", millisecs))!
+        timeLabel.textAlignment = .center
         timeLabel.text = "\(hours):\(mins):\(secs+millisecs)"
-
+        newClip.startHour = hours
+        newClip.startMinutes = mins
+        newClip.startSeconds = secs + millisecs
+        newClip.timeLabelView = timeLabel
+        
         // create the nudge right buttons
         let btnNudgeRightMillisecs = UIButton(frame: CGRect(x:200, y:15, width:20, height:20))
         btnNudgeRightMillisecs.backgroundColor = UIColor.darkGray
         btnNudgeRightMillisecs.setTitle(">", for: .normal)
-        btnNudgeRightMillisecs.tag = self.totalUploadedClips
-        btnNudgeRightMillisecs.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        btnNudgeRightMillisecs.tag = newClip.index
+        btnNudgeRightMillisecs.addTarget(self, action: #selector(CreateDescriptionViewController.nudgeRightMillisecClip(_:)), for: .touchDown)
         clipView.addSubview(btnNudgeRightMillisecs)
-
+        
         // create the nudge right buttons
         let btnNudgeRightSecs = UIButton(frame: CGRect(x:230, y:15, width:30, height:20))
         btnNudgeRightSecs.backgroundColor = UIColor.darkGray
         btnNudgeRightSecs.setTitle(">>", for: .normal)
-        btnNudgeRightSecs.tag = self.totalUploadedClips
-        btnNudgeRightSecs.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        btnNudgeRightSecs.tag = newClip.index
+        btnNudgeRightSecs.addTarget(self, action: #selector(CreateDescriptionViewController.nudgeRightSecClip(_:)), for: .touchDown)
         clipView.addSubview(btnNudgeRightSecs)
-
+        
         let switchInline = UISwitch(frame: CGRect(x:260, y:15, width:35, height:20))
         switchInline.isOn = false
         switchInline.sizeThatFits(CGSize(width: 150, height: 20))
         switchInline.addTarget(self, action: #selector(CreateDescriptionViewController.stateChanged(_: )), for: .valueChanged )
         clipView.addSubview(switchInline)
-
+        
         // create the delete clip button
         let btnDeleteClip = UIButton(frame: CGRect(x:320, y:15, width:35, height:20))
         btnDeleteClip.backgroundColor = UIColor.darkGray
         btnDeleteClip.setTitle("X", for: .normal)
-        btnDeleteClip.tag = self.totalUploadedClips
-        btnDeleteClip.addTarget(self, action: #selector(CreateDescriptionViewController.action(_:)), for: .touchDown)
+        btnDeleteClip.tag = newClip.index
+        btnDeleteClip.addTarget(self, action: #selector(CreateDescriptionViewController.deleteClip(_:)), for: .touchDown)
         clipView.addSubview(btnDeleteClip)
-
+        
         self.scrollView.addSubview(clipView)
         self.totalUploadedClips = self.totalUploadedClips + 1
         self.yPos = self.yPos + 50 + 5
         print("total clips are \(self.totalUploadedClips)")
         
-        scrollView.contentSize = CGSize(width: 400, height: CGFloat((clipView.frame.height + 10) * CGFloat(self.totalUploadedClips)))
+        scrollView.contentSize = CGSize(width: 400, height: CGFloat((clipView.frame.height + 5) * CGFloat(self.totalUploadedClips)))
         clipView.addSubview(timeLabel)
+        newClip.clipView = clipView // Hold a reference to this clipView
+        self.audioClips.append(newClip)
     }
- 
     func stateChanged(_ switchview: UISwitch!) {
-        print("The state is \(switchview.isOn)")
+        if switchview.isOn {
+            self.audioClips[switchview.tag].isInline = true
+        }
+        else {
+            self.audioClips[switchview.tag].isInline = false
+        }
     }
 
-    //then make a action method
     func action(_ button: UIButton!) {
-        print("Play the video associated with this clip")
+        
+    }
+    //then make a action method
+    func playClip(_ button: UIButton!) {
+        print("Play the video associated with this clip: \(self.audioClips[button.tag].audioFile.absoluteString)")
+        
+        // Play the audio clip
+        if let player = audioPlayer {
+            if player.isPlaying {
+                player.stop()
+                return
+            }
+        }
+        
+        if let recorder = audioRecorder {
+            if !recorder.isRecording {
+                do {
+                    audioPlayer = try AVAudioPlayer(contentsOf: self.audioClips[button.tag].audioFile)
+                    audioPlayer?.prepareToPlay()
+                    audioPlayer?.play()
+                } catch let error {
+                    print(error)
+                }
+            }
+        }
     }
 
-    func saveClipLocally(_ recording: AudioClip) {
-        let sourceURL = self.currentAudioFileDirectory.appendingPathComponent(self.currentAudioFileName)
-        let destURL = self.currentAudioFileDirectory.appendingPathComponent("\(self.sessionRecordingName)_\(recording.index)")
-        self.copyFile(
-            sourcePath: sourceURL,
-            destPath: destURL)
+    func deleteClip(_ button: UIButton!) {
+        self.confirmDeleteClip(index: button.tag)
+    }
+
+    func nudgeLeftSecClip(_ button: UIButton!) {
+        let audioClip = self.audioClips[button.tag]
+        if audioClip.startSeconds > 0 {
+           audioClip.startSeconds = audioClip.startSeconds - 1
+           // update the label
+            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
+        }
     }
     
+    func nudgeLeftMillisecClip(_ button: UIButton!) {
+        let audioClip = self.audioClips[button.tag]
+        if audioClip.startSeconds > 0 {
+            audioClip.startSeconds = audioClip.startSeconds - 0.1
+            // update the label
+            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
+        }
+    }
+    
+    func nudgeRightSecClip(_ button: UIButton!) {
+        let audioClip = self.audioClips[button.tag]
+        if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip
+            audioClip.startSeconds = audioClip.startSeconds + 1
+            // update the label
+            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
+        }
+    }
+    
+    func nudgeRightMillisecClip(_ button: UIButton!) {
+        let audioClip = self.audioClips[button.tag]
+        if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip
+            audioClip.startSeconds = audioClip.startSeconds + 0.1
+            // update the label
+            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
+        }
+    }
+
+    func redrawClips(deletedIndex: Int) {
+        var yPos = CGFloat(0)
+        for clip in self.audioClips {
+            if clip.index != deletedIndex {
+                clip.clipView.frame.origin.y = yPos
+                yPos = yPos + 50 + 5
+            }
+        }
+    }
+
+    func confirmDeleteClip(index: Int) {
+        let alertController = UIAlertController(title: "Alert", message: "Are you sure you want to delete this clip?", preferredStyle: .alert)
+        
+        // Initialize Actions
+        let yesAction = UIAlertAction(title: "Yes", style: .default) { (action) -> Void in
+            print("The clip to be deleted has index: \(index)")
+            self.audioClips[index].isDeleted = true
+            self.audioClips[index].clipView.removeFromSuperview()
+            self.redrawClips(deletedIndex: index)
+        }
+        
+        let noAction = UIAlertAction(title: "No", style: .default) { (action) -> Void in
+        }
+
+        alertController.addAction(noAction)
+        alertController.addAction(yesAction)
+
+        // Present Alert Controller
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+    func saveClipLocally(_ clip: AudioClip) -> URL {
+        let sourceURL = self.currentAudioFileDirectory.appendingPathComponent(self.currentAudioFileName)
+        let destURL = self.currentAudioFileDirectory.appendingPathComponent("\(self.sessionRecordingName!)_\(clip.index!).m4a")
+        self.copyFile(
+            sourcePath: sourceURL,
+            destPath: destURL
+        )
+        return destURL
+    }
+
     private func generateUniqueId() -> String {
         return UUID().uuidString
     }
@@ -278,7 +408,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         catch let error as NSError {
             print("Failed to copy file: \(error)")
         }
-
     }
     
     /*

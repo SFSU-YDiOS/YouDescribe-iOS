@@ -127,31 +127,23 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8La-i5-9cr">
-                                <rect key="frame" x="17" y="285" width="72" height="30"/>
+                                <rect key="frame" x="115" y="285" width="49" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Play Video"/>
+                                <state key="normal" title="Review"/>
                                 <connections>
                                     <action selector="playPauseAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="Z6O-mp-bDq"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Pr-He-X0D">
-                                <rect key="frame" x="176" y="285" width="49" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Record"/>
-                                <connections>
-                                    <action selector="recordAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="GzA-jH-p4o"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="igg-OI-lB4">
-                                <rect key="frame" x="258" y="285" width="50" height="30"/>
+                                <rect key="frame" x="260" y="285" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Upload"/>
+                                <state key="normal" title="Queue"/>
                                 <connections>
-                                    <action selector="uploadAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="NH5-vZ-fFB"/>
+                                    <action selector="queueAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="qT3-Xo-cy1"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Htq-eo-NG5">
-                                <rect key="frame" x="103" y="285" width="32" height="30"/>
+                                <rect key="frame" x="201" y="285" width="32" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Stop"/>
                                 <connections>
@@ -159,18 +151,35 @@
                                 </connections>
                             </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7f3-xZ-Wjd">
-                                <rect key="frame" x="0.0" y="323" width="375" height="344"/>
+                                <rect key="frame" x="0.0" y="323" width="375" height="300"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6fC-lW-rgu">
+                                <rect key="frame" x="162" y="631" width="50" height="30"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <state key="normal" title="Upload"/>
+                                <connections>
+                                    <action selector="uploadAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="yq9-Mf-iXR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Pr-He-X0D">
+                                <rect key="frame" x="37" y="285" width="49" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Record"/>
+                                <connections>
+                                    <action selector="recordAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="GzA-jH-p4o"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="btnPlayPause" destination="8La-i5-9cr" id="5ZS-pZ-tji"/>
+                        <outlet property="btnQueue" destination="igg-OI-lB4" id="F0d-eh-f0X"/>
                         <outlet property="btnRecord" destination="1Pr-He-X0D" id="Dc6-0p-o8G"/>
                         <outlet property="btnStop" destination="Htq-eo-NG5" id="8eN-di-OsN"/>
-                        <outlet property="btnUpload" destination="igg-OI-lB4" id="B9B-k0-By9"/>
+                        <outlet property="btnUpload" destination="6fC-lW-rgu" id="sg7-p2-qoX"/>
                         <outlet property="scrollView" destination="7f3-xZ-Wjd" id="56X-VK-suq"/>
                         <outlet property="youtubePlayer" destination="12z-Af-cOy" id="ABm-hu-pDq"/>
                     </connections>
