@@ -57,12 +57,12 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button hidden="YES" opaque="NO" alpha="0.33000000000000002" contentMode="center" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XkD-3l-eOO">
-                                            <rect key="frame" x="334" y="2" width="33" height="22"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <button alpha="0.5" contentMode="center" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XkD-3l-eOO">
+                                            <rect key="frame" x="334" y="-8" width="41" height="41"/>
                                             <rect key="contentStretch" x="0.0" y="0.0" width="0.5" height="0.55000000000000004"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                            <state key="normal" image="Menu"/>
+                                            <state key="normal" image="Menu">
+                                                <color key="titleColor" red="0.048407458437469408" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            </state>
                                             <connections>
                                                 <action selector="showDetailAction:" destination="pV7-La-OgN" eventType="touchUpInside" id="xww-Op-wAX"/>
                                             </connections>
@@ -72,8 +72,10 @@
                                         <constraint firstItem="WPL-Uo-cGb" firstAttribute="leading" secondItem="R1Y-2c-9Ro" secondAttribute="leadingMargin" constant="111" id="PvW-We-zMT"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="WPL-Uo-cGb" secondAttribute="bottom" constant="24" id="W3X-tS-YWf"/>
                                         <constraint firstItem="EUc-xm-1P2" firstAttribute="leading" secondItem="R1Y-2c-9Ro" secondAttribute="leadingMargin" constant="111" id="euF-fw-OGI"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="XkD-3l-eOO" secondAttribute="bottom" constant="41" id="f7b-XF-4lI"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="EUc-xm-1P2" secondAttribute="bottom" constant="4" id="maP-5m-5zx"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="WPL-Uo-cGb" secondAttribute="trailing" constant="41" id="prZ-KG-0Fh"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="XkD-3l-eOO" secondAttribute="trailing" constant="-8" id="vqm-Am-uvZ"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="EUc-xm-1P2" secondAttribute="trailing" id="xPX-Mo-DDT"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -100,12 +102,12 @@
                     <connections>
                         <outlet property="searchBarHeader" destination="gj7-Nc-bCU" id="qfZ-aY-0kx"/>
                         <segue destination="Y4C-Te-DCw" kind="show" identifier="DisplaySearchResultsSegue" id="cCc-Fr-mdj"/>
-                        <segue destination="mTR-mv-mH8" kind="presentation" identifier="CreateDescriptionSegue" id="8Yd-0C-3BI"/>
+                        <segue destination="mTR-mv-mH8" kind="show" identifier="ShowCreateDescriptionSegue" id="9ay-kU-8Uo"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZGc-cR-sdd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1281" y="-408"/>
+            <point key="canvasLocation" x="1280.8" y="-408.84557721139436"/>
         </scene>
         <!--Create Description View Controller-->
         <scene sceneID="71j-ME-wSr">
@@ -119,16 +121,59 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Work in progress" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EDc-dQ-Lin">
-                                <rect key="frame" x="58" y="323" width="232" height="21"/>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12z-Af-cOy" customClass="YTPlayerView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="277"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8La-i5-9cr">
+                                <rect key="frame" x="17" y="285" width="72" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Play Video"/>
+                                <connections>
+                                    <action selector="playPauseAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="Z6O-mp-bDq"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Pr-He-X0D">
+                                <rect key="frame" x="176" y="285" width="49" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Record"/>
+                                <connections>
+                                    <action selector="recordAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="GzA-jH-p4o"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="igg-OI-lB4">
+                                <rect key="frame" x="258" y="285" width="50" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Upload"/>
+                                <connections>
+                                    <action selector="uploadAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="NH5-vZ-fFB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Htq-eo-NG5">
+                                <rect key="frame" x="103" y="285" width="32" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Stop"/>
+                                <connections>
+                                    <action selector="stopAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="7mG-BW-6KP"/>
+                                </connections>
+                            </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7f3-xZ-Wjd">
+                                <rect key="frame" x="0.0" y="323" width="375" height="344"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="btnPlayPause" destination="8La-i5-9cr" id="5ZS-pZ-tji"/>
+                        <outlet property="btnRecord" destination="1Pr-He-X0D" id="Dc6-0p-o8G"/>
+                        <outlet property="btnStop" destination="Htq-eo-NG5" id="8eN-di-OsN"/>
+                        <outlet property="btnUpload" destination="igg-OI-lB4" id="B9B-k0-By9"/>
+                        <outlet property="scrollView" destination="7f3-xZ-Wjd" id="56X-VK-suq"/>
+                        <outlet property="youtubePlayer" destination="12z-Af-cOy" id="ABm-hu-pDq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QP0-vJ-AAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1087,6 +1132,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5yR-md-8s8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4078" y="1016"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="uax-m8-37h">
+            <objects>
+                <viewController id="9ko-Sm-Ddh" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="X3B-bk-Mhu">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="upy-2d-XsV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="uTT-py-01T">
+            <objects>
+                <viewController id="R22-e5-jrL" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Woq-aH-F4p"/>
+                        <viewControllerLayoutGuide type="bottom" id="aZE-fQ-rbF"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="OVI-JM-6C5">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nB7-RK-7jK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
     <resources>

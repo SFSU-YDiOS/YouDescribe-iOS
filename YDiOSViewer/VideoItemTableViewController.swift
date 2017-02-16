@@ -15,6 +15,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
     var tableSize: Int = 25
+    var currentItem: String = "" // TODO: Figure out how to perform segue with argument
     lazy var searchBar = UISearchBar()
 
 
@@ -178,7 +179,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             style: .default,
             handler: {
                 (alert: UIAlertAction) -> Void in
-                self.performSegue(withIdentifier: "CreateDescriptionSegue", sender: nil)
+                self.currentItem = mediaId
+                self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
         })
         
         let viewAuthorsVideosAction = UIAlertAction(title: "View videos described by author", style: .default, handler: {
@@ -254,8 +256,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             searchResultsViewController.searchString = searchBar.text!
             searchResultsViewController.allMovies = allMovies
             searchResultsViewController.authorMap = authorMap
-        } else if segue.identifier == "CreateDescriptionSegue" {
+        } else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
+            createDescriptionViewController.mediaId = self.currentItem
         }
     }
     

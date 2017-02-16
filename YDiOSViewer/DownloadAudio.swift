@@ -197,7 +197,7 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
                     downloadTask: URLSessionDownloadTask,
                     didFinishDownloadingTo location: URL){
         print("Finally got here")
-        print(downloadTask.currentRequest?.url?.absoluteString)
+        print((downloadTask.currentRequest?.url?.absoluteString)! as String)
         let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
         let documentDirectoryPath:String = path[0]
         let fileManager = FileManager()
