@@ -64,8 +64,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         } catch let error {
             print(error)
         }
-        
-        
+
         // define the recorder setting
         let recorderSettings = [AVFormatIDKey: Int(kAudioFormatMPEG4AAC), AVSampleRateKey : 44100.0, AVNumberOfChannelsKey : 2 as NSNumber] as [String : Any]
         
@@ -115,6 +114,8 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     
     // to be called when the record button is pressed.
     func record() {
+        // pause the video if it is playing
+        youtubePlayer.pauseVideo()
         // stop the audio player before recording
         if let player = audioPlayer {
             if player.isPlaying {
@@ -122,9 +123,8 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                 btnPlayPause.setTitle("Play", for: UIControlState())
             }
         }
-        
-        // pause the video if it is playing
-        youtubePlayer.pauseVideo()
+
+
         
         // if we are not recording then start recording!
         if let recorder = audioRecorder {
@@ -133,6 +133,8 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                     let audioSession = AVAudioSession.sharedInstance()
                     try audioSession.setActive(true)    // make the recorder work
                     // start recording
+                    // giving time for video to stop
+                    sleep(1)
                     recorder.record()
                     btnRecord.setTitle("Stop", for: UIControlState())
                     print("Started recording..")
@@ -361,6 +363,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                 yPos = yPos + 50 + 5
             }
         }
+        self.yPos = Int(yPos)
     }
 
     func confirmDeleteClip(index: Int) {
