@@ -52,6 +52,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var tester: Int = 0
 
     var playerLayer = AVPlayerLayer()
+    @IBOutlet weak var duckingSwitch: UISwitch!
+    @IBOutlet weak var volumeWrapperView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +76,14 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         playerLayer=AVPlayerLayer(player: audioPlayer!)
         playerLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
         self.view.layer.addSublayer(playerLayer)
-
+        
+        self.duckingSwitch.isOn = false
+        // Audio duck if required.
+        let control = VolumeControl()
+        control.setVolume(0.0)
+        
+        // Make volume controller
+        control.drawControl(self.volumeWrapperView)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -519,7 +528,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 }
             }
             tabBarController.mediaId = self.movieID!
-            tabBarController.myString = "Testing"
+            tabBarController.myString = "Testing" // TODO: Remove this test
             tabBarController.movieTitle = self.currentMovieTitle!
         }
     }
