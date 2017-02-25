@@ -37,6 +37,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var doShowMissingAudioWarning: Bool = false
     var previousTime: Float = 0
     var displayAuthor: String?
+    var displayAuthorID: String?
+    var initialAuthorIndex: Int?
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
@@ -84,6 +86,21 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // Make volume controller
         control.drawControl(self.volumeWrapperView)
+
+        // select the right author in the pickerview
+        var row: Int = 0
+        print(self.authorMap)
+        for author in self.authorIdList {
+            print(author)
+            if self.authorMap[author] == self.displayAuthor {
+                break
+            }
+            row += 1
+        }
+        self.initialAuthorIndex = row
+        //self.currentAuthorId = self.authorIdList[row1]
+        authorPickerView.selectRow(self.initialAuthorIndex!, inComponent: 0, animated: false)
+        authorPickerView.reloadAllComponents()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -137,7 +154,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
         if (authorIds.count > 0) {
             self.currentAuthorId = authorIds[0]
-            self.currentAuthor = self.authorMap[currentAuthorId!]
+            self.currentAuthor = self.displayAuthor
         }
         else {
             if self.movieID != nil {
@@ -499,7 +516,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         let pickerLabel = UILabel()
         pickerLabel.textColor = UIColor.black

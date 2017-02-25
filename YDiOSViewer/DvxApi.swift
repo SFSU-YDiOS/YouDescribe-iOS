@@ -39,7 +39,7 @@ class DvxApi {
         let url:String! = getConstructedUrl("movie", params: params)
         return DvxXmlParser().makeRequest(url, separator: "movie")
     }
-    
+
     func getClips(_ params:[String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("clip/metadata", params: params)
         return DvxXmlParser().makeRequest(url, separator: "clip")
@@ -54,16 +54,30 @@ class DvxApi {
         let url:String! = getConstructedUrl("user", params: params)
         return DvxXmlParser().makeRequest(url, separator: "user")
     }
-    
+
     func addUser(_ params:[String: String]) {
         let url:String! = getConstructedUrl("user", params: params)
     }
-    
+
     func prepareForLogin(_ params: [String: String]) -> NSMutableURLRequest {
         return self.getPostRequest(urlString: apiBaseUrl + "login", params: params)
     }
-    
+
     func prepareForAddUser(_ params: [String: String]) -> NSMutableURLRequest {
         return self.getPostRequest(urlString: apiBaseUrl + "user", params: params)
+    }
+
+    func getMoviesSearchTable(_ params: [String: String]) -> Array<AnyObject> {
+        let url:String! = getConstructedUrl("searchTable", params: params)
+        return DvxXmlParser().makeRequest(url, separator: "searchTable")
+    }
+
+    func getMovieIdFromMediaId(allMovies: Array<AnyObject>, mediaId: String) -> String {
+        for movie in allMovies {
+            if movie["movieMediaId"]  as! String == mediaId {
+                return movie["movieId"] as! String
+            }
+        }
+        return "" // No movie is found
     }
 }

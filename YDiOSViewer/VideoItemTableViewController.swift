@@ -12,6 +12,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
     let dvxApi = DvxApi()
     var allMovies: [AnyObject] = []
+    var allMoviesSearch: [AnyObject] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
     var tableSize: Int = 25
@@ -36,8 +37,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         self.allMovies = dvxApi.getMovies([:])
         self.allMovies.reverse()
         self.allAuthors = dvxApi.getUsers([:])
+        self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
         self.authorMap = getAuthorMap()
-        print(self.authorMap)
         self.createSearchBar()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -107,15 +108,15 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! VideoItemTableViewCell
         cell.delegate = self
         // Populating the items
-        let videoItem: AnyObject  = self.allMovies[indexPath.row]
+        let videoItem: AnyObject  = self.allMoviesSearch[indexPath.row]
         cell.nameLabel.text = videoItem["movieName"] as? String
         var mediaId = ""
         mediaId = videoItem["movieMediaId"] as! String
         cell.descriptionLabel.text = "Media ID: " + mediaId
         cell.mediaId = mediaId
-        let movieAuthor = videoItem["movieAuthor"] as? String
-        if (movieAuthor != nil && self.authorMap[movieAuthor!] != nil) {
-            cell.describerLabel.text = "by " + self.authorMap[movieAuthor!]!
+        let clipAuthor = videoItem["userHandle"] as? String
+        if (clipAuthor != nil) {
+            cell.describerLabel.text = "by " + clipAuthor!
         }
         else {
             cell.describerLabel.text = "No description"
@@ -247,14 +248,17 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         if segue.identifier == "ShowVideoDetail" {
             let videoDetailViewController = segue.destination as! ViewController
             let selectedRow = self.tableView.indexPathForSelectedRow
-            let row : AnyObject? = self.allMovies[(selectedRow?.row)!]
-            videoDetailViewController.movieID = row?["movieMediaId"] as? String
+            let row : AnyObject? = self.allMoviesSearch[(selectedRow?.row)!]
+            videoDetailViewController.movieID =  row?["movieMediaId"] as? String
+
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
-            videoDetailViewController.displayAuthor = self.authorMap[(row?["movieAuthor"] as? String)!]
+            videoDetailViewController.displayAuthor = row?["userHandle"] as? String
+            videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String
         } else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchString = searchBar.text!
             searchResultsViewController.allMovies = allMovies
+            searchResultsViewController.allMoviesSearch = allMoviesSearch
             searchResultsViewController.authorMap = authorMap
         } else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
@@ -264,9 +268,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotated")
-        //self.searchBarHeader.setNeedsDisplay(self.searchBarHeader.frame)
-        //self.searchBarHeader.setNeedsLayout()
-        //self.searchBar.sizeToFit()
     }
 
     

@@ -40,6 +40,7 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
     @IBOutlet weak var searchHeader: UIView!
     var searchString: String = ""
     var allMovies : [AnyObject] = []
+    var allMoviesSearch : [AnyObject] = []
     var authorMap: [String:String] = [:]
     var filteredMovies: [AnyObject] = []
     lazy var searchBar = UISearchBar()
@@ -49,7 +50,7 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         super.viewDidLoad()
         self.createSearchBar()
         self.navigationItem.title = "Search Results"
-        
+
         // Setup notifications for the activity indicator
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityInProgressNotification"), object: nil, queue: nil) { notification in
             self.activityIndicator.startAnimating()
@@ -78,11 +79,11 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         searchHeader.addSubview(searchBar)
         searchBar.delegate = self
     }
-    
+
     func performSearch() {
         print(searchString)
         self.filteredMovies = []
-        for movieClip in self.allMovies {
+        for movieClip in self.allMoviesSearch {
             if ((movieClip["movieName"] as! String).matchPattern(patStr: searchString)==true)
             {
                 self.filteredMovies.append(movieClip)
