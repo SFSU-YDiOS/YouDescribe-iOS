@@ -10,7 +10,6 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
 
-    var myString: String = ""
     var preferredAuthor: String = ""
     var mediaId: String = ""
     var movieTitle: String = ""

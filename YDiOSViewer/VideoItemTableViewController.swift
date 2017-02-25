@@ -17,21 +17,12 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     var authorMap: [String:String] = [:]
     var tableSize: Int = 25
     var currentItem: String = "" // TODO: Figure out how to perform segue with argument
+    var currentAuthor: String = ""
     lazy var searchBar = UISearchBar()
 
 
     @IBOutlet weak var searchBarHeader: UIView!
-
-    override func loadView(){
-        super.loadView()
-        do {
-            try dvxApi.getUsers([:])
-        }
-        catch is Error {
-            print ("Could not connect to the server and parse.")
-            self.showDVXError()
-        }
-    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.allMovies = dvxApi.getMovies([:])
@@ -53,7 +44,12 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     }
 
     func showDVXError() {
-        let alertController = UIAlertController(title: "Error connecting to the server!", message: "Unable to retrieve YouDescribe data from the server. The server may be down. Exiting for now. Please try again later.", preferredStyle: .alert)
+        // Hide the views if no data could be retrieved
+        tableView.tableFooterView = UIView(frame: .zero)
+        tabBarController?.view = UIView(frame: .zero)
+        
+        // Display the alert controller and exit once the user confirms
+        let alertController = UIAlertController(title: "Error connecting to the server!", message: "Unable to retrieve YouDescribe data from the server. Either your phone may not be connected to the internet or the server may be down. Exiting for now. Please try again later.", preferredStyle: .alert)
 
         let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
             UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
@@ -92,12 +88,24 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        if self.allMoviesSearch.isEmpty {
+            self.showDVXError()
+            return 0
+        }
+        else {
+            return 1
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return tableSize
+        if self.allMoviesSearch.isEmpty {
+            return 0
+        }
+        else {
+            return tableSize
+        }
+        
     }
 
 
@@ -108,6 +116,10 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! VideoItemTableViewCell
         cell.delegate = self
         // Populating the items
+        if self.allMoviesSearch.isEmpty {
+            print ("Failed to connect to DVX")
+        }
+        else {
         let videoItem: AnyObject  = self.allMoviesSearch[indexPath.row]
         cell.nameLabel.text = videoItem["movieName"] as? String
         var mediaId = ""
@@ -115,6 +127,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         cell.descriptionLabel.text = "Media ID: " + mediaId
         cell.mediaId = mediaId
         let clipAuthor = videoItem["userHandle"] as? String
+        cell.author = clipAuthor
         if (clipAuthor != nil) {
             cell.describerLabel.text = "by " + clipAuthor!
         }
@@ -134,7 +147,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
                 cell.thumbnailView.image = UIImage(data: data as! Data)
             }
         }
-
+        }
         return cell
     }
  
@@ -166,7 +179,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     }
     
     
-    func showItemMenu(mediaId: String) {
+    func showItemMenu(mediaId: String, author: String) {
         let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(
             title: "Cancel",
@@ -186,6 +199,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         
         let viewAuthorsVideosAction = UIAlertAction(title: "View videos described by author", style: .default, handler: {
             (alert: UIAlertAction) -> Void in
+            self.currentAuthor = author
+            self.performSegue(withIdentifier: "ShowAuthorMoviesSegue", sender: nil)
         })
 
         optionMenu.addAction(cancelAction)
@@ -235,9 +250,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     */
 
 
-    func showCellDetailMenu(mediaId: String) {
+    func showCellDetailMenu(mediaId: String, author: String) {
         print("The media ID from the cell is \(mediaId)")
-        self.showItemMenu(mediaId: mediaId)
+        self.showItemMenu(mediaId: mediaId, author: author)
     }
     // MARK: - Navigation
 
@@ -263,6 +278,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         } else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
+        } else if segue.identifier == "ShowAuthorMoviesSegue" {
+            let authorMoviesViewController = segue.destination as! AuthorMoviesTableTableViewController
+            authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
+
+            authorMoviesViewController.preferredAuthor = self.currentAuthor
         }
     }
     

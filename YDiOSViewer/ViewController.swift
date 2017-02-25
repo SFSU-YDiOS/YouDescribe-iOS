@@ -98,7 +98,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             row += 1
         }
         self.initialAuthorIndex = row
-        //self.currentAuthorId = self.authorIdList[row1]
         authorPickerView.selectRow(self.initialAuthorIndex!, inComponent: 0, animated: false)
         authorPickerView.reloadAllComponents()
     }
@@ -545,7 +544,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 }
             }
             tabBarController.mediaId = self.movieID!
-            tabBarController.myString = "Testing" // TODO: Remove this test
             tabBarController.movieTitle = self.currentMovieTitle!
         }
     }

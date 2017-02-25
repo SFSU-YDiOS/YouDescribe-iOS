@@ -9,7 +9,7 @@
 import UIKit
 
 protocol VideoItemTableViewCellDelegate {
-    func showCellDetailMenu(mediaId: String)
+    func showCellDetailMenu(mediaId: String, author: String)
 }
 
 class VideoItemTableViewCell: UITableViewCell {
@@ -20,6 +20,7 @@ class VideoItemTableViewCell: UITableViewCell {
     @IBOutlet weak var describerLabel: UILabel!
     @IBOutlet weak var btnDetail: UIButton!
     var mediaId: String!
+    var author: String!
     var delegate: VideoItemTableViewCellDelegate!
 
     override func awakeFromNib() {
@@ -34,7 +35,7 @@ class VideoItemTableViewCell: UITableViewCell {
     }
 
     @IBAction func showDetailAction(_ sender: Any) {
-        self.delegate.showCellDetailMenu(mediaId: self.mediaId)
+        self.delegate.showCellDetailMenu(mediaId: self.mediaId, author: self.author)
         print("Clicked here")
     }
 }
