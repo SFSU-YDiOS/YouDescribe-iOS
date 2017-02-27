@@ -102,6 +102,7 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
             resultTableViewController.displayMovies = self.filteredMovies
             resultTableViewController.authorMap = self.authorMap
             resultTableViewController.searchString = self.searchString
+            resultTableViewController.allMoviesSearch = self.allMoviesSearch
         }
     }
 

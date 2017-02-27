@@ -12,11 +12,15 @@ import SwiftyJSON
 class SearchResultsTableViewController: UITableViewController, SearchResultTableViewCellDelegate {
 
     var searchString: String = ""
+    var allMoviesSearch: [AnyObject] = []
     var filteredMovies: [AnyObject] = []
     var youDescribeMovies: [AnyObject] = []
     var displayMovies: [AnyObject] = []
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
+
+    var currentAuthor: String = ""
+    var currentItem : String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,19 +79,23 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
         // Table view cells are reused and should be dequeued using a cell identifier.
         let cellIdentifier = "SearchResultsTableViewCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SearchResultsTableViewCell
-        
+        cell.delegate = self
+
         // Populating the items
         let videoItem: AnyObject  = self.filteredMovies[indexPath.row]
         cell.nameLabel.text = videoItem["movieName"] as? String
         var mediaId = ""
         mediaId = videoItem["movieMediaId"] as! String
+        cell.mediaId = mediaId
         cell.descriptionLabel.text = "Media ID: " + mediaId
         let clipAuthor = videoItem["userHandle"] as? String
         if (clipAuthor != nil) {
             cell.descriptionLabel.text = "by " + clipAuthor!
+            cell.author = clipAuthor
         }
         else {
             cell.descriptionLabel.text = "No description"
+            cell.author = "None"
         }
         var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
         
@@ -158,7 +166,15 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             else {
                 videoDetailViewController.displayAuthor = "None"
             }
-
+        }
+        else if segue.identifier == "ShowAuthorMoviesSegue" {
+            let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController
+            authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
+            authorMoviesViewController.preferredAuthor = self.currentAuthor
+        }
+        else if segue.identifier == "ShowCreateDescriptionSegue" {
+            let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
+            createDescriptionViewController.mediaId = self.currentItem
         }
     }
     
@@ -180,16 +196,16 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             style: .default,
             handler: {
                 (alert: UIAlertAction) -> Void in
-                //self.currentItem = mediaId
+                self.currentItem = mediaId
                 self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
         })
 
         let viewAuthorsVideosAction = UIAlertAction(title: "List videos described by \(author)", style: .default, handler: {
             (alert: UIAlertAction) -> Void in
-            //self.currentAuthor = author
+            self.currentAuthor = author
             self.performSegue(withIdentifier: "ShowAuthorMoviesSegue", sender: nil)
         })
-        
+
         optionMenu.addAction(cancelAction)
         // show only if the user is logged in
         let preferences = UserDefaults.standard

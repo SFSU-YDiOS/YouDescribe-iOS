@@ -29,7 +29,7 @@ class TabBarViewController: UITabBarController {
         detailRequest = barViewControllers?[2] as? DetailRequestViewController
         print(self.preferredAuthor)
         print(self.mediaId)
-        
+
         // assign the mediaId
         detailInfo?.mediaId = self.mediaId
         detailRequest?.mediaId = self.mediaId

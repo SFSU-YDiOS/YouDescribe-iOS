@@ -15,11 +15,12 @@ protocol SearchResultTableViewCellDelegate {
 class SearchResultsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nameLabel: UILabel!
-    
     @IBOutlet weak var descriptionLabel: UILabel!
-    
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var btnMenu: UIButton!
+    var delegate: SearchResultTableViewCellDelegate!
+    var mediaId: String!
+    var author: String!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,7 +33,7 @@ class SearchResultsTableViewCell: UITableViewCell {
     }
     
     @IBAction func onMenuClicked(_ sender: Any) {
-        
+        self.delegate.showCellDetailMenu(mediaId: self.mediaId, author: self.author)
     }
 
 }

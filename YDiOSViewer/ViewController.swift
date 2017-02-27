@@ -45,18 +45,18 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
     @IBOutlet weak var playerLabel: UILabel!
-    @IBOutlet weak var playButton: UIButton!
+
     //@IBOutlet weak var authorText: UITextField!
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
-    //@IBOutlet weak var detailView: UITextView!
-    @IBOutlet weak var tabViewContainer: UIView!
-    
-    @IBOutlet weak var stackViewMain: UIStackView!
     var tester: Int = 0
 
     var playerLayer = AVPlayerLayer()
     @IBOutlet weak var volumeWrapperView: UIView!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
+    @IBOutlet weak var aboutButton: UIBarButtonItem!
+    @IBOutlet weak var audioVolumeSlider: UISlider!
+    @IBOutlet weak var playButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,7 +85,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         control.setVolume(0.0)
         
         // Make volume controller
-        control.drawControl(self.volumeWrapperView)
+        //control.drawControl(self.volumeWrapperView)
 
         // select the right author in the pickerview
         var row: Int = 0
@@ -100,6 +100,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.initialAuthorIndex = row
         authorPickerView.selectRow(self.initialAuthorIndex!, inComponent: 0, animated: false)
         authorPickerView.reloadAllComponents()
+        
+        // Remove the back button
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -571,9 +574,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         pickerLabel.textAlignment = NSTextAlignment.center
         
         // Post about the author change.
-        NotificationCenter.default.post(name: NSNotification.Name("AuthorChangeNotification"), object: pickerLabel.text)
+        //NotificationCenter.default.post(name: NSNotification.Name("AuthorChangeNotification"), object: pickerLabel.text)
         return pickerLabel
     }
+
     // Prepare for Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "EmbeddedTabViewController" {
@@ -592,12 +596,99 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             tabBarController.mediaId = self.movieID!
             tabBarController.movieTitle = self.currentMovieTitle!
         }
+        else if segue.identifier == "ShowAboutSegue" {
+            let aboutController = segue.destination as! DetailInfoViewController
+            aboutController.mediaId = self.movieID!
+            aboutController.audioClips = self.allAudioClips
+            aboutController.videoDuration = Float(youtubePlayer.duration())
+            if self.currentAuthorId != nil {
+            aboutController.currentAuthor = self.currentAuthorId!
+            }
+            else {
+                aboutController.currentAuthor = "None"
+            }
+        }
     }
-    
+
     // TODO: Orientation change.
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         print("Transitioning....")
     }
+
+    @IBAction func onShareButtonClicked(_ sender: Any) {
+        self.showShareMenu()
+    }
+    
+    @IBAction func onAboutButtonClicked(_ sender: Any) {
+        self.performSegue(withIdentifier: "ShowAboutSegue", sender: nil)
+        
+    }
+
+    @IBAction func audioVolumeSliderChanged(_ sender: Any) {
+        audioPlayer?.volume = self.audioVolumeSlider.value
+    }
+
+    func showShareMenu() {
+        let socialHelper = SocialHelper(mediaId: self.movieID!, author: self.displayAuthor!, movieTitle: self.currentMovieTitle!)
+        let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+        })
+
+        let shareVideoAction = UIAlertAction(
+            title: "Share video",
+            style: .default,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+                let objectsToShare = socialHelper.getShareOnSocialMediaObject()
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                activityVC.excludedActivityTypes = [UIActivityType.airDrop,
+                                                    UIActivityType.addToReadingList]
+                self.present(activityVC, animated: true, completion: nil)
+        })
+
+        var addWord = "a "
+        if self.authorIdList.count > 0 {
+            addWord = "another "
+        }
+        let requestDescriptionAction = UIAlertAction(
+            title: "Request \(addWord)description",
+            style: .default,
+            handler: {
+            (alert: UIAlertAction) -> Void in
+            let objectsToShare = socialHelper.getRequestDescriptionObject()
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityVC.excludedActivityTypes = [UIActivityType.airDrop,
+                                                UIActivityType.addToReadingList]
+            self.present(activityVC, animated: true, completion: nil)
+        })
+
+        let copyLinkAction = UIAlertAction(
+            title: "Copy link to clipboard",
+            style: .default,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+                socialHelper.copyLinkToClipboard()
+        })
+
+        let copyCodeAction = UIAlertAction(
+            title: "Copy embedable code to clipboard",
+            style: .default,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+                socialHelper.copyEmbedCodeToClipboard()
+        })
+        optionMenu.addAction(cancelAction)
+        optionMenu.addAction(shareVideoAction)
+        optionMenu.addAction(requestDescriptionAction)
+        optionMenu.addAction(copyLinkAction)
+        optionMenu.addAction(copyCodeAction)
+        self.present(optionMenu, animated: true, completion: nil)
+    }
+
 
 }
 

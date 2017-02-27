@@ -12,6 +12,9 @@ import SwiftyJSON
 class DetailInfoViewController: UIViewController {
 
     var mediaId: String = ""
+    var currentAuthor: String = ""
+    var audioClips: [AnyObject] = []
+    var videoDuration: Float = 0.0
     var apiKey: String = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
     var ytItem:[String:String] = [:]
 
@@ -23,10 +26,19 @@ class DetailInfoViewController: UIViewController {
     @IBOutlet weak var dislikesCount: UILabel!
     @IBOutlet weak var scrollableView: UIView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var completenessLabel: UILabel!
+    @IBOutlet weak var viewsYDCount: UILabel!
+    @IBOutlet var mainView: UIView!
+
+    @IBOutlet weak var mainScrollView: UIScrollView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-    
+        print(self.audioClips)
+        print(self.videoDuration)
+        self.mainView.isAccessibilityElement = false
+        self.mainScrollView.isAccessibilityElement = false
+        self.scrollableView.isAccessibilityElement = false
         getInfo()
     }
 
@@ -59,16 +71,71 @@ class DetailInfoViewController: UIViewController {
                         self.viewsCount.text = self.ytItem["movieStatViewCount"]
                         self.likesCount.text = self.ytItem["movieStatLikeCount"]
                         self.dislikesCount.text = self.ytItem["movieStatDislikeCount"]
+                        self.completenessLabel.text = self.getDescriptionCompleteness()
+                        self.viewsYDCount.text = "\(self.getMaxViewCount())"
                         self.heightConstraint.constant = self.heightConstraint.constant + CGFloat((self.descriptionContent.text?.characters.count)!)
                             self.updateViewConstraints()
-                        print(self.heightConstraint.constant)
                     }
-                    
                 }
             }
         }
         task.resume()
+    }
 
+    func getDescriptionCompleteness() -> String {
+        let effort = self.getDescriptionEffort()
+        if effort < 0 {
+            return "Unavailable"
+        }
+        else if effort < 0.25 {
+            return "Incomplete"
+        }
+        else if effort < 0.75 {
+            return "Underdescribed"
+        }
+        else {
+            return "Well Described"
+        }
+    }
+
+    // returns the greatest clip download count from among all the clips.
+    func getMaxViewCount() -> Int {
+        var count: Int = 0
+        for clip in self.audioClips {
+            if clip["clipAuthor"] as! String == self.currentAuthor {
+                if Int(clip["clipDownloadCount"] as! String)! > count {
+                    count = Int(clip["clipDownloadCount"] as! String)!
+                }
+            }
+        }
+        return count
+    }
+
+    // returns a description density to determine the quality
+    func getDescriptionEffort() -> Float {
+
+        var numberOfClips: Float = 0
+        var firstClipStartTime: Float = -1
+        var lastClipStartTime: Float = -1
+        var totalVideoDuration: Float = -1
+
+        for clip in self.audioClips {
+            if clip["clipAuthor"] as! String == self.currentAuthor {
+                numberOfClips += 1
+                if firstClipStartTime < 0 {
+                    firstClipStartTime = Float(clip["clipStartTime"] as! String)!
+                }
+                lastClipStartTime = Float(clip["clipStartTime"] as! String)!
+            }
+        }
+        totalVideoDuration = self.videoDuration
+
+        if numberOfClips > 0 && firstClipStartTime >= 0 && lastClipStartTime >= 0 && totalVideoDuration > 0 {
+            return ((lastClipStartTime - firstClipStartTime) / totalVideoDuration) * ( numberOfClips / ( totalVideoDuration / 60.0 ))
+        }
+        else {
+            return -1
+        }
     }
 }
 
