@@ -17,6 +17,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var failedAudioUrls:[URL] = []
     var audioPlayerItem:AVPlayerItem?
     var audioPlayer:AVPlayer?
+    var avAudioPlayer:AVAudioPlayer?
     var allAudioClips: [AnyObject] = []
     var audioClips: [AnyObject] = []
     var activeAudioIndex:Int = 0
@@ -39,6 +40,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var displayAuthor: String?
     var displayAuthorID: String?
     var initialAuthorIndex: Int?
+    var currentClipType: Int?
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
@@ -54,7 +56,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var tester: Int = 0
 
     var playerLayer = AVPlayerLayer()
-    @IBOutlet weak var duckingSwitch: UISwitch!
     @IBOutlet weak var volumeWrapperView: UIView!
 
     override func viewDidLoad() {
@@ -79,7 +80,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         playerLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
         self.view.layer.addSublayer(playerLayer)
         
-        self.duckingSwitch.isOn = false
         // Audio duck if required.
         let control = VolumeControl()
         control.setVolume(0.0)
@@ -108,6 +108,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.reset()
         }
     }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -123,6 +124,48 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         view.endEditing(true)
     }
 
+    // Audio session control
+    private func activateAudioSession() {
+        let session = AVAudioSession.sharedInstance()
+
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.interruptSpokenAudioAndMixWithOthers)
+            try session.setActive(true)
+            audioPlayer?.play()
+            audioPlayer?.volume = 10.0
+        } catch let error as Error {
+            print ("audio session error occured")
+            print(error)
+        }
+
+    }
+    
+    private func deactivateAudioSession() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setActive(false)
+            //session.setActive(false, with: AVAudioSessionCategoryOptions.duckOthers)
+        }
+        catch let error as Error {
+            print("deactivate error")
+            print(error)
+        }
+    }
+
+    func reactivateSession() {
+        audioPlayer?.pause()
+        let session = AVAudioSession.sharedInstance()
+        
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayback)
+            try session.setActive(true)
+            //audioPlayer?.pause()
+        } catch let error as Error {
+            print ("audio session error occured")
+            print(error)
+        }
+        
+    }
     // Loads all the audio clips based on the selected MediaId
     func loadClips() {
         // get the movieID of the clip
@@ -197,18 +240,19 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Play the audio - Also tries to precache the next audio clip as the current is playing
     func playAudio() {
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.playerDidFinishPlaying(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
+        //self.activateAudioSession()
         audioPlayer?.play()
         self.isAudioPlaying = true
-
+        
         // Pre-cache the next clip
         if self.audioClips.count > 0 && activeAudioIndex < self.audioClips.count-1 {
             self.nextAudioUrl = self.downloadAudioUrls[activeAudioIndex+1] as NSURL
         }
     }
     
-
     // Called when the audio clip finishes playing
     func playerDidFinishPlaying(_ note: Notification) {
+        //self.reactivateSession()
         self.isAudioPlaying = false
         print("Resume video playing:")
         youtubePlayer.playVideo()
@@ -383,6 +427,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
                         print("Pausing Video")
                         youtubePlayer.pauseVideo()
+                        self.currentClipType = 0
                         print("Playing Audio")
                         playAudio()
                     }
@@ -390,6 +435,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 else {
                     if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
+                        self.currentClipType = 1
                         playAudio()
                     }
                 }

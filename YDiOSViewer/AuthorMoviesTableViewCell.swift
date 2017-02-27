@@ -12,7 +12,7 @@ class AuthorMoviesTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblMovieName: UILabel!
     @IBOutlet weak var lblAuthorName: UILabel!
-    @IBOutlet weak var imgViewThumbnail: UIImageView!
+    @IBOutlet weak var thumbnailView: UIImageView!
 
     override func awakeFromNib() {
         super.awakeFromNib()

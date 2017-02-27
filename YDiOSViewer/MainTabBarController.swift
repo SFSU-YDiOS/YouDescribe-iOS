@@ -33,6 +33,7 @@ class MainTabBarController: UITabBarController {
             }
 
             self.setViewControllers(self.loggedOutViewControllers, animated: false)
+
         }
 
         NotificationCenter.default.addObserver(forName: NSNotification.Name("LoginNotification"), object: nil, queue: nil) { notification in
@@ -53,6 +54,9 @@ class MainTabBarController: UITabBarController {
             self.setViewControllers(self.loggedOutViewControllers, animated: false)
             // Show the login screen
         }
+        
+        // Remove the back button
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {

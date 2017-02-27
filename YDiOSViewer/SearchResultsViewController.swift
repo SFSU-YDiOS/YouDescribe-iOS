@@ -58,10 +58,6 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityCompletedNotification"), object: nil, queue: nil) { notification in
             self.activityIndicator.stopAnimating()
         }
-        //self.performSearch()
-        // call the segue
-        
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {

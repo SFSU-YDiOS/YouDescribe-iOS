@@ -120,33 +120,33 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             print ("Failed to connect to DVX")
         }
         else {
-        let videoItem: AnyObject  = self.allMoviesSearch[indexPath.row]
-        cell.nameLabel.text = videoItem["movieName"] as? String
-        var mediaId = ""
-        mediaId = videoItem["movieMediaId"] as! String
-        cell.descriptionLabel.text = "Media ID: " + mediaId
-        cell.mediaId = mediaId
-        let clipAuthor = videoItem["userHandle"] as? String
-        cell.author = clipAuthor
-        if (clipAuthor != nil) {
-            cell.describerLabel.text = "by " + clipAuthor!
-        }
-        else {
-            cell.describerLabel.text = "No description"
-        }
-        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
-
-        if thumbnailUrl == nil {
-            thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
-        } else {
-            var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-            if data == nil {
-                data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
+            let videoItem: AnyObject  = self.allMoviesSearch[indexPath.row]
+            cell.nameLabel.text = videoItem["movieName"] as? String
+            var mediaId = ""
+            mediaId = videoItem["movieMediaId"] as! String
+            cell.descriptionLabel.text = "Media ID: " + mediaId
+            cell.mediaId = mediaId
+            let clipAuthor = videoItem["userHandle"] as? String
+            cell.author = clipAuthor
+            if (clipAuthor != nil) {
+                cell.describerLabel.text = "by " + clipAuthor!
             }
             else {
-                cell.thumbnailView.image = UIImage(data: data as! Data)
+                cell.describerLabel.text = "No description"
             }
-        }
+            var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
+
+            if thumbnailUrl == nil {
+                thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
+            } else {
+                var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
+                if data == nil {
+                    data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
+                }
+                else {
+                    cell.thumbnailView.image = UIImage(data: data as! Data)
+                }
+            }
         }
         return cell
     }
@@ -196,8 +196,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
                 self.currentItem = mediaId
                 self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
         })
-        
-        let viewAuthorsVideosAction = UIAlertAction(title: "View videos described by author", style: .default, handler: {
+
+        let viewAuthorsVideosAction = UIAlertAction(title: "List videos described by \(author)", style: .default, handler: {
             (alert: UIAlertAction) -> Void in
             self.currentAuthor = author
             self.performSegue(withIdentifier: "ShowAuthorMoviesSegue", sender: nil)
@@ -213,41 +213,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
         self.present(optionMenu, animated: true, completion: nil)
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
 
     func showCellDetailMenu(mediaId: String, author: String) {
@@ -269,17 +234,20 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = row?["userHandle"] as? String
             videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String
-        } else if segue.identifier == "DisplaySearchResultsSegue" {
+        }
+        else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchString = searchBar.text!
             searchResultsViewController.allMovies = allMovies
             searchResultsViewController.allMoviesSearch = allMoviesSearch
             searchResultsViewController.authorMap = authorMap
-        } else if segue.identifier == "ShowCreateDescriptionSegue" {
+        }
+        else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
-        } else if segue.identifier == "ShowAuthorMoviesSegue" {
-            let authorMoviesViewController = segue.destination as! AuthorMoviesTableTableViewController
+        }
+        else if segue.identifier == "ShowAuthorMoviesSegue" {
+            let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController
             authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
 
             authorMoviesViewController.preferredAuthor = self.currentAuthor

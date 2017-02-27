@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyJSON
 
-class SearchResultsTableViewController: UITableViewController {
+class SearchResultsTableViewController: UITableViewController, SearchResultTableViewCellDelegate {
 
     var searchString: String = ""
     var filteredMovies: [AnyObject] = []
@@ -45,12 +45,6 @@ class SearchResultsTableViewController: UITableViewController {
             }
             self.tableView.reloadData()
         }
-        //self.createSearchController()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
     override func didReceiveMemoryWarning() {
@@ -99,16 +93,15 @@ class SearchResultsTableViewController: UITableViewController {
         
         if thumbnailUrl == nil {
             thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
-        } else {
-            var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-            if data == nil {
-                data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-            }
-            else {
-                cell.thumbnailView.image = UIImage(data: data as! Data)
-            }
+        }
+        var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
+        if data == nil {
+            data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
         }
         
+        cell.thumbnailView.image = UIImage(data: data as! Data)
+
+
         return cell
     }
     
@@ -134,7 +127,7 @@ class SearchResultsTableViewController: UITableViewController {
                         ytItem["movieMediaId"] = item["id"]["videoId"].stringValue
                         ytItem["movieName"] = item["snippet"]["title"].stringValue
                         ytItem["movieCreator"] = item["snippet"]["channelTitle"].stringValue
-                        ytItem["movieAuthor"] = ""
+                        ytItem["clipAuthor"] = ""
                         self.filteredMovies.append(ytItem as AnyObject)
                         self.displayMovies.append(ytItem as AnyObject)
                     }
@@ -168,6 +161,42 @@ class SearchResultsTableViewController: UITableViewController {
 
         }
     }
-
     
+    func showCellDetailMenu(mediaId: String, author: String) {
+        self.showItemMenu(mediaId: mediaId, author: author)
+    }
+    
+    func showItemMenu(mediaId: String, author: String) {
+        let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+        })
+
+        let createDescriptionAction = UIAlertAction(
+            title: "Create description",
+            style: .default,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+                //self.currentItem = mediaId
+                self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
+        })
+
+        let viewAuthorsVideosAction = UIAlertAction(title: "List videos described by \(author)", style: .default, handler: {
+            (alert: UIAlertAction) -> Void in
+            //self.currentAuthor = author
+            self.performSegue(withIdentifier: "ShowAuthorMoviesSegue", sender: nil)
+        })
+        
+        optionMenu.addAction(cancelAction)
+        // show only if the user is logged in
+        let preferences = UserDefaults.standard
+        if preferences.object(forKey: "session") != nil {
+            optionMenu.addAction(createDescriptionAction)
+        }
+        optionMenu.addAction(viewAuthorsVideosAction)
+        self.present(optionMenu, animated: true, completion: nil)
+    }
 }
