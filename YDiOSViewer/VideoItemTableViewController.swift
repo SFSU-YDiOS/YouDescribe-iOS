@@ -165,13 +165,13 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         let tableViewContentSizeHeight = tableView.contentSize.height
         let tableViewOffset = tableView.contentOffset.y
         if tableViewOffset + tableViewHeight == tableViewContentSizeHeight {
-            if tableSize + 15 <= self.allMovies.count {
+            if tableSize + 15 <= self.allMoviesSearch.count {
                 tableSize += 15
                 print(tableSize)
                 tableView.reloadData()
             }
             else {
-                tableSize = self.allMovies.count
+                tableSize = self.allMoviesSearch.count
                 print(tableSize)
                 tableView.reloadData()
             }
@@ -245,6 +245,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
+            createDescriptionViewController.allMovies = self.allMovies
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController

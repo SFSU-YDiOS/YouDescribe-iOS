@@ -12,6 +12,9 @@
 		1F1B67AD1E63E7C5007A2B50 /* SocialHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */; };
 		1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */; };
 		1F6526DD1E4D1E1500B5A59E /* CreateDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */; };
+		1F6895D81E6891480049A8C4 /* DvxUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D71E6891480049A8C4 /* DvxUpload.swift */; };
+		1F6895DA1E68A3EB0049A8C4 /* YouTubeApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */; };
+		1F6895DC1E68E02F0049A8C4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895DB1E68E02F0049A8C4 /* Constants.swift */; };
 		1F6C6EA91E5ED76A00AB4D07 /* VolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EA81E5ED76A00AB4D07 /* VolumeControl.swift */; };
 		1F6C6EAD1E617C5000AB4D07 /* AuthorMoviesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EAC1E617C4F00AB4D07 /* AuthorMoviesTableViewController.swift */; };
 		1F6C6EAF1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EAE1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift */; };
@@ -66,6 +69,9 @@
 		1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialHelper.swift; sourceTree = "<group>"; };
 		1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDescriptionViewController.swift; sourceTree = "<group>"; };
+		1F6895D71E6891480049A8C4 /* DvxUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxUpload.swift; sourceTree = "<group>"; };
+		1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeApi.swift; sourceTree = "<group>"; };
+		1F6895DB1E68E02F0049A8C4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1F6C6EA81E5ED76A00AB4D07 /* VolumeControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeControl.swift; sourceTree = "<group>"; };
 		1F6C6EAC1E617C4F00AB4D07 /* AuthorMoviesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorMoviesTableViewController.swift; sourceTree = "<group>"; };
 		1F6C6EAE1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorMoviesTableViewCell.swift; sourceTree = "<group>"; };
@@ -197,7 +203,10 @@
 				1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */,
 				897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */,
 				89859B3C1D9B9C7E00785D6F /* Main.storyboard */,
+				1F6895DB1E68E02F0049A8C4 /* Constants.swift */,
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
+				1F6895D71E6891480049A8C4 /* DvxUpload.swift */,
+				1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */,
 				1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */,
 				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
 				8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */,
@@ -438,9 +447,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				89DA3AB31DEA9BB1002719BA /* VideoItemTableViewCell.swift in Sources */,
+				1F6895D81E6891480049A8C4 /* DvxUpload.swift in Sources */,
 				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
 				1FCCD8981E47131A008FEC85 /* MainTabBarController.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
+				1F6895DC1E68E02F0049A8C4 /* Constants.swift in Sources */,
 				1F6C6EAD1E617C5000AB4D07 /* AuthorMoviesTableViewController.swift in Sources */,
 				1FCCD89A1E47F710008FEC85 /* RegisterViewController.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
@@ -454,6 +465,7 @@
 				1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */,
 				89859B391D9B9C7E00785D6F /* AppDelegate.swift in Sources */,
 				8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */,
+				1F6895DA1E68A3EB0049A8C4 /* YouTubeApi.swift in Sources */,
 				897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */,
 				8975702E1D9C0AE300EAFF49 /* DvxApi.swift in Sources */,
 				89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */,

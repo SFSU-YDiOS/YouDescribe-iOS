@@ -67,6 +67,10 @@ class DvxApi {
         return self.getPostRequest(urlString: apiBaseUrl + "user", params: params)
     }
 
+    func prepareForAddMovie(_ params: [String: String]) -> NSMutableURLRequest {
+        return self.getPostRequest(urlString: apiBaseUrl + "movie", params: params)
+    }
+
     func getMoviesSearchTable(_ params: [String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("searchTable", params: params)
         return DvxXmlParser().makeRequest(url, separator: "searchTable")
@@ -80,4 +84,6 @@ class DvxApi {
         }
         return "" // No movie is found
     }
+    
+    
 }

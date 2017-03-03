@@ -15,6 +15,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
     var allMoviesSearch: [AnyObject] = []
     var filteredMovies: [AnyObject] = []
     var youDescribeMovies: [AnyObject] = []
+    var allMovies: [AnyObject] = []
     var displayMovies: [AnyObject] = []
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
@@ -175,6 +176,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
         else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
+            createDescriptionViewController.allMovies = self.allMovies
         }
     }
     

@@ -11,7 +11,11 @@ import AVFoundation
 
 class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
 
+    let dvxApi = DvxApi()
+    let youTubeApi = YouTubeApi()
     var mediaId: String!
+    var movieId: String!
+    var youTubeInfo: [String:String] = [:]
     var audioRecorder: AVAudioRecorder!
     var audioPlayer: AVAudioPlayer?
     var currentAudioFileDirectory: URL!
@@ -20,6 +24,9 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     var totalUploadedClips: Int!
     var yPos: Int!
     var audioClips: [AudioClip]!
+    var allMovies: [AnyObject] = []
+    var userId: String = ""
+    var userToken: String = ""
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     @IBOutlet weak var btnPlayPause: UIButton!
@@ -44,13 +51,67 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         setUpAudioRecord()
         self.yPos = 0
         self.audioClips = []
+
+        // Set the user ID
+        let preferences = UserDefaults.standard
+        if preferences.object(forKey: "session") != nil {
+            let user = dvxApi.getUsers(["LoginName": preferences.object(forKey: "username") as! String ])[0]
+            self.userId = user["userId"] as! String
+            self.userToken = preferences.object(forKey: "session") as! String
+        }
+        else {
+            // TODO: Handle the case where the user's session has expired and might need to login again.
+        }
+
+        // Get the YouTube Info for this video, and the movie ID
+        youTubeApi.getInfo(mediaId: self.mediaId, finished: { item in
+            self.youTubeInfo = item
+            // Call this only once we have all the info
+            self.setOrCreateMovie()
+        })
+
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
+    // Returns the movie ID. If one already exists,
+    func setOrCreateMovie() {
+        self.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.mediaId)
+        print("Returning an existing movie ID: \(self.movieId)")
+        if self.movieId == "" {
+            // Create a new movie and return the movie Id
+            let request = dvxApi.prepareForAddMovie(["AppId": Constants.APP_ID,
+                                                     "MediaId": self.mediaId,
+                                                     "Title": self.youTubeInfo["movieName"]!,
+                                                     "Language": "English",
+                                                     "Summary": "",
+                                                     "Token": self.userToken,
+                                                     "UserId": self.userId])
+            let session = URLSession.shared
+            let task = session.dataTask(with: request as URLRequest, completionHandler: {
+                (data, response, error) in
+                let result = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+                if let httpResponse = response as? HTTPURLResponse
+                {
+                    if httpResponse.statusCode != 200 || result != "OK" {
+                        print("Error: Failed creating a movie object: returned status \(httpResponse.statusCode)")
+                        print(error ?? "Unknown error")
+                    }
+                    else {
+                        // Re-read all the movies
+                        self.allMovies = self.dvxApi.getMovies([:])
+                        self.movieId = self.dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.mediaId)
+                        print("Created a new Movie Id: \(self.movieId)")
+                    }
+                }
+            })
+            task.resume()
+        }
+    }
+
     func setUpAudioRecord()
     {
         // set up the audio file
@@ -101,7 +162,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             }
         }
     }
-    
+
     // to be called when the cancel button is pressed.
     func cancel() {
         if let player = audioPlayer {
@@ -124,8 +185,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             }
         }
 
-
-        
         // if we are not recording then start recording!
         if let recorder = audioRecorder {
             if !recorder.isRecording {
@@ -327,7 +386,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
         }
     }
-    
+
     func nudgeLeftMillisecClip(_ button: UIButton!) {
         let audioClip = self.audioClips[button.tag]
         if audioClip.startSeconds > 0 {
@@ -336,7 +395,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
         }
     }
-    
+
     func nudgeRightSecClip(_ button: UIButton!) {
         let audioClip = self.audioClips[button.tag]
         if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip
@@ -345,7 +404,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
         }
     }
-    
+
     func nudgeRightMillisecClip(_ button: UIButton!) {
         let audioClip = self.audioClips[button.tag]
         if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip

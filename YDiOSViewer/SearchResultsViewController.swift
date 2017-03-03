@@ -103,6 +103,7 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
             resultTableViewController.authorMap = self.authorMap
             resultTableViewController.searchString = self.searchString
             resultTableViewController.allMoviesSearch = self.allMoviesSearch
+            resultTableViewController.allMovies = self.allMovies
         }
     }
 
