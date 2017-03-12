@@ -19,7 +19,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
     var displayMovies: [AnyObject] = []
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
-
+    var startEditMode: Bool = false
     var currentAuthor: String = ""
     var currentItem : String = ""
 
@@ -177,6 +177,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.isEditMode = self.startEditMode
         }
     }
     
@@ -193,27 +194,33 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
                 (alert: UIAlertAction) -> Void in
         })
 
-        let createDescriptionAction = UIAlertAction(
-            title: "Create description",
-            style: .default,
-            handler: {
-                (alert: UIAlertAction) -> Void in
-                self.currentItem = mediaId
-                self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
-        })
-
         let viewAuthorsVideosAction = UIAlertAction(title: "List videos described by \(author)", style: .default, handler: {
             (alert: UIAlertAction) -> Void in
             self.currentAuthor = author
             self.performSegue(withIdentifier: "ShowAuthorMoviesSegue", sender: nil)
         })
 
-        optionMenu.addAction(cancelAction)
         // show only if the user is logged in
         let preferences = UserDefaults.standard
         if preferences.object(forKey: "session") != nil {
+            var descAction:String = "Create"
+            var editMode: Bool = false
+            if preferences.object(forKey: "username") as! String == author {
+                descAction = "Edit"
+                editMode = true
+            }
+            let createDescriptionAction = UIAlertAction(
+                title: descAction + " description",
+                style: .default,
+                handler: {
+                    (alert: UIAlertAction) -> Void in
+                    self.currentItem = mediaId
+                    self.startEditMode = editMode
+                    self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
+            })
             optionMenu.addAction(createDescriptionAction)
         }
+        optionMenu.addAction(cancelAction)
         optionMenu.addAction(viewAuthorsVideosAction)
         self.present(optionMenu, animated: true, completion: nil)
     }

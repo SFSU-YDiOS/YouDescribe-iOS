@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate {
+class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate, UINavigationControllerDelegate {
 
     let dvxApi = DvxApi()
     var allMovies: [AnyObject] = []
@@ -18,26 +18,48 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     var tableSize: Int = 25
     var currentItem: String = "" // TODO: Figure out how to perform segue with argument
     var currentAuthor: String = ""
+    var currentUser: String = ""
+    var startEditMode: Bool = false
     lazy var searchBar = UISearchBar()
-
 
     @IBOutlet weak var searchBarHeader: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.allMovies = dvxApi.getMovies([:])
-        self.allMovies.reverse()
+        //self.allMovies = dvxApi.getMovies([:])
+        //self.allMovies.reverse()
         self.allAuthors = dvxApi.getUsers([:])
-        self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
+        //self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
         self.authorMap = getAuthorMap()
         self.createSearchBar()
+        self.navigationController?.delegate = self
+
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    
+
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        // Update the cache if required
+        if let allMoviesSearchCache = GlobalCache.cache.object(forKey: "allMoviesSearch") {
+            print("Using the old cache")
+            self.allMoviesSearch = allMoviesSearchCache as! [AnyObject]
+        } else {
+            self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
+            print("Resetting the cache")
+            GlobalCache.cache.setObject(self.allMoviesSearch as AnyObject, forKey: "allMoviesSearch")
+        }
+        
+        if let allMoviesCache = GlobalCache.cache.object(forKey: "allMovies") {
+            self.allMovies = allMoviesCache as! [AnyObject]
+        } else {
+            self.allMovies = dvxApi.getMovies([:])
+            GlobalCache.cache.setObject(self.allMovies as AnyObject, forKey: "allMovies")
+        }
+    }
+
     func sortMovies() {
         // sorting the movies based on the date/time
         self.allMovies.sort{ (($0["movieCreated"] as! NSString) as! Int) > (($1["movieCreated"] as! NSString) as! Int) }
@@ -187,15 +209,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             handler: {
             (alert: UIAlertAction) -> Void in
         })
-        
-        let createDescriptionAction = UIAlertAction(
-            title: "Create description",
-            style: .default,
-            handler: {
-                (alert: UIAlertAction) -> Void in
-                self.currentItem = mediaId
-                self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
-        })
+
 
         let viewAuthorsVideosAction = UIAlertAction(title: "List videos described by \(author)", style: .default, handler: {
             (alert: UIAlertAction) -> Void in
@@ -204,9 +218,25 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         })
 
         optionMenu.addAction(cancelAction)
+
         // show only if the user is logged in
         let preferences = UserDefaults.standard
         if preferences.object(forKey: "session") != nil {
+            var descAction:String = "Create"
+            var editMode: Bool = false
+            if preferences.object(forKey: "username") as! String == author {
+                descAction = "Edit"
+                editMode = true
+            }
+            let createDescriptionAction = UIAlertAction(
+                title: descAction + " description",
+                style: .default,
+                handler: {
+                    (alert: UIAlertAction) -> Void in
+                    self.currentItem = mediaId
+                    self.startEditMode = editMode
+                    self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
+            })
             optionMenu.addAction(createDescriptionAction)
         }
         optionMenu.addAction(viewAuthorsVideosAction)
@@ -216,7 +246,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
 
     func showCellDetailMenu(mediaId: String, author: String) {
-        print("The media ID from the cell is \(mediaId)")
         self.showItemMenu(mediaId: mediaId, author: author)
     }
     // MARK: - Navigation
@@ -246,15 +275,15 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.isEditMode = self.startEditMode
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController
             authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
-
             authorMoviesViewController.preferredAuthor = self.currentAuthor
         }
     }
-    
+
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotated")
     }

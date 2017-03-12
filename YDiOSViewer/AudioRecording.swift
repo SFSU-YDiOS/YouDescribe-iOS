@@ -9,6 +9,7 @@
 import Foundation
 
 class AudioClip {
+    var id:String!
     var audioFile: URL!
     var isUploaded: Bool! = false
     var startTime: Float!
@@ -28,5 +29,6 @@ class AudioClip {
     var startHour: Int!
     var startMinutes: Int!
     var startSeconds: Float!
+    var data: AnyObject!
 }
 

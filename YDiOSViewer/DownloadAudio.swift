@@ -187,7 +187,7 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
             }
             
         } catch _ {
-            print("ERROR#@$@#$@#$")
+            print("ERROR while downloading")
         }
     }
     

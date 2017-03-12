@@ -1,11 +1,11 @@
 import Foundation
 
 class DvxApi {
-    let defaultAppId = "ydesc"
-    let apiBaseUrl = "http://dvxtest.ski.org:8080/dvx2Api/"
-    
+    let defaultAppId = Constants.APP_ID
+    let apiBaseUrl = Constants.API_BASE_URL
+
     func getConstructedUrl(_ query: String, params:[String: String]) -> String {
-        var url:String = apiBaseUrl + query + "?AppId=ydesc"
+        var url:String = apiBaseUrl + query + "?AppId=" + defaultAppId
         // loop through the arguments and create the url parameters.
         var paramString = ""
         var paramArray:[String] = Array()
@@ -55,8 +55,14 @@ class DvxApi {
         return DvxXmlParser().makeRequest(url, separator: "user")
     }
 
-    func addUser(_ params:[String: String]) {
+    func getUserId(_ params: [String: String]) -> String {
         let url:String! = getConstructedUrl("user", params: params)
+        return DvxXmlParser().makeRequest(url, separator: "user")[0]["userId"] as! String
+    }
+
+    func addUser(_ params:[String: String]) -> String {
+        let url:String! = getConstructedUrl("user", params: params)
+        return url
     }
 
     func prepareForLogin(_ params: [String: String]) -> NSMutableURLRequest {
@@ -69,6 +75,14 @@ class DvxApi {
 
     func prepareForAddMovie(_ params: [String: String]) -> NSMutableURLRequest {
         return self.getPostRequest(urlString: apiBaseUrl + "movie", params: params)
+    }
+
+    func prepareForAddClip(_ params: [String: String]) -> NSMutableURLRequest {
+        return self.getPostRequest(urlString: apiBaseUrl + "clip", params: params)
+    }
+
+    func prepareForUpdateClip(_ params: [String: String]) -> NSMutableURLRequest {
+        return self.getPostRequest(urlString: apiBaseUrl + "clip/update", params: params)
     }
 
     func getMoviesSearchTable(_ params: [String: String]) -> Array<AnyObject> {
@@ -85,5 +99,7 @@ class DvxApi {
         return "" // No movie is found
     }
     
-    
+    func prepareForDeleteClip(_ params: [String: String]) -> NSMutableURLRequest {
+         return self.getPostRequest(urlString: apiBaseUrl + "clip/delete", params: params)
+    }
 }

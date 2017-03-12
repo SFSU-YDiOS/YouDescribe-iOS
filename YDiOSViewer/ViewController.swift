@@ -79,7 +79,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         playerLayer=AVPlayerLayer(player: audioPlayer!)
         playerLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
         self.view.layer.addSublayer(playerLayer)
-        
+
         // Audio duck if required.
         let control = VolumeControl()
         control.setVolume(0.0)
@@ -132,7 +132,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         let session = AVAudioSession.sharedInstance()
 
         do {
-            try session.setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.interruptSpokenAudioAndMixWithOthers)
+            try session.setCategory(AVAudioSessionCategoryPlayback, with: AVAudioSessionCategoryOptions.duckOthers)
             try session.setActive(true)
             audioPlayer?.play()
             audioPlayer?.volume = 10.0
@@ -147,7 +147,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setActive(false)
-            //session.setActive(false, with: AVAudioSessionCategoryOptions.duckOthers)
         }
         catch let error as Error {
             print("deactivate error")
@@ -179,6 +178,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
             self.currentMovie = selectedMovies[0]
+            print("The movie ID is \(movieId)")
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print(clips.description)
             self.allAudioClips = clips
@@ -255,7 +255,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     
     // Called when the audio clip finishes playing
     func playerDidFinishPlaying(_ note: Notification) {
-        //self.reactivateSession()
+        //self.deactivateAudioSession()
         self.isAudioPlaying = false
         print("Resume video playing:")
         youtubePlayer.playVideo()
@@ -294,7 +294,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             print("Could not find a valid movie")
         }
     }
-    
+
     // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
         self.startPlay()

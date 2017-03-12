@@ -33,7 +33,6 @@ class VolumeControl {
             let audioVolume =  audioSession.outputVolume
             let audioVolumePercentage = audioVolume * 100
             print ("The volume is \(audioVolumePercentage)")
-            
             //return Int(audioVolumePercentage)
         }catch{
             print("Error while getting volume level \(error)")

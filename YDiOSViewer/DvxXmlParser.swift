@@ -25,8 +25,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
         let success:Bool = parser.parse()
         
         if success {
-            print("Parsed successfully!")
-            //print(resultArray)
+            print("Parsed successfully")
             return resultArray
         } else {
             print("Failed to parse!")
