@@ -64,6 +64,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         self.yPos = 0
         self.audioClips = []
 
+        youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
         // Set the user ID
         let preferences = UserDefaults.standard
         if preferences.object(forKey: "session") != nil {
