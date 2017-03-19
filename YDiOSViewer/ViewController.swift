@@ -103,6 +103,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // Remove the back button
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
+        // setting the default playback quality to lowest
+        youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
+
     }
 
     override func viewWillDisappear(_ animated: Bool) {

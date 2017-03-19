@@ -165,7 +165,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                     return
                 }
             }
-
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: args["path"] as! URL)
                 audioPlayer?.prepareToPlay()
@@ -492,6 +491,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         let dvxUpload = DvxUpload()
         print("The request is ")
         do {
+            print("The starttime was \(startTime)")
             let request = try dvxUpload.createRequest(["AppId": Constants.APP_ID,
                                                "UserId": self.userId,
                                                "Movie": self.movieId,
@@ -520,14 +520,14 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                     if httpResponse.statusCode == 200  {
                         print("Looks good!")
 
-                        DispatchQueue.main.async {
+                        //DispatchQueue.main.async {
                             let clipData = self.dvxApi.getClips(["Movie": self.movieId,
                                                                  "UserId": self.userId])
                             print("The clip Data is ")
                             print(clipData)
                             // Relayout the clips, since we need the new clip ID
                             self.layoutClips(clipData)
-                        }
+                        //}
                     }
                     else {
                         print("Encountered an error while attempting to add a clip")

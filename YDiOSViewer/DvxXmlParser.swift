@@ -13,7 +13,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
     var keyName:String = ""
     var valueName:String = ""
     var separator:String = ""
-    
+
     func makeRequest(_ url:String, separator:String) -> Array<AnyObject> {
 
         let urlToSend: URL = URL(string: url)!
@@ -23,9 +23,11 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
         parser.delegate = self
         
         let success:Bool = parser.parse()
-        
+
         if success {
             print("Parsed successfully")
+            print("Result Array is ")
+            print(resultArray)
             return resultArray
         } else {
             print("Failed to parse!")
@@ -47,7 +49,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
             resultArray.append(record as AnyObject)
         }
     }
-    
+
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if(passName){
             record[keyName] = string as AnyObject?
@@ -58,7 +60,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
             print(string)
         }
     }
-    
+
     func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
         print(parseError)
     }

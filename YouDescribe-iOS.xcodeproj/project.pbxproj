@@ -30,6 +30,7 @@
 		1FCCD89C1E494AB0008FEC85 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD89B1E494AB0008FEC85 /* LoginViewController.swift */; };
 		1FCCD8A01E4C6BE7008FEC85 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */; };
 		1FE8CAF31E03146E00B15309 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE8CAF21E03146D00B15309 /* Alamofire.framework */; };
+		1FF01A0F1E7E5C22006AD014 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF01A0E1E7E5C22006AD014 /* NetworkClient.swift */; };
 		8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8913AB531D9C0DD80027213D /* DvxXmlParser.swift */; };
 		897570261D9BB21B00EAFF49 /* YouTubeHelperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */; };
 		8975702A1D9BB53400EAFF49 /* YTPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 897570291D9BB53400EAFF49 /* YTPlayerView.m */; };
@@ -92,6 +93,7 @@
 		1FCCD89B1E494AB0008FEC85 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		1FE8CAF21E03146D00B15309 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../Library/Developer/Xcode/DerivedData/YouDescribe-iOS-gbykshtkifyvxnbsvhiqvdqjdjcx/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		1FF01A0E1E7E5C22006AD014 /* NetworkClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
 		4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDescribe_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CD7B64015E134A0D177AE5A /* Pods-YDiOSViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YDiOSViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YDiOSViewer/Pods-YDiOSViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		8913AB531D9C0DD80027213D /* DvxXmlParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxXmlParser.swift; sourceTree = "<group>"; };
@@ -218,9 +220,9 @@
 				1F6895DB1E68E02F0049A8C4 /* Constants.swift */,
 				8975702D1D9C0AE300EAFF49 /* DvxApi.swift */,
 				1F6895D71E6891480049A8C4 /* DvxUpload.swift */,
+				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
 				1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */,
 				1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */,
-				8913AB531D9C0DD80027213D /* DvxXmlParser.swift */,
 				8999DA961DAF74EB00FB50B3 /* DownloadAudio.swift */,
 				1FCBC5361E32E73A00FE1749 /* DetailInfoViewController.swift */,
 				1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */,
@@ -240,6 +242,7 @@
 				89859B471D9B9C7E00785D6F /* Info.plist */,
 				89859B3F1D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld */,
 				1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */,
+				1FF01A0E1E7E5C22006AD014 /* NetworkClient.swift */,
 			);
 			name = "YouDescribe-iOS";
 			path = YDiOSViewer;
@@ -486,6 +489,7 @@
 				89DA3AB51DEABD23002719BA /* VideoItemTableViewController.swift in Sources */,
 				1F6C6EAF1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift in Sources */,
 				89DA3AB91DEB90C6002719BA /* SearchResultsTableViewCell.swift in Sources */,
+				1FF01A0F1E7E5C22006AD014 /* NetworkClient.swift in Sources */,
 				1FA953941E73266E00112300 /* AudioHelper.swift in Sources */,
 				1F20987B1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift in Sources */,
 				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
