@@ -38,7 +38,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        self.navigationItem.rightBarButtonItem = self.editButtonItem
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -102,9 +102,23 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         searchBar.searchBarStyle = .default
         searchBar.delegate = self
     }
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.searchBar.endEditing(true)
         performSegue(withIdentifier: "DisplaySearchResultsSegue", sender: nil)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.searchBar.text = ""
+        self.searchBar.endEditing(true)
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
+
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
     }
 
     // MARK: - Table view data source
@@ -284,9 +298,15 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         }
     }
 
+    // TODO: Remove if no specific purpose now.
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotated")
     }
 
+    // Mark - Accessibility
+    override func accessibilityPerformMagicTap() -> Bool {
+        self.performSegue(withIdentifier: "ShowVideoDetail", sender: nil)
+        return true
+    }
     
 }

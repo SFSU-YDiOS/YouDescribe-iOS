@@ -97,4 +97,10 @@ class AuthorMoviesTableViewController: UITableViewController {
             }
         }
     }
+
+    // Mark - Accessibility
+    override func accessibilityPerformMagicTap() -> Bool {
+        self.performSegue(withIdentifier: "ShowAuthorVideoDetailSegue", sender: nil)
+        return true
+    }
 }

@@ -44,8 +44,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var movieText: UITextField!
-    @IBOutlet weak var playerLabel: UILabel!
+    //@IBOutlet weak var playerLabel: UILabel!
 
+    @IBOutlet weak var verticalStack: UIStackView!
     //@IBOutlet weak var authorText: UITextField!
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
@@ -425,7 +426,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
 
 
-        self.playerLabel.text = "\(playTime)"
+        //self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
             if(!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
@@ -601,12 +602,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             tabBarController.movieTitle = self.currentMovieTitle!
         }
         else if segue.identifier == "ShowAboutSegue" {
-            let aboutController = segue.destination as! DetailInfoViewController
+            let aboutController = segue.destination as! DetailInfoTableViewController
             aboutController.mediaId = self.movieID!
             aboutController.audioClips = self.allAudioClips
             aboutController.videoDuration = Float(youtubePlayer.duration())
             if self.currentAuthorId != nil {
-            aboutController.currentAuthor = self.currentAuthorId!
+                aboutController.currentAuthor = self.currentAuthorId!
             }
             else {
                 aboutController.currentAuthor = "None"
@@ -693,6 +694,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.present(optionMenu, animated: true, completion: nil)
     }
 
+    // MARK - Accessibility
+    override func accessibilityPerformMagicTap() -> Bool {
+        print("Toggling play/pause")
+        self.startPlay()
+        return true
+    }
 
 }
 
