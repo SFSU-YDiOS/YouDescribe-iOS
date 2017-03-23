@@ -6,6 +6,8 @@
 //  Copyright © 2017 SFSU. All rights reserved.
 //
 
+/* TODO: Remove ! Not being used anymore. Remove old UI Connections to this.
+ */
 import UIKit
 
 class TabBarViewController: UITabBarController {
@@ -13,7 +15,6 @@ class TabBarViewController: UITabBarController {
     var preferredAuthor: String = ""
     var mediaId: String = ""
     var movieTitle: String = ""
-    var detailInfo: DetailInfoViewController?
     var detailShare: DetailShareViewController?
     var detailRequest: DetailRequestViewController?
 
@@ -24,14 +25,12 @@ class TabBarViewController: UITabBarController {
         let barViewControllers = self.viewControllers
         
         // Get all YouTube datat about a video.
-        detailInfo = barViewControllers?[0] as? DetailInfoViewController
         detailShare = barViewControllers?[1] as? DetailShareViewController
         detailRequest = barViewControllers?[2] as? DetailRequestViewController
         print(self.preferredAuthor)
         print(self.mediaId)
 
         // assign the mediaId
-        detailInfo?.mediaId = self.mediaId
         detailRequest?.mediaId = self.mediaId
         detailRequest?.preferredAuthor = self.preferredAuthor
         detailRequest?.movieTitle = self.movieTitle

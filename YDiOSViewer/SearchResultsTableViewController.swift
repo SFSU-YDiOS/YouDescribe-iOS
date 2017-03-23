@@ -224,10 +224,5 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
         optionMenu.addAction(viewAuthorsVideosAction)
         self.present(optionMenu, animated: true, completion: nil)
     }
-    
-    // Mark - Accessibility
-    override func accessibilityPerformMagicTap() -> Bool {
-        self.performSegue(withIdentifier: "ShowSearchVideoDetailSegue", sender: nil)
-        return true
-    }
+
 }

@@ -302,11 +302,5 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         print("Rotated")
     }
-
-    // Mark - Accessibility
-    override func accessibilityPerformMagicTap() -> Bool {
-        self.performSegue(withIdentifier: "ShowVideoDetail", sender: nil)
-        return true
-    }
     
 }

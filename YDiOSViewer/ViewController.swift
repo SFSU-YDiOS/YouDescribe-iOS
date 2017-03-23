@@ -696,7 +696,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     // MARK - Accessibility
     override func accessibilityPerformMagicTap() -> Bool {
-        print("Toggling play/pause")
         self.startPlay()
         return true
     }
