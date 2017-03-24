@@ -165,6 +165,9 @@ class DetailInfoTableViewController: UITableViewController {
         }
     }
 
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+
+    }
     /*
     // MARK: - Navigation
 

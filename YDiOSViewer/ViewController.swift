@@ -25,6 +25,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var movieID : String?
     var currentAuthor: String?
     var isAudioPlaying: Bool = false
+    var isPlaybackActive: Bool = false // Keeps track of user induced pause vs pause for extended descriptions.
     var authorIdList: [String] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
@@ -107,7 +108,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // setting the default playback quality to lowest
         youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
-
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -233,16 +233,19 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         return self.authorMap
     }
 
+    // Replaces the current audio player item with that in currentAudioUrl
     func loadAudio() {
         // play the audio link
         if self.failedAudioUrls.contains(currentAudioUrl! as URL) {
-            let myUrl = URL(string: "https://dl.dropboxusercontent.com/u/57189163/point1sec.mp3")
+            let myUrl = URL(string: "https://www.dropbox.com/s/xr640am1tv564ob/point1sec.mp3")
             audioPlayerItem = AVPlayerItem(url: myUrl!)
         }
         else {
             audioPlayerItem = AVPlayerItem(url: currentAudioUrl! as URL)
         }
-        audioPlayer?.replaceCurrentItem(with: audioPlayerItem)
+        if audioPlayerItem != nil {
+            audioPlayer?.replaceCurrentItem(with: audioPlayerItem)
+        }
     }
     
     // Play the audio - Also tries to precache the next audio clip as the current is playing
@@ -251,19 +254,16 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         //self.activateAudioSession()
         audioPlayer?.play()
         self.isAudioPlaying = true
-        
+        self.isPlaybackActive = true
         // Pre-cache the next clip
         if self.audioClips.count > 0 && activeAudioIndex < self.audioClips.count-1 {
             self.nextAudioUrl = self.downloadAudioUrls[activeAudioIndex+1] as NSURL
         }
     }
-    
+
     // Called when the audio clip finishes playing
     func playerDidFinishPlaying(_ note: Notification) {
-        //self.deactivateAudioSession()
         self.isAudioPlaying = false
-        print("Resume video playing:")
-        youtubePlayer.playVideo()
         activeAudioIndex = activeAudioIndex + 1
         showNextClipStartTime()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
@@ -271,16 +271,24 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.currentAudioUrl = self.nextAudioUrl
             loadAudio()
         }
+        
+        // If the pause button was pressed, don't resume video.
+        if self.isPlaybackActive {
+            print("Resume video playing:")
+            youtubePlayer.playVideo()
+        }
     }
 
     func resetAudio() {
         self.isAudioPlaying = false
-        youtubePlayer.playVideo()
+        //youtubePlayer.playVideo()
         showNextClipStartTime()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: audioPlayer?.currentItem)
-        if self.nextAudioUrl != self.currentAudioUrl {
-            self.currentAudioUrl = self.nextAudioUrl
-            loadAudio()
+        if youtubePlayer.playerState().rawValue != 5 {
+            if self.nextAudioUrl != self.currentAudioUrl {
+                self.currentAudioUrl = self.nextAudioUrl
+                loadAudio()
+            }
         }
     }
 
@@ -305,6 +313,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.startPlay()
     }
 
+    func playPreStartAudio() {
+        // Check if there is any audio that might not be triggered by the player's events.
+        
+    }
     func startPlay() {
         if(doPlay) {
             if self.didAuthorReset {
@@ -312,22 +324,41 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 self.didAuthorReset = false
             }
             youtubePlayer.playVideo()
+            self.isPlaybackActive = true
         } else {
+            // Stop video and audio atomically
             youtubePlayer.pauseVideo()
+            print("Pausing audio")
+            audioPlayer?.pause()
+            self.isAudioPlaying = false
+            self.isPlaybackActive = false
+        }
+        self.applyPlayPauseLabel()
+    }
+
+    // Apply the play/pause label depending on the current state 
+    // of the audio and video player
+    func applyPlayPauseLabel() {
+        if self.isPlaybackActive == true {
+            playButton.setTitle("Pause", for: UIControlState())
+            self.doPlay = false
+        }
+        else {
+            playButton.setTitle("Play", for: UIControlState())
+            self.doPlay = true
         }
     }
     // Called on clicking the 'stop' button
     @IBAction func stopAction(_ sender: AnyObject) {
-        reset()
+        self.reset()
     }
 
     // Resets the state of both the audio and video players
     func reset() {
         youtubePlayer.stopVideo()
         audioPlayer?.pause()
-        loadAudio()
         activeAudioIndex = 0
-        //self.audioClips = []
+        loadAudio()
         doPlay = true
         resetActiveAudioIndex()
         showNextClipStartTime()
@@ -366,6 +397,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             for _ in self.audioClips {
                 if Float((self.audioClips[index]["clipStartTime"]!! as AnyObject).description)! >= Float(youtubePlayer.currentTime()) {
                     activeAudioIndex = index
+                    print("Assigned as activeaudioindex \(self.activeAudioIndex)")
                     showNextClipStartTime()
                     self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
                     loadAudio()
@@ -422,10 +454,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             //self.stopAudio()
             self.resetAudio()
             resetActiveAudioIndex()
-
         }
-
-
         //self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
@@ -433,60 +462,81 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                 if (self.audioClips[activeAudioIndex]["clipFunction"]!! as! String) == "desc_extended" {
                     if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
-                        print("Pausing Video")
-                        youtubePlayer.pauseVideo()
+                        // Pause the video if it isn't already paused
+                        if youtubePlayer.playerState().rawValue != 3 {
+                            print("Pausing Video")
+                            youtubePlayer.pauseVideo()
+                        }
                         self.currentClipType = 0
-                        print("Playing Audio")
-                        playAudio()
+                        if youtubePlayer.playerState().rawValue != 5 {
+                            print("Playing Audio")
+                            playAudio()
+                        }
                     }
                 }
                 else {
                     if Float(playTime) >= Float((self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)! {
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
                         self.currentClipType = 1
-                        playAudio()
+                        if self.isPlaybackActive == true {
+                            print("Getting here")
+                            playAudio()
+                        }
                     }
                 }
             }
         }
         self.previousTime = youtubePlayer.currentTime()
+        
+        // Make sure we have the right player labels
+        /*if self.isPlaybackActive == true && playButton.titleLabel?.text != "Pause" {
+            playButton.setTitle("Pause", for: UIControlState())
+        }
+        else if self.isPlaybackActive == false && playButton.titleLabel?.text != "Play"{
+            playButton.setTitle("Play", for: UIControlState())
+        }*/
     }
     
     // Called when the youtube-player is ready to play the video
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
         print("The video player is now ready")
     }
-    
+
     // Called whenever the youtube-player changes its state.
     func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
         // the player changed to state
         print(state.rawValue)
         if (state.rawValue == 4) {
-            self.startPlay()
+            self.doPlay = true
+            self.isPlaybackActive = true
         }
         else if (state.rawValue == 2) { // state is 'playing'
-            //change the button to text
-            playButton.setTitle("Pause", for: UIControlState())
-            doPlay = false
+            self.isPlaybackActive = true
         }
-        else if (state.rawValue == 3) { // buffering
-            playButton.setTitle("Play", for: UIControlState())
-            doPlay = true
+        else if (state.rawValue == 3) { // paused
+            // This could be caused by an extended audio description 
+            // so consider that playback is still active
         }
         else if (state.rawValue == 5) { // stop
-            playButton.setTitle("Play", for: UIControlState())
-            doPlay = true
+            self.isPlaybackActive = false
+            // Prepare by loading the first clip
+            self.previousTime = 0.0
+            self.resetAudio()
+            self.activeAudioIndex = 0
+            self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
+            self.loadAudio()
+            self.showNextClipStartTime()
         }
         else if (state.rawValue == 0) {
-            playButton.setTitle("Play", for: UIControlState())
-            doPlay = true
+            self.isPlaybackActive = false
             self.reset()
         }
         else if (state.rawValue == 1) { // movie ended
-            playButton.setTitle("Play", for: UIControlState())
-            doPlay = true
+            self.isPlaybackActive = false
             self.reset()
         }
+        
+        self.applyPlayPauseLabel()
     }
 
     // Implementation for the DownloadAudioDelegate
@@ -696,6 +746,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     // MARK - Accessibility
     override func accessibilityPerformMagicTap() -> Bool {
+        // Toggle isPlaybackActive
+        if self.isPlaybackActive {
+            self.isPlaybackActive = false
+        }
+        else {
+            self.isPlaybackActive = true
+        }
         self.startPlay()
         return true
     }
