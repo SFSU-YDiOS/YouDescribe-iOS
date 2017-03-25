@@ -29,7 +29,7 @@ class DvxApi {
         // Create the parameter body
         var paramString = ""
         for (key, value) in params {
-            paramString = paramString + key + "=" + value + "&"
+            paramString = paramString + key + "=" + value.addingPercentEncoding(withAllowedCharacters: .alphanumerics)! + "&"
         }
         request.httpBody = paramString.data(using: String.Encoding.utf8)
         return request
@@ -92,8 +92,10 @@ class DvxApi {
 
     func getMovieIdFromMediaId(allMovies: Array<AnyObject>, mediaId: String) -> String {
         for movie in allMovies {
-            if movie["movieMediaId"]  as! String == mediaId {
-                return movie["movieId"] as! String
+            if movie.allKeys.contains(where: {$0 as! String == "movieMediaId" }) {
+                if movie["movieMediaId"]  as! String == mediaId {
+                    return movie["movieId"] as! String
+                }
             }
         }
         return "" // No movie is found

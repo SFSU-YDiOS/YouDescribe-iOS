@@ -73,7 +73,7 @@ class DetailInfoTableViewController: UITableViewController {
     func getInfo() {
         let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=statistics%2Csnippet&key=\(apiKey)")
         print("\n\nURL\n\n: ",newUrl)
-        print("Item Details")
+        //print("Item Details")
         let task = URLSession.shared.dataTask(with: newUrl! as URL) {(data, response, error) in
             let json = JSON(data: data!)
             if let items = json["items"].array{

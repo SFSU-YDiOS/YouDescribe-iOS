@@ -26,8 +26,6 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
 
         if success {
             print("Parsed successfully")
-            print("Result Array is ")
-            print(resultArray)
             return resultArray
         } else {
             print("Failed to parse!")
@@ -47,12 +45,18 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
         
         if (elementName == self.separator) {
             resultArray.append(record as AnyObject)
+            record = [:]
         }
     }
 
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if(passName){
-            record[keyName] = string as AnyObject?
+            if record[keyName] != nil {
+                record[keyName] = (record[keyName] as! String + string) as AnyObject
+            }
+            else {
+                record[keyName] = string as AnyObject?
+            }
         }
         
         if(passData)

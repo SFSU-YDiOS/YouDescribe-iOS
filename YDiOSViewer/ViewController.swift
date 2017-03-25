@@ -351,18 +351,19 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Called on clicking the 'stop' button
     @IBAction func stopAction(_ sender: AnyObject) {
         self.reset()
+        self.isPlaybackActive = false
     }
 
     // Resets the state of both the audio and video players
     func reset() {
         youtubePlayer.stopVideo()
-        audioPlayer?.pause()
         activeAudioIndex = 0
         loadAudio()
         doPlay = true
         resetActiveAudioIndex()
         showNextClipStartTime()
         self.nextClipAtLabel.text = ""
+        audioPlayer?.pause()
     }
 
     @IBAction func skipBackAction(_ sender: AnyObject) {
@@ -479,8 +480,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
                         print("Starting audio at seconds:" + (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description)
                         self.currentClipType = 1
                         if self.isPlaybackActive == true {
-                            print("Getting here")
-                            playAudio()
+                            if youtubePlayer.playerState().rawValue != 5 {
+                                playAudio()
+                            }
                         }
                     }
                 }
@@ -522,10 +524,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             // Prepare by loading the first clip
             self.previousTime = 0.0
             self.resetAudio()
-            self.activeAudioIndex = 0
-            self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
-            self.loadAudio()
-            self.showNextClipStartTime()
+            if self.downloadAudioUrls.count > 0 {
+                self.activeAudioIndex = 0
+                self.currentAudioUrl = self.downloadAudioUrls[activeAudioIndex] as NSURL
+                self.loadAudio()
+                self.showNextClipStartTime()
+            }
         }
         else if (state.rawValue == 0) {
             self.isPlaybackActive = false

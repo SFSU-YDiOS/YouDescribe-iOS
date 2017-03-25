@@ -290,12 +290,14 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         if self.movieId == "" {
             // Create a new movie and return the movie Id
             let request = dvxApi.prepareForAddMovie(["AppId": Constants.APP_ID,
-                                                     "MediaId": self.mediaId,
+                                                     "MediaId": self.mediaId!,
                                                      "Title": self.youTubeInfo["movieName"]!,
                                                      "Language": "English",
                                                      "Summary": "",
                                                      "Token": self.userToken,
                                                      "UserId": self.userId])
+            print(request)
+            print("\(Constants.APP_ID) , \(self.mediaId!), \(self.youTubeInfo["movieName"]!), \(self.userToken), \(self.userId)")
             let session = URLSession.shared
             let task = session.dataTask(with: request as URLRequest, completionHandler: {
                 (data, response, error) in
