@@ -80,16 +80,16 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         print(searchString)
         self.filteredMovies = []
         for movieClip in self.allMoviesSearch {
-            if ((movieClip["movieName"] as! String).matchPattern(patStr: searchString)==true)
+            if (movieClip.allKeys.contains(where: {$0 as! String == "movieName" }) && (movieClip["movieName"] as! String).matchPattern(patStr: searchString) == true)
             {
                 self.filteredMovies.append(movieClip)
                 print(movieClip["movieName"]!!)
             }
-            else if ((movieClip["userHandle"] as! String).matchPattern(patStr: searchString)==true) {
+            else if (movieClip.allKeys.contains(where: {$0 as! String == "userHandle" }) && (movieClip["userHandle"] as! String).matchPattern(patStr: searchString) == true) {
                 self.filteredMovies.append(movieClip)
                 print(movieClip["userHandle"]!!)
             }
-            else if ((movieClip["movieMediaId"] as! String).matchPattern(patStr: searchString) == true) {
+            else if (movieClip.allKeys.contains(where: {$0 as! String == "movieMediaId" }) && (movieClip["movieMediaId"] as! String).matchPattern(patStr: searchString) == true) {
                 self.filteredMovies.append(movieClip)
                 print(movieClip["movieMediaId"]!!)
             }
