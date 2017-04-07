@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1C93546B8E8CE93EF990BDF5 /* Pods_YouDescribe_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EF7159945C309AB33E38B68 /* Pods_YouDescribe_iOS.framework */; };
+		1F0474241E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0474231E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift */; };
 		1F122C241E53BA0A006734B5 /* AudioRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F122C231E53BA0A006734B5 /* AudioRecording.swift */; };
 		1F1B67AD1E63E7C5007A2B50 /* SocialHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */; };
 		1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */; };
@@ -70,6 +71,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1F0474231E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAccessibilityExtendedAction.swift; sourceTree = "<group>"; };
 		1F122C231E53BA0A006734B5 /* AudioRecording.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecording.swift; sourceTree = "<group>"; };
 		1F1B67AC1E63E7C5007A2B50 /* SocialHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialHelper.swift; sourceTree = "<group>"; };
 		1F1FB7101E38085E004FE5B7 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				89859B3F1D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld */,
 				1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */,
 				1FF01A0E1E7E5C22006AD014 /* NetworkClient.swift */,
+				1F0474231E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift */,
 			);
 			name = "YouDescribe-iOS";
 			path = YDiOSViewer;
@@ -493,6 +496,7 @@
 				1F20987B1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift in Sources */,
 				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
 				1FF01A111E82F358006AD014 /* DetailInfoTableViewController.swift in Sources */,
+				1F0474241E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift in Sources */,
 				1FCCD8A01E4C6BE7008FEC85 /* SettingsTableViewController.swift in Sources */,
 				1F6526DD1E4D1E1500B5A59E /* CreateDescriptionViewController.swift in Sources */,
 				1F20987F1E7AFCE600F6F5E9 /* GlobalCache.swift in Sources */,

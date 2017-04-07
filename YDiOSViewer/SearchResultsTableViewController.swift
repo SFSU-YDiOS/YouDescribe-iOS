@@ -96,7 +96,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
         }
         else {
             cell.descriptionLabel.text = "No description"
-            cell.author = "None"
+            cell.author = ""
         }
         var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
         
@@ -110,10 +110,19 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
         
         cell.thumbnailView.image = UIImage(data: data as! Data)
 
-
+        // Setup for accessibility
+        let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(SearchResultsTableViewController.onMoreActions(_:)))
+        moreAction.mediaId = mediaId
+        moreAction.author = cell.author
+        cell.accessibilityCustomActions = [moreAction]
         return cell
     }
-    
+
+    @objc private func onMoreActions(_ sender: UIAccessibilityExtendedAction) -> Bool {
+        self.showItemMenu(mediaId: sender.mediaId, author: sender.author)
+        return true
+    }
+
     func getYouTubeResults() {
 
         if (self.searchString != "") {
@@ -221,8 +230,9 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             optionMenu.addAction(createDescriptionAction)
         }
         optionMenu.addAction(cancelAction)
-        optionMenu.addAction(viewAuthorsVideosAction)
+        if author != "" {
+            optionMenu.addAction(viewAuthorsVideosAction)
+        }
         self.present(optionMenu, animated: true, completion: nil)
     }
-
 }

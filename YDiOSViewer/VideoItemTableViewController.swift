@@ -183,10 +183,21 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
                     cell.thumbnailView.image = UIImage(data: data as! Data)
                 }
             }
+
+            // Setup for accessibility
+            let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(VideoItemTableViewController.onMoreActions(_:)))
+            moreAction.mediaId = mediaId
+            moreAction.author = clipAuthor!
+            cell.accessibilityCustomActions = [moreAction]
         }
         return cell
     }
- 
+
+    @objc private func onMoreActions(_ sender: UIAccessibilityExtendedAction) -> Bool {
+        self.showItemMenu(mediaId: sender.mediaId, author: sender.author)
+        return true
+    }
+
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         return self.searchBar
     }

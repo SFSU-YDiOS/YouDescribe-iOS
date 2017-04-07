@@ -8,11 +8,18 @@
 
 import UIKit
 
+protocol AuthorMoviesTableViewCellDelegate {
+    func showCellDetailMenu(mediaId: String, author: String)
+}
+
 class AuthorMoviesTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblMovieName: UILabel!
     @IBOutlet weak var lblAuthorName: UILabel!
     @IBOutlet weak var thumbnailView: UIImageView!
+    var delegate: AuthorMoviesTableViewCellDelegate!
+    var mediaId: String!
+    var author: String!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,4 +32,7 @@ class AuthorMoviesTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func onMenuClicked(_ sender: Any) {
+        self.delegate.showCellDetailMenu(mediaId: self.mediaId, author: self.author)
+    }
 }

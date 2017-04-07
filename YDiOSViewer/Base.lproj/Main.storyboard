@@ -59,7 +59,9 @@
                                         </label>
                                         <button alpha="0.5" contentMode="center" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XkD-3l-eOO">
                                             <rect key="frame" x="334" y="-8" width="41" height="41"/>
-                                            <accessibility key="accessibilityConfiguration" label="Menu"/>
+                                            <accessibility key="accessibilityConfiguration" label="Menu">
+                                                <bool key="isElement" value="NO"/>
+                                            </accessibility>
                                             <rect key="contentStretch" x="0.0" y="0.0" width="0.5" height="0.55000000000000004"/>
                                             <state key="normal" image="Menu">
                                                 <color key="titleColor" red="0.048407458437469408" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -120,7 +122,7 @@
                         <viewControllerLayoutGuide type="bottom" id="E00-oS-JPL"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="uqW-W7-a8D">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12z-Af-cOy" customClass="YTPlayerView">
@@ -372,7 +374,7 @@
             <objects>
                 <tableViewController id="fUL-0s-nJw" customClass="AuthorMoviesTableViewController" customModule="YouDescribe_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="93" sectionHeaderHeight="28" sectionFooterHeight="28" id="eu1-2J-Zei">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -401,6 +403,13 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NUG-k1-ZIq">
+                                            <rect key="frame" x="347" y="8" width="20" height="22"/>
+                                            <state key="normal" image="Menu"/>
+                                            <connections>
+                                                <action selector="onMenuClicked:" destination="BQQ-q1-B2q" eventType="touchUpInside" id="ldy-Sv-G1D"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="leadingMargin" secondItem="Ffn-aO-I3n" secondAttribute="leading" id="1cl-9S-96T"/>
@@ -409,8 +418,10 @@
                                         <constraint firstAttribute="trailingMargin" secondItem="W2s-VV-ver" secondAttribute="trailing" id="Ghq-vQ-kiH"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="1NP-BT-Txe" secondAttribute="trailing" id="Iqa-fb-Lwf"/>
                                         <constraint firstItem="1NP-BT-Txe" firstAttribute="leading" secondItem="Ffn-aO-I3n" secondAttribute="trailing" constant="8" symbolic="YES" id="V4W-q2-c0g"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="NUG-k1-ZIq" secondAttribute="trailing" id="VIw-BW-KXk"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="W2s-VV-ver" secondAttribute="bottom" constant="6" id="apS-i6-t14"/>
                                         <constraint firstItem="W2s-VV-ver" firstAttribute="leading" secondItem="Ffn-aO-I3n" secondAttribute="trailing" constant="8" symbolic="YES" id="gD0-Uc-Tha"/>
+                                        <constraint firstAttribute="topMargin" secondItem="NUG-k1-ZIq" secondAttribute="top" id="nhq-3K-hb7"/>
                                         <constraint firstItem="Ffn-aO-I3n" firstAttribute="top" secondItem="NKq-N6-Xp0" secondAttribute="topMargin" id="xTb-Pj-yce"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -469,6 +480,9 @@
                                         </label>
                                         <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n6E-np-DwI">
                                             <rect key="frame" x="342" y="8" width="25" height="25"/>
+                                            <accessibility key="accessibilityConfiguration">
+                                                <bool key="isElement" value="NO"/>
+                                            </accessibility>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="1HZ-Fb-gVl"/>
                                             </constraints>
@@ -581,7 +595,7 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="8Yg-B4-sxY">
@@ -615,7 +629,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QaZ-Qv-aks">
-                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="426" width="375" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="xIw-J2-68D"/>
                                     <barButtonItem style="plain" id="fDi-VT-Wym">
@@ -671,10 +685,10 @@
                                 </items>
                             </toolbar>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Cra-KW-o23">
-                                <rect key="frame" x="0.0" y="64" width="376" height="539"/>
+                                <rect key="frame" x="0.0" y="64" width="376" height="342"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZD0-re-c29" customClass="YTPlayerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="376" height="461"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="376" height="294"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <accessibility key="accessibilityConfiguration" label="YouTube player">
                                             <accessibilityTraits key="traits" notEnabled="YES"/>
@@ -682,7 +696,7 @@
                                         </accessibility>
                                     </view>
                                     <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uN1-Hd-70y">
-                                        <rect key="frame" x="75.5" y="461" width="225" height="48"/>
+                                        <rect key="frame" x="75.5" y="294" width="225" height="48"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" text="Described by" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lx5-df-McI">
                                                 <rect key="frame" x="0.0" y="0.0" width="75" height="48"/>
@@ -703,16 +717,16 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="LO4-XQ-gob">
-                                        <rect key="frame" x="0.0" y="509" width="376" height="30"/>
+                                        <rect key="frame" x="0.0" y="342" width="376" height="0.0"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description volume" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="none" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UsX-1g-WGI">
-                                                <rect key="frame" x="0.0" y="0.0" width="188" height="30"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="188" height="0.0"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="hMA-ka-YR5">
-                                                <rect key="frame" x="186" y="0.0" width="192" height="31"/>
+                                                <rect key="frame" x="186" y="0.0" width="192" height="1"/>
                                                 <connections>
                                                     <action selector="audioVolumeSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="eHL-v5-Szf"/>
                                                 </connections>
@@ -1119,7 +1133,7 @@
             <objects>
                 <tableViewController title="Video Details" id="WlB-Sb-r3p" customClass="DetailInfoTableViewController" customModule="YouDescribe_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="1cY-Bh-vT2">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -1408,9 +1422,9 @@
         <image name="Video" width="20" height="20"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="9ay-kU-8Uo"/>
-        <segue reference="voX-Kb-cI6"/>
-        <segue reference="tRT-l9-ODk"/>
+        <segue reference="8rT-Au-lg7"/>
+        <segue reference="LYD-be-fiJ"/>
+        <segue reference="zkB-lk-Yqo"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.097015251650071188" green="0.4402525920883168" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

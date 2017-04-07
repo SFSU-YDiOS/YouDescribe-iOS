@@ -8,11 +8,12 @@
 
 import UIKit
 
-class AuthorMoviesTableViewController: UITableViewController {
+class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableViewCellDelegate {
 
     var allMoviesSearch: [AnyObject] = []
     var filteredMovies: [AnyObject] = []
     var preferredAuthor: String = ""
+    var isUserLoggedIn: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +33,12 @@ class AuthorMoviesTableViewController: UITableViewController {
 
         // Remove the back button title.
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
+        // Set, if user is logged in
+        let preferences = UserDefaults.standard
+        if preferences.object(forKey: "session") != nil {
+            self.isUserLoggedIn = true
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,7 +69,9 @@ class AuthorMoviesTableViewController: UITableViewController {
         let videoItem: AnyObject  = self.filteredMovies[indexPath.row]
         cell.lblMovieName.text = videoItem["movieName"] as? String
         cell.lblAuthorName.text = videoItem["userHandle"] as? String
+        cell.author = cell.lblAuthorName.text!
         let mediaId:String = (videoItem["movieMediaId"] as? String)!
+        cell.mediaId = mediaId
         var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
         if thumbnailUrl == nil {
             thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
@@ -73,8 +82,53 @@ class AuthorMoviesTableViewController: UITableViewController {
         }
         cell.thumbnailView.image = UIImage(data: data as! Data)
 
+        // Setup for accessibility
+        if self.isUserLoggedIn {
+            let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(AuthorMoviesTableViewController.onMoreActions(_:)))
+            moreAction.mediaId = mediaId
+            cell.accessibilityCustomActions = [moreAction]
+        }
         return cell
-    
+    }
+
+    @objc private func onMoreActions(_ sender: UIAccessibilityExtendedAction) -> Bool {
+        self.showItemMenu(mediaId: sender.mediaId, author: self.preferredAuthor)
+        return true
+    }
+
+    func showCellDetailMenu(mediaId: String, author: String) {
+        self.showItemMenu(mediaId: mediaId, author: author)
+    }
+
+    func showItemMenu(mediaId: String, author: String) {
+        let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: {
+                (alert: UIAlertAction) -> Void in
+        })
+
+        // show only if the user is logged in
+        let preferences = UserDefaults.standard
+        if preferences.object(forKey: "session") != nil {
+            var descAction:String = "Create"
+            var editMode: Bool = false
+            if preferences.object(forKey: "username") as! String == author {
+                descAction = "Edit"
+                editMode = true
+            }
+            let createDescriptionAction = UIAlertAction(
+                title: descAction + " description",
+                style: .default,
+                handler: {
+                    (alert: UIAlertAction) -> Void in
+                    self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
+            })
+            optionMenu.addAction(createDescriptionAction)
+        }
+        optionMenu.addAction(cancelAction)
+        self.present(optionMenu, animated: true, completion: nil)
     }
 
     // MARK: - Navigation
