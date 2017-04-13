@@ -443,10 +443,13 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Videos by author" id="ibE-1T-sno"/>
+                    <connections>
+                        <segue destination="mTR-mv-mH8" kind="show" identifier="ShowCreateDescriptionSegue" id="kiE-yg-QAi"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OVt-37-y3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5185" y="-807"/>
+            <point key="canvasLocation" x="5410" y="-148"/>
         </scene>
         <!--Search Results Table View Controller-->
         <scene sceneID="S05-fm-hNy">
@@ -691,7 +694,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZD0-re-c29" customClass="YTPlayerView">
                                         <rect key="frame" x="0.0" y="0.0" width="376" height="294"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <accessibility key="accessibilityConfiguration" label="YouTube player">
+                                        <accessibility key="accessibilityConfiguration" label="YouTube Player">
                                             <accessibilityTraits key="traits" notEnabled="YES"/>
                                             <bool key="isElement" value="YES"/>
                                         </accessibility>
@@ -797,7 +800,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3037.5999999999999" y="506.89655172413796"/>
+            <point key="canvasLocation" x="3310" y="855"/>
         </scene>
         <!--YouDescribe-->
         <scene sceneID="VHF-Bo-Pbc">
@@ -1373,7 +1376,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xTk-W4-cQD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4816.8000000000002" y="188.90554722638683"/>
+            <point key="canvasLocation" x="5230" y="497"/>
         </scene>
         <!--Request Description-->
         <scene sceneID="uZs-5g-HfG">
@@ -1444,8 +1447,8 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="8rT-Au-lg7"/>
-        <segue reference="LYD-be-fiJ"/>
-        <segue reference="YHP-bY-ih5"/>
+        <segue reference="kiE-yg-QAi"/>
+        <segue reference="zkB-lk-Yqo"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.097015251650071188" green="0.4402525920883168" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

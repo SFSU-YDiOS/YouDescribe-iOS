@@ -11,6 +11,7 @@ import UIKit
 class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableViewCellDelegate {
 
     var allMoviesSearch: [AnyObject] = []
+    var allMovies: [AnyObject] = []
     var filteredMovies: [AnyObject] = []
     var preferredAuthor: String = ""
     var isUserLoggedIn: Bool = false
@@ -96,15 +97,18 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
     }
 
     @objc private func onMoreActions(_ sender: UIAccessibilityExtendedAction) -> Bool {
-        self.showItemMenu(mediaId: sender.mediaId, author: self.preferredAuthor)
+        self.showItemMenu(sender)
         return true
     }
 
     func showCellDetailMenu(mediaId: String, author: String) {
-        self.showItemMenu(mediaId: mediaId, author: author)
+        let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(AuthorMoviesTableViewController.onMoreActions(_:)))
+        moreAction.mediaId = mediaId
+        moreAction.author = author
+        self.showItemMenu(moreAction)
     }
 
-    func showItemMenu(mediaId: String, author: String) {
+    func showItemMenu(_ sender: UIAccessibilityExtendedAction) {
         let optionMenu = UIAlertController(title: nil, message: "Choose action", preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(
             title: "Cancel",
@@ -118,7 +122,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         if preferences.object(forKey: "session") != nil {
             var descAction:String = "Create"
             var editMode: Bool = false
-            if preferences.object(forKey: "username") as! String == author {
+            if preferences.object(forKey: "username") as! String == sender.author {
                 descAction = "Edit"
                 editMode = true
             }
@@ -127,7 +131,8 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
                 style: .default,
                 handler: {
                     (alert: UIAlertAction) -> Void in
-                    self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
+                    sender.isEditMode = editMode
+                    self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: sender)
             })
             optionMenu.addAction(createDescriptionAction)
         }
@@ -153,6 +158,13 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
             else {
                 videoDetailViewController.displayAuthor = "None"
             }
+        }
+        else if segue.identifier == "ShowCreateDescriptionSegue" {
+            let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
+            let mysender = sender as! UIAccessibilityExtendedAction
+            createDescriptionViewController.mediaId = mysender.mediaId
+            createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.isEditMode = mysender.isEditMode
         }
     }
 }

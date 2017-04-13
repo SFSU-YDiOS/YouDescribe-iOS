@@ -11,4 +11,5 @@ import Foundation
 class UIAccessibilityExtendedAction: UIAccessibilityCustomAction {
     var mediaId: String = ""
     var author: String = ""
+    var isEditMode: Bool = false
 }

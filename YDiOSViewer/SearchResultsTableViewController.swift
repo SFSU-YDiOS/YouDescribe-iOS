@@ -181,6 +181,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController
             authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
             authorMoviesViewController.preferredAuthor = self.currentAuthor
+            authorMoviesViewController.allMovies = self.allMovies
         }
         else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController

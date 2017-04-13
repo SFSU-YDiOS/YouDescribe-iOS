@@ -58,6 +58,8 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             self.allMovies = dvxApi.getMovies([:])
             GlobalCache.cache.setObject(self.allMovies as AnyObject, forKey: "allMovies")
         }
+
+        self.searchBar.text = ""
     }
 
     func sortMovies() {
@@ -306,6 +308,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController
             authorMoviesViewController.allMoviesSearch = self.allMoviesSearch
             authorMoviesViewController.preferredAuthor = self.currentAuthor
+            authorMoviesViewController.allMovies = self.allMovies
         }
     }
 
