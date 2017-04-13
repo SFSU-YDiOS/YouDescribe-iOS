@@ -59,6 +59,8 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var aboutButton: UIBarButtonItem!
     @IBOutlet weak var audioVolumeSlider: UISlider!
     @IBOutlet weak var playButton: UIButton!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var clipCountLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,6 +97,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         for author in self.authorIdList {
             print(author)
             if self.authorMap[author] == self.displayAuthor {
+                self.currentAuthorId = author
                 break
             }
             row += 1
@@ -108,6 +111,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // setting the default playback quality to lowest
         youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
+        
+        // Update the clips label after the author id is updated.
+        self.updateClipCountFromAuthor()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -120,16 +126,6 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    // Functions to dismiss the keyboard on tapping outside
-    func hideKeyboardOnTap() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
-
-    func dismissKeyboard() {
-        view.endEditing(true)
     }
 
     // Audio session control
@@ -182,6 +178,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
+            self.titleLabel.text = selectedMovies[0]["movieName"] as? String
             self.currentMovie = selectedMovies[0]
             print("The movie ID is \(movieId)")
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
@@ -258,6 +255,24 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         // Pre-cache the next clip
         if self.audioClips.count > 0 && activeAudioIndex < self.audioClips.count-1 {
             self.nextAudioUrl = self.downloadAudioUrls[activeAudioIndex+1] as NSURL
+        }
+    }
+
+    func updateClipCountFromAuthor() {
+        var clipCount: Int = 0
+        for clip in self.allAudioClips {
+            let authorId:String = clip["clipAuthor"] as! String
+            if authorId == self.currentAuthorId {
+                clipCount += 1
+            }
+        }
+        DispatchQueue.main.async {
+            if clipCount == 1 {
+                self.clipCountLabel.text = "(\(clipCount) audio clip) "
+            }
+            else {
+                self.clipCountLabel.text = "(\(clipCount) audio clips)"
+            }
         }
     }
 
@@ -622,6 +637,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.didAuthorReset = true
         self.currentAuthorId = self.authorIdList[row]
+        self.updateClipCountFromAuthor()
     }
 
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
