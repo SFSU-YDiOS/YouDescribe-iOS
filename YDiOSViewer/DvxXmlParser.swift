@@ -58,7 +58,6 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
                 record[keyName] = string as AnyObject?
             }
         }
-        
         if(passData)
         {
             print(string)

@@ -17,6 +17,8 @@ class AuthorMoviesTableViewCell: UITableViewCell {
     @IBOutlet weak var lblMovieName: UILabel!
     @IBOutlet weak var lblAuthorName: UILabel!
     @IBOutlet weak var thumbnailView: UIImageView!
+    @IBOutlet weak var btnMenu: UIButton!
+
     var delegate: AuthorMoviesTableViewCellDelegate!
     var mediaId: String!
     var author: String!

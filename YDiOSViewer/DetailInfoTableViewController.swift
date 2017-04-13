@@ -27,11 +27,18 @@ class DetailInfoTableViewController: UITableViewController {
     @IBOutlet weak var videoAuthorName: UILabel!
     @IBOutlet weak var titleName: UILabel!
     @IBOutlet weak var likesCount: UILabel!
+    
+    @IBOutlet weak var descriptionTextView: UITextView!
+    @IBOutlet weak var descriptionWebView: UIWebView!
+
+    @IBOutlet weak var contentViewTest: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         print(self.audioClips)
         print(self.videoDuration)
+        self.descriptionWebView.dataDetectorTypes = .link
+        contentViewTest.accessibilityElements = [descriptionTextView]
         getInfo()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -91,6 +98,8 @@ class DetailInfoTableViewController: UITableViewController {
                         self.titleName.text = self.ytItem["movieName"]
                         self.prevRowHeight = CGFloat(self.descriptionContent.frame.height)
                         self.descriptionContent.text = self.ytItem["movieDescription"]
+                        self.descriptionTextView.text = self.ytItem["movieDescription"]
+                        self.descriptionWebView.loadHTMLString(self.ytItem["movieDescription"]!, baseURL: nil)
                         self.videoAuthorName.text = self.ytItem["movieCreator"]
                         self.viewsCount.text = self.ytItem["movieStatViewCount"]
                         self.likesCount.text = self.ytItem["movieStatLikeCount"]
@@ -166,7 +175,9 @@ class DetailInfoTableViewController: UITableViewController {
     }
 
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-
+        self.tableView.beginUpdates()
+        self.tableView.reloadSections(IndexSet(integer: 0), with: UITableViewRowAnimation.none)
+        self.tableView.endUpdates()
     }
     /*
     // MARK: - Navigation

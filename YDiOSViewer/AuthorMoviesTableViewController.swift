@@ -72,6 +72,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         cell.author = cell.lblAuthorName.text!
         let mediaId:String = (videoItem["movieMediaId"] as? String)!
         cell.mediaId = mediaId
+        cell.delegate = self
         var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
         if thumbnailUrl == nil {
             thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
@@ -87,6 +88,9 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
             let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(AuthorMoviesTableViewController.onMoreActions(_:)))
             moreAction.mediaId = mediaId
             cell.accessibilityCustomActions = [moreAction]
+        }
+        else {
+            cell.btnMenu.isHidden = true
         }
         return cell
     }

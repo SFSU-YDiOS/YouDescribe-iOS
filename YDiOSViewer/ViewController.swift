@@ -127,7 +127,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
-    
+
     func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -518,6 +518,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         else if (state.rawValue == 3) { // paused
             // This could be caused by an extended audio description 
             // so consider that playback is still active
+            if !self.isPlaybackActive {
+                // This is a user induced pause
+                print("This is a user induced pause")
+            }
         }
         else if (state.rawValue == 5) { // stop
             self.isPlaybackActive = false
