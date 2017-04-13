@@ -43,6 +43,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     @IBOutlet weak var audioClipsTableView: UITableView!
     @IBOutlet weak var btnPreview: UIButton!
     @IBOutlet weak var btnPlayVideo: UIButton!
+    @IBOutlet weak var btnPreviewTimeline: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -740,6 +741,14 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             }
             videoDetailViewController.displayAuthorID = self.userId
         }
+        else if segue.identifier == "ShowTimelineSegue" {
+            let timelineViewController = segue.destination as! TimelineViewController
+            timelineViewController.youTubeInfo = self.youTubeInfo
+            let clipData = self.dvxApi.getClips(["Movie": self.movieId,
+                                                 "UserId": self.userId])
+            timelineViewController.clipData = clipData
+            timelineViewController.videoDuration = Float(self.youtubePlayer.duration())
+        }
     }
 
 
@@ -819,5 +828,12 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             self.reset()
         }
     }
+    
+    
+    // Timeline preview
+    @IBAction func onTimelinePreviewAction(_ sender: Any) {
+        performSegue(withIdentifier: "ShowTimelineSegue", sender: sender)
+    }
+
 
 }

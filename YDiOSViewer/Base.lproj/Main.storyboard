@@ -126,7 +126,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="12z-Af-cOy" customClass="YTPlayerView">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="277"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="255"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -152,7 +152,7 @@
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </scrollView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="85" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="w2A-Ia-eyW">
-                                <rect key="frame" x="0.0" y="317" width="375" height="298"/>
+                                <rect key="frame" x="0.0" y="323" width="375" height="292"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -307,32 +307,84 @@
                                     <action selector="playVideoAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="w2w-sT-zAK"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LOc-QA-n7r">
-                                <rect key="frame" x="116" y="631" width="144" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LOc-QA-n7r">
+                                <rect key="frame" x="116" y="431" width="144" height="39"/>
                                 <state key="normal" title="Preview in player"/>
                                 <connections>
                                     <action selector="previewDetailAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="uds-3u-RiO"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XSU-gO-5ea">
+                                <rect key="frame" x="1" y="263" width="375" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Preview in Timeline"/>
+                                <connections>
+                                    <action selector="onTimelinePreviewAction:" destination="mTR-mv-mH8" eventType="touchUpInside" id="seV-6j-WMo"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LOc-QA-n7r" firstAttribute="centerX" secondItem="uqW-W7-a8D" secondAttribute="centerX" id="NME-Ar-zZc"/>
+                            <constraint firstItem="E00-oS-JPL" firstAttribute="top" secondItem="LOc-QA-n7r" secondAttribute="bottom" id="cpD-6J-2wy"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="audioClipsTableView" destination="w2A-Ia-eyW" id="bKF-t7-m5k"/>
                         <outlet property="btnPlayPause" destination="8La-i5-9cr" id="5ZS-pZ-tji"/>
                         <outlet property="btnPlayVideo" destination="Pxq-6H-UwH" id="8sO-gZ-q9C"/>
                         <outlet property="btnPreview" destination="LOc-QA-n7r" id="thK-t1-qlw"/>
+                        <outlet property="btnPreviewTimeline" destination="XSU-gO-5ea" id="8QB-BX-Jok"/>
                         <outlet property="btnQueue" destination="igg-OI-lB4" id="F0d-eh-f0X"/>
                         <outlet property="btnRecord" destination="1Pr-He-X0D" id="Dc6-0p-o8G"/>
                         <outlet property="scrollView" destination="7f3-xZ-Wjd" id="56X-VK-suq"/>
                         <outlet property="youtubePlayer" destination="12z-Af-cOy" id="ABm-hu-pDq"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="PreviewDescriptionSegue" id="qOX-jm-4L4"/>
+                        <segue destination="kYQ-gQ-tw4" kind="show" identifier="ShowTimelineSegue" id="Wxm-2Y-aij"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QP0-vJ-AAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="997.60000000000002" y="381.85907046476763"/>
+            <point key="canvasLocation" x="997.60000000000002" y="381.40929535232385"/>
+        </scene>
+        <!--Timeline View Controller-->
+        <scene sceneID="fMg-fk-fmh">
+            <objects>
+                <viewController id="kYQ-gQ-tw4" customClass="TimelineViewController" customModule="YouDescribe_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MPZ-pX-kUL"/>
+                        <viewControllerLayoutGuide type="bottom" id="JmK-9Z-whA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yvr-o6-0Hl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="470"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a4h-Uz-F5V">
+                                <rect key="frame" x="16" y="136" width="3" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b8W-qU-lPB">
+                                <rect key="frame" x="27" y="206" width="332" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FNJ-nQ-7ce">
+                                <rect key="frame" x="27" y="165" width="332" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="audioView" destination="b8W-qU-lPB" id="yT1-un-asX"/>
+                        <outlet property="videoView" destination="FNJ-nQ-7ce" id="tqp-Wy-9qX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mVn-ff-WXH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1909.5999999999999" y="411.99400299850078"/>
         </scene>
         <!--Support-->
         <scene sceneID="kCe-Iy-GIU">
@@ -1507,7 +1559,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="8rT-Au-lg7"/>
         <segue reference="kiE-yg-QAi"/>
-        <segue reference="zkB-lk-Yqo"/>
+        <segue reference="qOX-jm-4L4"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.097015251650071188" green="0.4402525920883168" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

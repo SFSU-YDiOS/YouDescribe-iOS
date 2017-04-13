@@ -524,6 +524,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         // the player changed to state
         print(state.rawValue)
         if (state.rawValue == 4) {
+            // Toggle isPlaybackActive
+            if !self.isPlaybackActive {
+                self.isPlaybackActive = true
+                self.startPlay()
+            }
             self.doPlay = true
             self.isPlaybackActive = true
         }

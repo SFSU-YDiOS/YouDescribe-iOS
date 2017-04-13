@@ -21,6 +21,9 @@
 		1F6C6EA91E5ED76A00AB4D07 /* VolumeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EA81E5ED76A00AB4D07 /* VolumeControl.swift */; };
 		1F6C6EAD1E617C5000AB4D07 /* AuthorMoviesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EAC1E617C4F00AB4D07 /* AuthorMoviesTableViewController.swift */; };
 		1F6C6EAF1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C6EAE1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift */; };
+		1F8CCC941E9F8AD30082E04E /* TimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8CCC931E9F8AD30082E04E /* TimelineViewController.swift */; };
+		1F8CCC961E9FE4BA0082E04E /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8CCC951E9FE4BA0082E04E /* VideoView.swift */; };
+		1F8CCC981E9FFA110082E04E /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8CCC971E9FFA110082E04E /* AudioView.swift */; };
 		1FA953941E73266E00112300 /* AudioHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA953931E73266E00112300 /* AudioHelper.swift */; };
 		1FA953971E73305300112300 /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA953961E73305300112300 /* libmp3lame.a */; };
 		1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBC5381E32E78800FE1749 /* DetailRequestViewController.swift */; };
@@ -84,6 +87,9 @@
 		1F6C6EA81E5ED76A00AB4D07 /* VolumeControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeControl.swift; sourceTree = "<group>"; };
 		1F6C6EAC1E617C4F00AB4D07 /* AuthorMoviesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorMoviesTableViewController.swift; sourceTree = "<group>"; };
 		1F6C6EAE1E617CA300AB4D07 /* AuthorMoviesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorMoviesTableViewCell.swift; sourceTree = "<group>"; };
+		1F8CCC931E9F8AD30082E04E /* TimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineViewController.swift; sourceTree = "<group>"; };
+		1F8CCC951E9FE4BA0082E04E /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
+		1F8CCC971E9FFA110082E04E /* AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
 		1FA953931E73266E00112300 /* AudioHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioHelper.swift; sourceTree = "<group>"; };
 		1FA953951E732D0A00112300 /* lame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lame.h; sourceTree = "<group>"; };
 		1FA953961E73305300112300 /* libmp3lame.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp3lame.a; sourceTree = "<group>"; };
@@ -246,6 +252,9 @@
 				1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */,
 				1FF01A0E1E7E5C22006AD014 /* NetworkClient.swift */,
 				1F0474231E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift */,
+				1F8CCC931E9F8AD30082E04E /* TimelineViewController.swift */,
+				1F8CCC951E9FE4BA0082E04E /* VideoView.swift */,
+				1F8CCC971E9FFA110082E04E /* AudioView.swift */,
 			);
 			name = "YouDescribe-iOS";
 			path = YDiOSViewer;
@@ -472,9 +481,11 @@
 				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
 				1FCCD8981E47131A008FEC85 /* MainTabBarController.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
+				1F8CCC941E9F8AD30082E04E /* TimelineViewController.swift in Sources */,
 				1F6895DC1E68E02F0049A8C4 /* Constants.swift in Sources */,
 				1F6C6EAD1E617C5000AB4D07 /* AuthorMoviesTableViewController.swift in Sources */,
 				1FCCD89A1E47F710008FEC85 /* RegisterViewController.swift in Sources */,
+				1F8CCC961E9FE4BA0082E04E /* VideoView.swift in Sources */,
 				89859B411D9B9C7E00785D6F /* YDiOSViewer.xcdatamodeld in Sources */,
 				89DA3ABB1DEBBD1A002719BA /* SearchResultsViewController.swift in Sources */,
 				1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */,
@@ -496,6 +507,7 @@
 				1F20987B1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift in Sources */,
 				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
 				1FF01A111E82F358006AD014 /* DetailInfoTableViewController.swift in Sources */,
+				1F8CCC981E9FFA110082E04E /* AudioView.swift in Sources */,
 				1F0474241E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift in Sources */,
 				1FCCD8A01E4C6BE7008FEC85 /* SettingsTableViewController.swift in Sources */,
 				1F6526DD1E4D1E1500B5A59E /* CreateDescriptionViewController.swift in Sources */,
