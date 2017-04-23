@@ -20,6 +20,7 @@ class TwitterViewController: UIViewController, UIWebViewDelegate {
             let request = URLRequest(url: url)
             webView.loadRequest(request)
         }
+        webView.allowsLinkPreview = false
     }
 
     override func didReceiveMemoryWarning() {

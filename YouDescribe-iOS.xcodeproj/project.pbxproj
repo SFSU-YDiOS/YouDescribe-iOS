@@ -15,6 +15,7 @@
 		1F20987B1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F20987A1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift */; };
 		1F20987F1E7AFCE600F6F5E9 /* GlobalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */; };
 		1F2626331EAD644500222955 /* TwitterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626321EAD644500222955 /* TwitterViewController.swift */; };
+		1F2626351EAD73FB00222955 /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626341EAD73FB00222955 /* AppExtensions.swift */; };
 		1F6526DD1E4D1E1500B5A59E /* CreateDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */; };
 		1F6895D81E6891480049A8C4 /* DvxUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D71E6891480049A8C4 /* DvxUpload.swift */; };
 		1F6895DA1E68A3EB0049A8C4 /* YouTubeApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */; };
@@ -82,6 +83,7 @@
 		1F20987A1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDescriptionTableViewCell.swift; sourceTree = "<group>"; };
 		1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalCache.swift; sourceTree = "<group>"; };
 		1F2626321EAD644500222955 /* TwitterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterViewController.swift; sourceTree = "<group>"; };
+		1F2626341EAD73FB00222955 /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
 		1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDescriptionViewController.swift; sourceTree = "<group>"; };
 		1F6895D71E6891480049A8C4 /* DvxUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxUpload.swift; sourceTree = "<group>"; };
 		1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeApi.swift; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 			children = (
 				1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */,
 				1F6895DB1E68E02F0049A8C4 /* Constants.swift */,
+				1F2626341EAD73FB00222955 /* AppExtensions.swift */,
 			);
 			name = globals;
 			sourceTree = "<group>";
@@ -534,6 +537,7 @@
 				1FCBC5391E32E78800FE1749 /* DetailRequestViewController.swift in Sources */,
 				1F1B67AD1E63E7C5007A2B50 /* SocialHelper.swift in Sources */,
 				1FCCD89C1E494AB0008FEC85 /* LoginViewController.swift in Sources */,
+				1F2626351EAD73FB00222955 /* AppExtensions.swift in Sources */,
 				89859B3B1D9B9C7E00785D6F /* ViewController.swift in Sources */,
 				89DA3AB71DEB8E0B002719BA /* SearchResultsTableViewController.swift in Sources */,
 				1F1FB7111E38085E004FE5B7 /* TabBarViewController.swift in Sources */,

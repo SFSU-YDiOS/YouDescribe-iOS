@@ -98,17 +98,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             cell.descriptionLabel.text = "No description"
             cell.author = ""
         }
-        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
-        
-        if thumbnailUrl == nil {
-            thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
-        }
-        var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-        if data == nil {
-            data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-        }
-        
-        cell.thumbnailView.image = UIImage(data: data as! Data)
+        cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
 
         // Setup for accessibility
         let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(SearchResultsTableViewController.onMoreActions(_:)))

@@ -967,8 +967,8 @@
                         <segue destination="yfP-qN-e1b" kind="relationship" relationship="viewControllers" id="q36-In-97K"/>
                         <segue destination="A4R-lv-Mmt" kind="relationship" relationship="viewControllers" id="WLC-b5-9e2"/>
                         <segue destination="UiB-ys-q6B" kind="relationship" relationship="viewControllers" id="nQ1-AR-rcQ"/>
-                        <segue destination="oFi-Ox-NQV" kind="relationship" relationship="viewControllers" id="Gwr-6S-F54"/>
                         <segue destination="tRw-IP-t7Q" kind="relationship" relationship="viewControllers" id="BjD-uG-7Rd"/>
+                        <segue destination="oFi-Ox-NQV" kind="relationship" relationship="viewControllers" id="Gwr-6S-F54"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Llb-pr-lrP" userLabel="First Responder" sceneMemberID="firstResponder"/>

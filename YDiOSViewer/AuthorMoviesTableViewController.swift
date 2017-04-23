@@ -74,15 +74,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         let mediaId:String = (videoItem["movieMediaId"] as? String)!
         cell.mediaId = mediaId
         cell.delegate = self
-        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
-        if thumbnailUrl == nil {
-            thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
-        }
-        var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-        if data == nil {
-            data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-        }
-        cell.thumbnailView.image = UIImage(data: data as! Data)
+        cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
 
         // Setup for accessibility
         if self.isUserLoggedIn {

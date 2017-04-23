@@ -172,19 +172,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             else {
                 cell.describerLabel.text = "No description"
             }
-            var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
-
-            if thumbnailUrl == nil {
-                thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
-            } else {
-                var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-                if data == nil {
-                    data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-                }
-                else {
-                    cell.thumbnailView.image = UIImage(data: data as! Data)
-                }
-            }
+            cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
 
             // Setup for accessibility
             let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(VideoItemTableViewController.onMoreActions(_:)))
