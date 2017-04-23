@@ -58,6 +58,8 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityCompletedNotification"), object: nil, queue: nil) { notification in
             self.activityIndicator.stopAnimating()
         }
+        // hide keyboard when tapped elsewhere
+        self.hideKeyboardWhenTappedAround()
     }
 
     override func didReceiveMemoryWarning() {
@@ -71,6 +73,7 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         searchBar.sizeToFit()
         searchBar.text = searchString
         searchBar.showsScopeBar = true
+        searchBar.showsCancelButton = true
         searchBar.scopeButtonTitles = ["All", "Described"]
         searchHeader.addSubview(searchBar)
         searchBar.delegate = self
