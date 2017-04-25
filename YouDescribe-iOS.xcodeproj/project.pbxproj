@@ -16,6 +16,8 @@
 		1F20987F1E7AFCE600F6F5E9 /* GlobalCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */; };
 		1F2626331EAD644500222955 /* TwitterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626321EAD644500222955 /* TwitterViewController.swift */; };
 		1F2626351EAD73FB00222955 /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626341EAD73FB00222955 /* AppExtensions.swift */; };
+		1F2626371EAD7D4E00222955 /* ExtendedYouTubeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626361EAD7D4E00222955 /* ExtendedYouTubeControl.swift */; };
+		1F2626391EAD920700222955 /* TestBedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2626381EAD920700222955 /* TestBedViewController.swift */; };
 		1F6526DD1E4D1E1500B5A59E /* CreateDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */; };
 		1F6895D81E6891480049A8C4 /* DvxUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D71E6891480049A8C4 /* DvxUpload.swift */; };
 		1F6895DA1E68A3EB0049A8C4 /* YouTubeApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */; };
@@ -84,6 +86,8 @@
 		1F20987E1E7AFCE600F6F5E9 /* GlobalCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalCache.swift; sourceTree = "<group>"; };
 		1F2626321EAD644500222955 /* TwitterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterViewController.swift; sourceTree = "<group>"; };
 		1F2626341EAD73FB00222955 /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
+		1F2626361EAD7D4E00222955 /* ExtendedYouTubeControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtendedYouTubeControl.swift; sourceTree = "<group>"; };
+		1F2626381EAD920700222955 /* TestBedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestBedViewController.swift; sourceTree = "<group>"; };
 		1F6526DC1E4D1E1500B5A59E /* CreateDescriptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDescriptionViewController.swift; sourceTree = "<group>"; };
 		1F6895D71E6891480049A8C4 /* DvxUpload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DvxUpload.swift; sourceTree = "<group>"; };
 		1F6895D91E68A3EB0049A8C4 /* YouTubeApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeApi.swift; sourceTree = "<group>"; };
@@ -197,6 +201,7 @@
 				1F8CCC951E9FE4BA0082E04E /* VideoView.swift */,
 				1F8CCC971E9FFA110082E04E /* AudioView.swift */,
 				897570251D9BB21B00EAFF49 /* YouTubeHelperControl.swift */,
+				1F2626361EAD7D4E00222955 /* ExtendedYouTubeControl.swift */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -220,6 +225,7 @@
 				1FCCD89F1E4C6BE7008FEC85 /* SettingsTableViewController.swift */,
 				1F8CCC931E9F8AD30082E04E /* TimelineViewController.swift */,
 				1F2626321EAD644500222955 /* TwitterViewController.swift */,
+				1F2626381EAD920700222955 /* TestBedViewController.swift */,
 			);
 			name = controller;
 			sourceTree = "<group>";
@@ -526,6 +532,7 @@
 				1F6895D81E6891480049A8C4 /* DvxUpload.swift in Sources */,
 				8999DA971DAF74EB00FB50B3 /* DownloadAudio.swift in Sources */,
 				1FCCD8981E47131A008FEC85 /* MainTabBarController.swift in Sources */,
+				1F2626391EAD920700222955 /* TestBedViewController.swift in Sources */,
 				8913AB541D9C0DD80027213D /* DvxXmlParser.swift in Sources */,
 				1F8CCC941E9F8AD30082E04E /* TimelineViewController.swift in Sources */,
 				1F6895DC1E68E02F0049A8C4 /* Constants.swift in Sources */,
@@ -554,6 +561,7 @@
 				1FA953941E73266E00112300 /* AudioHelper.swift in Sources */,
 				1F20987B1E73A30900F6F5E9 /* CreateDescriptionTableViewCell.swift in Sources */,
 				1FCBC5591E32FDCA00FE1749 /* DetailShareViewController.swift in Sources */,
+				1F2626371EAD7D4E00222955 /* ExtendedYouTubeControl.swift in Sources */,
 				1FF01A111E82F358006AD014 /* DetailInfoTableViewController.swift in Sources */,
 				1F8CCC981E9FFA110082E04E /* AudioView.swift in Sources */,
 				1F0474241E96A6DD00E23715 /* UIAccessibilityExtendedAction.swift in Sources */,

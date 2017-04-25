@@ -11,10 +11,12 @@ import UIKit
 class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate, UINavigationControllerDelegate {
 
     let dvxApi = DvxApi()
+    let youtubeApi = YouTubeApi()
     var allMovies: [AnyObject] = []
     var allMoviesSearch: [AnyObject] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
+    var allDurations: [String: String] = [:]
     var tableSize: Int = 25
     var currentItem: String = "" // TODO: Figure out how to perform segue with argument
     var currentAuthor: String = ""
@@ -173,7 +175,25 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
                 cell.describerLabel.text = "No description"
             }
             cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
-
+            if self.allDurations[mediaId] != nil {
+                DispatchQueue.main.async {
+                    cell.durationLabel.text = self.allDurations[mediaId]
+                }
+            } else {
+                YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
+                    (result) in
+                    if result["duration"]?.range(of: ":") == nil {
+                        self.allDurations[mediaId] = "00:" + (result["duration"] ?? "00")
+                    }
+                    else {
+                        self.allDurations[mediaId] = result["duration"] ?? "00:00"
+                    }
+                    GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
+                    DispatchQueue.main.async {
+                        cell.durationLabel.text = self.allDurations[mediaId]
+                    }
+                })
+            }
             // Setup for accessibility
             let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(VideoItemTableViewController.onMoreActions(_:)))
             moreAction.mediaId = mediaId

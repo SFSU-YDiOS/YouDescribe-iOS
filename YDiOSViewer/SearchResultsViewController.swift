@@ -53,7 +53,6 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         searchBar.sizeToFit()
         searchBar.text = searchString
         searchBar.showsScopeBar = true
-        searchBar.showsCancelButton = true
         searchBar.scopeButtonTitles = ["All", "Described"]
         searchHeader.addSubview(searchBar)
         searchBar.delegate = self

@@ -45,6 +45,9 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     @IBOutlet weak var btnPlayVideo: UIButton!
     @IBOutlet weak var btnPreviewTimeline: UIButton!
 
+    @IBAction func testButtonClicked(_ sender: Any) {
+        self.performSegue(withIdentifier: "TestBedSegue", sender: nil)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         let options = ["playsinline" : 1]

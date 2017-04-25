@@ -17,6 +17,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
     var youDescribeMovies: [AnyObject] = []
     var allMovies: [AnyObject] = []
     var displayMovies: [AnyObject] = []
+    var allDurations: [String:String] = [:]
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
     var startEditMode: Bool = false
@@ -26,7 +27,7 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getYouTubeResults()
-
+        self.allDurations = GlobalCache.cache.object(forKey: GlobalCache.durationCacheKey) as! [String:String]
         // Search from the second screen (using the same logic)
         NotificationCenter.default.addObserver(forName: NSNotification.Name("SearchAgainNotification"), object: nil, queue: nil) { notification in
             var myObject = notification.object as! [AnyObject]
@@ -99,7 +100,26 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             cell.author = ""
         }
         cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
-
+        // Durations
+        if self.allDurations[mediaId] != nil {
+            DispatchQueue.main.async {
+                cell.durationLabel.text = self.allDurations[mediaId]
+            }
+        } else {
+            YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
+                (result) in
+                if result["duration"]?.range(of: ":") == nil {
+                    self.allDurations[mediaId] = "00:" + (result["duration"] ?? "00")
+                }
+                else {
+                    self.allDurations[mediaId] = result["duration"] ?? "00:00"
+                }
+                GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
+                DispatchQueue.main.async {
+                    cell.durationLabel.text = self.allDurations[mediaId]
+                }
+            })
+        }
         // Setup for accessibility
         let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(SearchResultsTableViewController.onMoreActions(_:)))
         moreAction.mediaId = mediaId

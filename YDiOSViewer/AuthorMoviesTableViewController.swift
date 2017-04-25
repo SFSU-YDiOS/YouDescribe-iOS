@@ -13,6 +13,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
     var allMoviesSearch: [AnyObject] = []
     var allMovies: [AnyObject] = []
     var filteredMovies: [AnyObject] = []
+    var allDurations: [String:String] = [:]
     var preferredAuthor: String = ""
     var isUserLoggedIn: Bool = false
 
@@ -20,6 +21,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         super.viewDidLoad()
         // filter the movies based on the required author
         self.filteredMovies = []
+        self.allDurations = GlobalCache.cache.object(forKey: GlobalCache.durationCacheKey) as! [String:String]
         for movie in self.allMoviesSearch {
             if movie["userHandle"] as! String == self.preferredAuthor {
                 self.filteredMovies.append(movie)
@@ -76,6 +78,25 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         cell.delegate = self
         cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
 
+        if self.allDurations[mediaId] != nil {
+            DispatchQueue.main.async {
+                cell.lblDuration.text = self.allDurations[mediaId]
+            }
+        } else {
+            YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
+                (result) in
+                if result["duration"]?.range(of: ":") == nil {
+                    self.allDurations[mediaId] = "00:" + (result["duration"] ?? "00")
+                }
+                else {
+                    self.allDurations[mediaId] = result["duration"] ?? "00:00"
+                }
+                GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
+                DispatchQueue.main.async {
+                    cell.lblDuration.text = self.allDurations[mediaId]
+                }
+            })
+        }
         // Setup for accessibility
         if self.isUserLoggedIn {
             let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(AuthorMoviesTableViewController.onMoreActions(_:)))
