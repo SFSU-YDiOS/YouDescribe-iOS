@@ -42,6 +42,7 @@ class DvxApi {
 
     func getClips(_ params:[String: String]) -> Array<AnyObject> {
         let url:String! = getConstructedUrl("clip/metadata", params: params)
+        print("The URL IS \(url)")
         return DvxXmlParser().makeRequest(url, separator: "clip")
     }
 

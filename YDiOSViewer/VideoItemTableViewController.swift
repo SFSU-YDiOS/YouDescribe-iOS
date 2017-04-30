@@ -292,9 +292,11 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         if segue.identifier == "ShowVideoDetail" {
             let videoDetailViewController = segue.destination as! ViewController
             let selectedRow = self.tableView.indexPathForSelectedRow
+            let cell = self.tableView.cellForRow(at: selectedRow!) as! VideoItemTableViewCell
             let row : AnyObject? = self.allMoviesSearch[(selectedRow?.row)!]
             videoDetailViewController.movieID =  row?["movieMediaId"] as? String
-
+            videoDetailViewController.movieIdLocal = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: videoDetailViewController.movieID!)
+            videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = row?["userHandle"] as? String
             videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String

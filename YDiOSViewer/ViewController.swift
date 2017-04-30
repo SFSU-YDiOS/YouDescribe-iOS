@@ -7,6 +7,7 @@ import Social
 class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDelegate, UIPickerViewDelegate, UIPickerViewDataSource  {
 
     let dvxApi = DvxApi()
+    let youTubeApi = YouTubeApi()
     let audioIndexThreshold:Int = 3
     let skipButtonFrameCount:Float = 10
 
@@ -42,12 +43,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var displayAuthorID: String?
     var initialAuthorIndex: Int?
     var currentClipType: Int?
+    var movieIdLocal: String?
+    var videoDurationInSeconds: Float =  0.0
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
-    //@IBOutlet weak var movieText: UITextField!
-    //@IBOutlet weak var playerLabel: UILabel!
-
-    @IBOutlet weak var verticalStack: UIStackView!
     //@IBOutlet weak var authorText: UITextField!
     @IBOutlet weak var nextClipAtLabel: UILabel!
     @IBOutlet weak var authorPickerView: UIPickerView!
@@ -61,6 +60,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var clipCountLabel: UILabel!
+    @IBOutlet weak var timelineContainer: UIView!
+    @IBOutlet weak var currentClipIndexLabel: UILabel!
+    @IBOutlet weak var timelineSliderImage: UIImageView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -178,7 +180,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
-            self.titleLabel.text = selectedMovies[0]["movieName"] as? String
+            //self.titleLabel.text = selectedMovies[0]["movieName"] as? String
             self.currentMovie = selectedMovies[0]
             print("The movie ID is \(movieId)")
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
@@ -326,6 +328,15 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Called on clicking the Play/Pause toggle button
     @IBAction func playPauseAction(_ sender: AnyObject) {
         self.startPlay()
+       /* let timelineViewController = TimelineViewController()
+        // Get the YouTube Info for this video, and the movie ID
+        youTubeApi.getInfo(mediaId: self.movieID!, finished: { item in
+            timelineViewController.youTubeInfo = item
+            let clipData = self.dvxApi.getClips(["Movie": self.currentMovie!["movieId"] as! String, "UserId": self.currentAuthorId!])
+            timelineViewController.clipData = clipData
+            timelineViewController.videoDuration = Float(self.youtubePlayer.duration())
+            self.timelineContainer.addSubview(timelineViewController.view)
+        })*/
     }
 
     func playPreStartAudio() {
@@ -351,6 +362,13 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.applyPlayPauseLabel()
     }
 
+    func startAnimating() {
+        UIView.animate(withDuration: 0.75, delay: 0, options: .curveLinear, animations: {
+            // this will change Y position of your imageView center
+            // by 1 every time you press button
+            self.timelineSliderImage.center.x += 0.1
+        }, completion: nil)
+    }
     // Apply the play/pause label depending on the current state 
     // of the audio and video player
     func applyPlayPauseLabel() {
@@ -459,6 +477,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
             self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
+            self.currentClipIndexLabel.text = "\(activeAudioIndex) of "
         }
     }
 
@@ -471,6 +490,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             self.resetAudio()
             resetActiveAudioIndex()
         }
+        self.startAnimating()
         //self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
@@ -691,6 +711,16 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             else {
                 aboutController.currentAuthor = "None"
             }
+        }
+        else if segue.identifier == "EmbedTimelineSegue" {
+            let timelineViewController = segue.destination as! TimelineViewController
+            // Get the YouTube Info for this video, and the movie ID
+            timelineViewController.mediaId = self.movieID!
+            timelineViewController.movieId = self.movieIdLocal!
+            timelineViewController.authorId = self.displayAuthorID!
+            timelineViewController.videoDuration = self.videoDurationInSeconds
+            print("The data is \(self.movieIdLocal)")
+            print("The user is \(self.displayAuthorID)")
         }
     }
 

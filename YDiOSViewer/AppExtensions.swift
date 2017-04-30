@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 extension UIViewController {
     func hideKeyboardWhenTappedAround() {
@@ -55,5 +56,32 @@ extension String {
             isMatch = false
         }
         return isMatch
+    }
+    
+    func durationInSeconds() -> Float {
+        let tokens = self.components(separatedBy: ":")
+        var convertedTime: Float = 0.0
+        var hours: Float = 0.0
+        var minutes: Float = 0.0
+        var seconds: Float = 0.0
+        if tokens.count > 0{
+            if tokens.count == 3 {
+                hours = Float(tokens[0])! * 60 * 60
+                minutes = Float(tokens[1])! * 60
+                seconds = Float(tokens[2])!
+            }
+            else {
+                minutes = Float(tokens[0])! * 60
+                seconds = Float(tokens[1])!
+            }
+            convertedTime = hours + minutes + seconds
+        }
+        return convertedTime
+    }
+}
+
+extension AVPlayer {
+    var isPlaying: Bool {
+        return rate != 0 && error == nil
     }
 }

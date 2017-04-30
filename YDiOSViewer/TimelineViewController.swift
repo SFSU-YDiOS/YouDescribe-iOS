@@ -19,17 +19,30 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
     @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var audioView: UIView!
 
+    var movieId: String = ""
+    var mediaId: String = ""
+    var authorId: String = ""
+    var youTubeApi = YouTubeApi()
+    var dvxApi = DvxApi()
+    let yStart:Int = 7
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         // make sure we have all the required data
-        print(youTubeInfo)
-        print(clipData)
-        print(videoDuration)
-        self.makeAudioClipData(clipData)
-        self.doDownload()
-
+        youTubeApi.getInfo(mediaId: self.mediaId, finished: { item in
+            self.youTubeInfo = item
+            self.clipData = self.dvxApi.getClips(["Movie": self.movieId, "UserId": self.authorId])
+            print("The movie ID is \(self.movieId)")
+            print("The author id is \(self.authorId)")
+            print(self.youTubeInfo)
+            print(self.clipData)
+            print("Making audio clip data")
+            self.makeAudioClipData(self.clipData)
+            print("Doing download")
+            self.doDownload()
+        })
     }
 
     override func didReceiveMemoryWarning() {
@@ -169,7 +182,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         var counter: Int = 0
         for (videoTimeBreakPoint, videoViewBreakPoint) in videoBreakPoints {
             let k = VideoView(frame: CGRect(
-                origin: CGPoint(x: Int(lastVideoClipStart), y: 10),
+                origin: CGPoint(x: Int(lastVideoClipStart), y: self.yStart),
                 size: CGSize(width: Int(videoViewBreakPoint), height: 10)))
             // Add the view to the view hierarchy so that it shows up on screen
             self.videoView.addSubview(k)
@@ -180,7 +193,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         
         // Draw the video sub views
         let k = VideoView(frame: CGRect(
-            origin: CGPoint(x: Int(lastVideoClipStart), y: 10),
+            origin: CGPoint(x: Int(lastVideoClipStart), y: yStart),
             size: CGSize(width: Int(maxWidth-lastVideoClipStart), height: 10)))
         // Add the view to the view hierarchy so that it shows up on screen
         self.videoView.addSubview(k)
@@ -191,7 +204,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
             let scaledStartTime:Float = (clip.startTime * maxWidth) / videoExtendedDuration
             let scaledDuration:Float = (clip.duration * maxWidth) / videoExtendedDuration
             let k = AudioView(frame: CGRect(
-                origin: CGPoint(x: Int(scaledStartTime), y: 10),
+                origin: CGPoint(x: Int(scaledStartTime), y: yStart),
                 size: CGSize(width: Int(scaledDuration), height: 10)))
             // Add the view to the view hierarchy so that it shows up on screen
             self.audioView.addSubview(k)
