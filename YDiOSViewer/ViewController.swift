@@ -45,6 +45,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var currentClipType: Int?
     var movieIdLocal: String?
     var videoDurationInSeconds: Float =  0.0
+    var videoDurationString: String = ""
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var authorText: UITextField!
@@ -63,6 +64,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var timelineContainer: UIView!
     @IBOutlet weak var currentClipIndexLabel: UILabel!
     @IBOutlet weak var timelineSliderImage: UIImageView!
+    @IBOutlet weak var controlEndTimeLabel: UILabel!
+    @IBOutlet weak var controlStartTimeLabel: UILabel!
+    @IBOutlet weak var controlPlayPauseButton: UIButton!
+    @IBOutlet weak var currentDescriptionInfo: UILabel!
+    @IBOutlet weak var controlSlider: UISlider!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,6 +122,9 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // Update the clips label after the author id is updated.
         self.updateClipCountFromAuthor()
+        
+        // Update the control slider maxrange and the end label
+        self.updateSliderTimeInfo()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -171,6 +180,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
         
     }
+    
+    func updateSliderTimeInfo() {
+        self.controlEndTimeLabel.text = self.videoDurationString
+        self.controlSlider.maximumValue = self.videoDurationInSeconds * 1000
+        
+    }
     // Loads all the audio clips based on the selected MediaId
     func loadClips() {
         // get the movieID of the clip
@@ -180,7 +195,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
-            //self.titleLabel.text = selectedMovies[0]["movieName"] as? String
+            self.titleLabel.text = selectedMovies[0]["movieName"] as? String
             self.currentMovie = selectedMovies[0]
             print("The movie ID is \(movieId)")
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
@@ -270,10 +285,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         }
         DispatchQueue.main.async {
             if clipCount == 1 {
-                self.clipCountLabel.text = "(\(clipCount) audio clip) "
+                self.clipCountLabel.text = "\(clipCount)"
             }
             else {
-                self.clipCountLabel.text = "(\(clipCount) audio clips)"
+                self.clipCountLabel.text = "\(clipCount)"
             }
         }
     }
@@ -316,7 +331,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // Called when the movie is loaded
     @IBAction func loadMovie(_ sender: AnyObject) {
         if((movieID) != nil) {
-            let options = ["playsinline" : 1]
+            let options = ["playsinline" : 1, "controls" : 0]
             youtubePlayer.load(withVideoId: movieID!, playerVars: options)
             // load the clips for this video.
             loadClips()
@@ -373,11 +388,15 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     // of the audio and video player
     func applyPlayPauseLabel() {
         if self.isPlaybackActive == true {
-            playButton.setTitle("Pause", for: UIControlState())
+            //playButton.setTitle("Pause", for: UIControlState())
+            playButton.setImage(#imageLiteral(resourceName: "Pause") , for: UIControlState())
+            controlPlayPauseButton.setImage(#imageLiteral(resourceName: "Pause"), for: UIControlState())
             self.doPlay = false
         }
         else {
-            playButton.setTitle("Play", for: UIControlState())
+            //playButton.setTitle("Play", for: UIControlState())
+            playButton.setImage(#imageLiteral(resourceName: "Play"), for: UIControlState())
+            controlPlayPauseButton.setImage(#imageLiteral(resourceName: "Play"), for: UIControlState())
             self.doPlay = true
         }
     }
@@ -477,8 +496,21 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func showNextClipStartTime() {
         if (!self.audioClips.isEmpty && activeAudioIndex < self.audioClips.count) {
             self.nextClipAtLabel.text = (self.audioClips[activeAudioIndex]["clipStartTime"]!! as AnyObject).description
-            self.currentClipIndexLabel.text = "\(activeAudioIndex) of "
+            self.currentDescriptionInfo.text = "\(activeAudioIndex) of \(self.clipCountLabel.text!) "
+            if self.clipCountLabel.text! == "1" {
+                self.currentDescriptionInfo.text = "\(String(describing: self.currentDescriptionInfo.text!)) description"
+            }
+            else {
+                self.currentDescriptionInfo.text = "\(String(describing: self.currentDescriptionInfo.text!)) descriptions"
+            }
         }
+    }
+    
+    private func updateSlider(_ currentTime: Float) {
+        // update the start time
+        self.controlStartTimeLabel.text =  currentTime.millisToFormattedString()
+        // update the slider
+        self.controlSlider.value = currentTime * 1000
     }
 
     // Called periodically as the youtube-player plays the video.
@@ -486,11 +518,11 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     {
         if abs(self.previousTime - youtubePlayer.currentTime()) > 5 {
             print("DETECTED JUMP !!!")
-            //self.stopAudio()
             self.resetAudio()
             resetActiveAudioIndex()
         }
         self.startAnimating()
+        self.updateSlider(youtubePlayer.currentTime())
         //self.playerLabel.text = "\(playTime)"
         if !self.isAudioPlaying {
             // Check if we have reached the point in the video
@@ -803,6 +835,10 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.present(optionMenu, animated: true, completion: nil)
     }
 
+    
+    @IBAction func controlPlayButtonAction(_ sender: Any) {
+        self.startPlay()
+    }
     // MARK - Accessibility
     override func accessibilityPerformMagicTap() -> Bool {
         // Toggle isPlaybackActive

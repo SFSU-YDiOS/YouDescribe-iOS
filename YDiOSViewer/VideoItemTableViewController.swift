@@ -296,6 +296,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             videoDetailViewController.movieID =  row?["movieMediaId"] as? String
             videoDetailViewController.movieIdLocal = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: videoDetailViewController.movieID!)
             videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
+            videoDetailViewController.videoDurationString = cell.durationLabel.text!
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = row?["userHandle"] as? String
             videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String

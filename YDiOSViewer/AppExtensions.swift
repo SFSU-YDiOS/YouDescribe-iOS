@@ -100,3 +100,17 @@ extension UITextField {
         last.addTarget(last, action: #selector(UIResponder.resignFirstResponder), for: .editingDidEndOnExit)
     }
 }
+
+extension Float {
+    func millisToFormattedString() -> String {
+        let hours = Int(self) / 3600
+        let minutes = Int(self) / 60 % 60
+        let seconds = Int(self) % 60
+        if hours == 0 {
+            return String(format:"%02i:%02i", minutes, seconds)
+        }
+        else {
+            return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+        }
+    }
+}
