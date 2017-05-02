@@ -51,6 +51,8 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             }
             self.tableView.reloadData()
         }
+        // Remove extra lines from the tableView
+        tableView.tableFooterView = UIView()
     }
 
     override func didReceiveMemoryWarning() {
