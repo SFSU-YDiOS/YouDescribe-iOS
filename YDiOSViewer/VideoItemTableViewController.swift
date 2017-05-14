@@ -299,7 +299,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             videoDetailViewController.videoDurationString = cell.durationLabel.text!
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = row?["userHandle"] as? String
-            videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String
+            videoDetailViewController.displayAuthorID = (row?["clipAuthor"] as? String)!
         }
         else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
@@ -313,6 +313,10 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
             createDescriptionViewController.isEditMode = self.startEditMode
+            createDescriptionViewController.movieName = "Rupal Khilari"
+            createDescriptionViewController.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.currentItem)
+            createDescriptionViewController.videoDurationInSeconds = (self.allDurations[self.currentItem]?.durationInSeconds())!
+            createDescriptionViewController.videoDurationString = self.allDurations[self.currentItem]!
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController

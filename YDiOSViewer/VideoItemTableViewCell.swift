@@ -23,6 +23,7 @@ class VideoItemTableViewCell: UITableViewCell {
 
     var mediaId: String!
     var author: String!
+    var movieId: String!
     var delegate: VideoItemTableViewCellDelegate!
 
     override func awakeFromNib() {

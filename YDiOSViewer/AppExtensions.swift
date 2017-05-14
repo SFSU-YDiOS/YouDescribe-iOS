@@ -25,7 +25,7 @@ extension UIImageView {
     public func imageFromServerURL(urlString: String) {
         
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
-            
+
             if error != nil {
                 print(error!)
                 return
@@ -112,5 +112,18 @@ extension Float {
         else {
             return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
         }
+    }
+}
+
+// FileManager extensions for documents and cache directories
+extension FileManager {
+    class func documentsDir() -> String {
+        var paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as [String]
+        return paths[0]
+    }
+    
+    class func cachesDir() -> String {
+        var paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true) as [String]
+        return paths[0]
     }
 }

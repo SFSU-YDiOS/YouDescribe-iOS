@@ -182,11 +182,17 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             let row : AnyObject? = self.filteredMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+            let cell = self.tableView.cellForRow(at: selectedRow!) as! SearchResultsTableViewCell
+            videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
+            videoDetailViewController.videoDurationString = cell.durationLabel.text!
             if (self.authorMap.index(forKey: (row?["clipAuthor"] as? String)!) != nil) {
                 videoDetailViewController.displayAuthor = self.authorMap[(row?["clipAuthor"] as? String)!]
+                videoDetailViewController.hasDescription = true
             }
             else {
                 videoDetailViewController.displayAuthor = "None"
+                videoDetailViewController.hasDescription = false
+                videoDetailViewController.showTimeline = false
             }
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {

@@ -16,7 +16,7 @@ class TwitterViewController: UIViewController, UIWebViewDelegate {
         super.viewDidLoad()
         webView.delegate = self
         // Do any additional setup after loading the view.
-        if let url = URL(string: "https://twitter.com/search?q=%23YDRequest") {
+        if let url = URL(string: "https://twitter.com/search?q=%23YDRequest%20Requesting%20description") {
             let request = URLRequest(url: url)
             webView.loadRequest(request)
         }

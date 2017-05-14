@@ -43,7 +43,7 @@ class SocialHelper {
         let message = "Requesting a description of  \(self.movieTitle!) at "
         //Set the link to share.
         let link = NSURL(string: self.getCreateCode())
-        let hashTags = "\n#YouDescribe #ydrequest #ViDesc"
+        let hashTags = "\n#YouDescribe #ydrequest "
 
         let objectsToShare = [message + (link?.absoluteString!)! + hashTags] as [Any]
         return objectsToShare

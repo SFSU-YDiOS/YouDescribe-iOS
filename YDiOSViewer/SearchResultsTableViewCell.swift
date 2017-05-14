@@ -34,7 +34,7 @@ class SearchResultsTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
-    
+
     @IBAction func onMenuClicked(_ sender: Any) {
         self.delegate.showCellDetailMenu(mediaId: self.mediaId, author: self.author)
     }

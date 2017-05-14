@@ -40,12 +40,16 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     var doShowMissingAudioWarning: Bool = false
     var previousTime: Float = 0
     var displayAuthor: String?
-    var displayAuthorID: String?
+    var displayAuthorID: String = ""
     var initialAuthorIndex: Int?
     var currentClipType: Int?
-    var movieIdLocal: String?
+    var movieIdLocal: String = ""
     var videoDurationInSeconds: Float =  0.0
     var videoDurationString: String = ""
+    var isEmbedded: Bool = false
+    var hasDescription: Bool = true
+    var showTimeline: Bool = true
+    var isControlSliderDown: Bool = false
 
     @IBOutlet weak var youtubePlayer: YTPlayerView!
     //@IBOutlet weak var authorText: UITextField!
@@ -69,6 +73,12 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBOutlet weak var controlPlayPauseButton: UIButton!
     @IBOutlet weak var currentDescriptionInfo: UILabel!
     @IBOutlet weak var controlSlider: UISlider!
+    @IBOutlet weak var toolbarControls: UIToolbar!
+    @IBOutlet weak var describerLabel: UILabel!
+    @IBOutlet weak var descriptionVolumeLabel: UILabel!
+
+    @IBOutlet weak var createDescriptionButton: UIButton!
+    @IBOutlet weak var createDescriptionView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,6 +135,32 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         
         // Update the control slider maxrange and the end label
         self.updateSliderTimeInfo()
+        
+        // update the display for the player in embedded mode
+        if self.isEmbedded {
+            self.updateForEmbed()
+        }
+        
+        if self.hasDescription {
+            self.createDescriptionView.isHidden = true
+        }
+        else {
+            self.createDescriptionView.isHidden = false
+            self.timelineContainer.isHidden = true
+            self.describerLabel.isHidden = true
+            self.descriptionVolumeLabel.isHidden = true
+            self.authorPickerView.isHidden = true
+            self.audioVolumeSlider.isHidden = true
+            self.timelineSliderImage.isHidden = true
+        }
+        
+        // show/hide the timeline display depending on the requirement
+        if !self.showTimeline {
+            self.timelineContainer.isHidden = true
+        }
+        // Add tap gesture recognizer to the slider
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.sliderTapped(_:)))
+        self.controlSlider.addGestureRecognizer(tapGesture)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -184,25 +220,37 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     func updateSliderTimeInfo() {
         self.controlEndTimeLabel.text = self.videoDurationString
         self.controlSlider.maximumValue = self.videoDurationInSeconds * 1000
-        
+        self.timelineSliderImage.center.x = self.timelineContainer.subviews[0].subviews[1].frame.minX
     }
+    
+    // Hides the controls that are not necessary while embedding it in another controller
+    func updateForEmbed() {
+        self.authorPickerView.isHidden = true
+        self.describerLabel.isHidden = true
+        self.descriptionVolumeLabel.isHidden = true
+        self.toolbarControls.isHidden = true
+        self.audioVolumeSlider.isHidden = true
+        self.createDescriptionView.isHidden = true
+    }
+
     // Loads all the audio clips based on the selected MediaId
     func loadClips() {
         // get the movieID of the clip
         let selectedMovies = dvxApi.getMovies(["MediaId": movieID!])
         
         //For Youtube videos
-        
+
         if(selectedMovies.count >= 1) {
             let movieId = selectedMovies[0]["movieId"]
             self.titleLabel.text = selectedMovies[0]["movieName"] as? String
             self.currentMovie = selectedMovies[0]
-            print("The movie ID is \(movieId)")
             let clips = dvxApi.getClips(["Movie": (movieId!! as AnyObject).description])
             print(clips.description)
             self.allAudioClips = clips
             self.authorIdList = getAllAuthors()
             authorPickerView.reloadAllComponents()
+        } else {
+            self.titleLabel.text = self.currentMovieTitle
         }
     }
 
@@ -513,9 +561,37 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.controlSlider.value = currentTime * 1000
     }
 
+    @IBAction func controlSliderChanged(_ sender: Any) {
+        //youtubePlayer.seek(toSeconds: self.controlSlider.value/1000.0, allowSeekAhead: true)
+        self.isControlSliderDown = true
+    }
+    
+    @IBAction func controlSliderTouchUpOutsideAction(_ sender: Any) {
+        print("Outside classed")
+    }
+    
+    @IBAction func controlSliderTouchUpInsideAction(_ sender: Any) {
+        self.isControlSliderDown = false
+        youtubePlayer.seek(toSeconds: self.controlSlider.value/1000.0, allowSeekAhead: true)
+        resetActiveAudioIndex()
+        self.stopAudio()
+    }
+    
+    @IBAction func controlSliderTouchDown(_ sender: Any) {
+        print("Touch down")
+    }
+    
+    @IBAction func controlSliderTouchDragEnter(_ sender: Any) {
+        print("TD Enter")
+    }
     // Called periodically as the youtube-player plays the video.
     func playerView(_ playerView: YTPlayerView, didPlayTime playTime: Float)
     {
+        // if the control slider is being moved, pause the video and return
+        if self.isControlSliderDown {
+            return
+        }
+
         if abs(self.previousTime - youtubePlayer.currentTime()) > 5 {
             print("DETECTED JUMP !!!")
             self.resetAudio()
@@ -716,23 +792,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     // Prepare for Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "EmbeddedTabViewController" {
-            let tabBarController = segue.destination as! TabBarViewController
-            if (self.currentAuthorId != nil) {
-                tabBarController.preferredAuthor = self.authorMap[self.currentAuthorId!]!
-            }
-            else {
-                if self.displayAuthor != nil {
-                    tabBarController.preferredAuthor = self.displayAuthor!
-                }
-                else {
-                    tabBarController.preferredAuthor = "None"
-                }
-            }
-            tabBarController.mediaId = self.movieID!
-            tabBarController.movieTitle = self.currentMovieTitle!
-        }
-        else if segue.identifier == "ShowAboutSegue" {
+        if segue.identifier == "ShowAboutSegue" {
             let aboutController = segue.destination as! DetailInfoTableViewController
             aboutController.mediaId = self.movieID!
             aboutController.audioClips = self.allAudioClips
@@ -748,17 +808,46 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
             let timelineViewController = segue.destination as! TimelineViewController
             // Get the YouTube Info for this video, and the movie ID
             timelineViewController.mediaId = self.movieID!
-            timelineViewController.movieId = self.movieIdLocal!
-            timelineViewController.authorId = self.displayAuthorID!
+            timelineViewController.movieId = self.movieIdLocal
+            timelineViewController.authorId = self.displayAuthorID
             timelineViewController.videoDuration = self.videoDurationInSeconds
             print("The data is \(self.movieIdLocal)")
             print("The user is \(self.displayAuthorID)")
+        }
+        else if segue.identifier == "ShowCreateDescriptionSegue" {
+            let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
+            createDescriptionViewController.mediaId = self.movieID!
+            createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.isEditMode = false
+            createDescriptionViewController.movieName = self.currentMovieTitle!
+            createDescriptionViewController.movieId = self.movieIdLocal
+            createDescriptionViewController.videoDurationInSeconds = self.videoDurationInSeconds
+            createDescriptionViewController.videoDurationString = self.videoDurationString
         }
     }
 
     // TODO: Orientation change.
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         print("Transitioning....")
+        let device = UIDevice.current
+        if device.orientation == UIDeviceOrientation.portrait {
+            self.describerLabel.isHidden = false
+            self.descriptionVolumeLabel.isHidden = false
+            self.authorPickerView.isHidden = false
+            self.audioVolumeSlider.isHidden = false
+        } else if device.orientation == UIDeviceOrientation.landscapeLeft {
+            self.describerLabel.isHidden = true
+            self.descriptionVolumeLabel.isHidden = true
+            self.authorPickerView.isHidden = true
+            self.audioVolumeSlider.isHidden = true
+        }
+        else if device.orientation == UIDeviceOrientation.landscapeRight {
+            self.describerLabel.isHidden = true
+            self.descriptionVolumeLabel.isHidden = true
+            self.authorPickerView.isHidden = true
+            self.audioVolumeSlider.isHidden = true
+        }
+        
     }
 
     @IBAction func onShareButtonClicked(_ sender: Any) {
@@ -773,6 +862,7 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
     @IBAction func audioVolumeSliderChanged(_ sender: Any) {
         audioPlayer?.volume = self.audioVolumeSlider.value
     }
+
 
     func showShareMenu() {
         let socialHelper = SocialHelper(mediaId: self.movieID!, author: self.displayAuthor!, movieTitle: self.currentMovieTitle!)
@@ -837,7 +927,24 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
 
     
     @IBAction func controlPlayButtonAction(_ sender: Any) {
-        self.startPlay()
+        playPauseControl()
+    }
+    
+    func sliderTapped(_ gestureRecognizer: UIGestureRecognizer) {
+        print("A")
+        
+        let pointTapped: CGPoint = gestureRecognizer.location(in: self.view)
+        
+        let positionOfSlider: CGPoint = controlSlider.frame.origin
+        let widthOfSlider: CGFloat = controlSlider.frame.size.width
+        let newValue = ((pointTapped.x - positionOfSlider.x) * CGFloat(controlSlider.maximumValue) / widthOfSlider)
+        
+        controlSlider.setValue(Float(newValue), animated: true)
+    }
+
+    
+    @IBAction func createDescriptionAction(_ sender: Any) {
+        self.performSegue(withIdentifier: "ShowCreateDescriptionSegue", sender: nil)
     }
     // MARK - Accessibility
     override func accessibilityPerformMagicTap() -> Bool {
@@ -851,6 +958,14 @@ class ViewController: UIViewController, YTPlayerViewDelegate, DownloadAudioDeleg
         self.startPlay()
         return true
     }
-
+    func playPauseControl() {
+        if self.isPlaybackActive {
+            self.isPlaybackActive = false
+        }
+        else {
+            self.isPlaybackActive = true
+        }
+        self.startPlay()
+    }
 }
 

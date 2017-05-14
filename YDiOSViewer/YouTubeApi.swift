@@ -11,10 +11,9 @@ import SwiftyJSON
 
 class YouTubeApi {
     
-    var apiKey: String = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
-    
+
     func getInfo(mediaId: String, finished: @escaping (_ item: [String:String]) ->Void) {
-        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=statistics%2Csnippet&key=\(apiKey)")
+        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=statistics%2Csnippet&key=\(Constants.YOUTUBE_API_KEY)")
         print("\n\nURL\n\n: ",newUrl)
         print("Item Details")
         var ytItem: [String:String] = [:]
@@ -70,7 +69,7 @@ class YouTubeApi {
         
     }
     func getContentDetails(mediaId: String, finished: @escaping (_ item: [String:String]) ->Void) {
-        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=contentDetails&key=\(apiKey)")
+        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=contentDetails&key=\(Constants.YOUTUBE_API_KEY)")
         print("\n\nURL\n\n: ",newUrl)
         print("Item Details")
         var ytItem: [String:String] = [:]

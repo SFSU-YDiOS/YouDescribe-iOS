@@ -25,6 +25,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
     var youTubeApi = YouTubeApi()
     var dvxApi = DvxApi()
     let yStart:Int = 7
+    let barHeight:Int = 10
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,15 +34,17 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         // make sure we have all the required data
         youTubeApi.getInfo(mediaId: self.mediaId, finished: { item in
             self.youTubeInfo = item
-            self.clipData = self.dvxApi.getClips(["Movie": self.movieId, "UserId": self.authorId])
-            print("The movie ID is \(self.movieId)")
-            print("The author id is \(self.authorId)")
-            print(self.youTubeInfo)
-            print(self.clipData)
-            print("Making audio clip data")
-            self.makeAudioClipData(self.clipData)
-            print("Doing download")
-            self.doDownload()
+            if self.movieId != "" {
+                self.clipData = self.dvxApi.getClips(["Movie": self.movieId, "UserId": self.authorId])
+                print("The movie ID is \(self.movieId)")
+                print("The author id is \(self.authorId)")
+                print(self.youTubeInfo)
+                print(self.clipData)
+                print("Making audio clip data")
+                self.makeAudioClipData(self.clipData)
+                print("Doing download")
+                self.doDownload()
+            }
         })
     }
 
@@ -140,7 +143,6 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
             return this.startTime < that.startTime
         }
         self.audioClips.sort(by: sortFilter)
-        
     }
 
     func findClipDuration() {
@@ -173,31 +175,10 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         print("Video extended duration \(videoExtendedDuration)")
         let maxWidth: Float = Float(self.videoView.frame.width - 4.0)
         print("The max width is \(maxWidth)")
-        for (videoTimeBreakPoint, _) in videoBreakPoints {
-            videoBreakPoints[videoTimeBreakPoint] = (videoTimeBreakPoint * maxWidth) / videoExtendedDuration
-        }
-        print(videoBreakPoints)
-        
-        // Draw the video sub views
-        var counter: Int = 0
-        for (videoTimeBreakPoint, videoViewBreakPoint) in videoBreakPoints {
-            let k = VideoView(frame: CGRect(
-                origin: CGPoint(x: Int(lastVideoClipStart), y: self.yStart),
-                size: CGSize(width: Int(videoViewBreakPoint), height: 10)))
-            // Add the view to the view hierarchy so that it shows up on screen
-            self.videoView.addSubview(k)
-            lastVideoClipStart = videoViewBreakPoint
-            lastVideoClipStart += ((extendedClips[counter].duration * maxWidth)/videoExtendedDuration)
-            counter += 1
-        }
-        
-        // Draw the video sub views
-        let k = VideoView(frame: CGRect(
-            origin: CGPoint(x: Int(lastVideoClipStart), y: yStart),
-            size: CGSize(width: Int(maxWidth-lastVideoClipStart), height: 10)))
-        // Add the view to the view hierarchy so that it shows up on screen
-        self.videoView.addSubview(k)
 
+        
+        /////////////
+        var videoBreaks: [Float:Float] = [:]
         // Draw the audio sub views
         lastVideoClipStart = 0.0
         for clip in self.audioClips {
@@ -208,6 +189,39 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
                 size: CGSize(width: Int(scaledDuration), height: 10)))
             // Add the view to the view hierarchy so that it shows up on screen
             self.audioView.addSubview(k)
+            
+            // store points at which video should not be drawn
+            if !clip.isInline {
+                videoBreaks[scaledStartTime] = scaledDuration
+            }
+        }
+        
+        if videoBreaks.isEmpty {
+            // No extended clips - draw from 0 to end
+            let k = VideoView(frame: CGRect(
+                origin: CGPoint(x: Int(0.0), y: yStart),
+                size: CGSize(width: Int(maxWidth), height: 10)))
+            // Add the view to the view hierarchy so that it shows up on screen
+            self.videoView.addSubview(k)
+        }
+        else {
+            // Draw the last video
+            let k = VideoView(frame: CGRect(
+                origin: CGPoint(x: Int(0), y: yStart),
+                size: CGSize(width: Int(maxWidth), height: 10)))
+            self.videoView.addSubview(k)
+            // We have extended clips
+            var lastBreak:Float = 0.0
+            for (scaledSTime, scaledDuration) in videoBreaks {
+                // draw from last break to scaledStartTime
+                let k = VideoView(frame: CGRect(
+                    origin: CGPoint(x: Int(scaledSTime), y: yStart),
+                    size: CGSize(width: Int(scaledDuration), height: 10)))
+                k.color = UIColor.groupTableViewBackground
+                // Add the view to the view hierarchy so that it shows up on screen
+                self.videoView.addSubview(k)
+                lastBreak = scaledSTime + scaledDuration
+            }
         }
     }
     

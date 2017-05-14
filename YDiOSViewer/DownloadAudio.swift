@@ -1,18 +1,6 @@
 import Foundation
 import Alamofire
 
-// FileManager extensions for documents and cache directories
-extension FileManager {
-    class func documentsDir() -> String {
-        var paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as [String]
-        return paths[0]
-    }
-    
-    class func cachesDir() -> String {
-        var paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true) as [String]
-        return paths[0]
-    }
-}
 
 // Thread-safe counter for counting the the number of asynchronous audio downloads completed
 class AtomicCounter {

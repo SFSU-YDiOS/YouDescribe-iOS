@@ -37,6 +37,4 @@ class NetworkClient {
     private func get(request: NSMutableURLRequest, completion: @escaping (_ success: Bool, _ object: AnyObject?) -> ()) {
         dataTask(request: request, method: "GET", completion: completion)
     }
-    
-    
 }
