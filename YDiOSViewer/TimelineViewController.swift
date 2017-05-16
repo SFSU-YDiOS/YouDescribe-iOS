@@ -34,7 +34,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         // make sure we have all the required data
         youTubeApi.getInfo(mediaId: self.mediaId, finished: { item in
             self.youTubeInfo = item
-            if self.movieId != "" {
+            if self.movieId != "" && self.authorId != "" {
                 self.clipData = self.dvxApi.getClips(["Movie": self.movieId, "UserId": self.authorId])
                 print("The movie ID is \(self.movieId)")
                 print("The author id is \(self.authorId)")
@@ -43,7 +43,23 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
                 print("Making audio clip data")
                 self.makeAudioClipData(self.clipData)
                 print("Doing download")
-                self.doDownload()
+                if !self.clipData.isEmpty {
+                    usleep(useconds_t(1500))
+                    self.doDownload()
+                }
+                else {
+                    usleep(useconds_t(1500))
+                    print("Coming to the minimal section")
+                    self.findClipDuration()
+                    self.postMarkerPositions(self.getMarkerPositions())
+                }
+            }
+            else {
+                usleep(useconds_t(1500))
+                print("Coming to the minimal section")
+                self.makeAudioClipData([])
+                self.findClipDuration()
+                self.postMarkerPositions(self.getMarkerPositions())
             }
         })
     }
@@ -86,6 +102,7 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
             sleep(1) // To make sure all the data is saved.
             print("Finding the clip durations since all clips have downloaded")
             self.findClipDuration()
+            self.postMarkerPositions(self.getMarkerPositions())
         }
     }
     /*
@@ -97,6 +114,10 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+
+    func postMarkerPositions(_ positions: [Float]) {
+        NotificationCenter.default.post(name: NSNotification.Name("MarkerPositionsNotification"), object: ["positions": positions])
+    }
 
     func getTimeComponents(_ currentMarkerTime: Float) -> [String:AnyObject] {
         let hours = (Int(currentMarkerTime)) / (3600) as Int
@@ -158,6 +179,9 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
     }
 
     func drawTimeline() {
+        DispatchQueue.main.async {
+        self.videoView.subviews.forEach({ $0.removeFromSuperview() })
+        self.audioView.subviews.forEach({ $0.removeFromSuperview() })
         var videoExtendedDuration: Float = self.videoDuration
         var videoBreakPoints: [Float:Float] = [:]
         var totalOffset: Float = 0.0
@@ -181,11 +205,12 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
         var videoBreaks: [Float:Float] = [:]
         // Draw the audio sub views
         lastVideoClipStart = 0.0
+        var prevOffset: Float = 0.0
         for clip in self.audioClips {
-            let scaledStartTime:Float = (clip.startTime * maxWidth) / videoExtendedDuration
+            let scaledStartTime:Float = ((clip.startTime * maxWidth) / videoExtendedDuration) + prevOffset
             let scaledDuration:Float = (clip.duration * maxWidth) / videoExtendedDuration
             let k = AudioView(frame: CGRect(
-                origin: CGPoint(x: Int(scaledStartTime), y: yStart),
+                origin: CGPoint(x: Int(scaledStartTime), y: self.yStart),
                 size: CGSize(width: Int(scaledDuration), height: 10)))
             // Add the view to the view hierarchy so that it shows up on screen
             self.audioView.addSubview(k)
@@ -193,36 +218,100 @@ class TimelineViewController: UIViewController, DownloadAudioDelegate {
             // store points at which video should not be drawn
             if !clip.isInline {
                 videoBreaks[scaledStartTime] = scaledDuration
+                prevOffset += scaledDuration
             }
         }
-        
-        if videoBreaks.isEmpty {
-            // No extended clips - draw from 0 to end
-            let k = VideoView(frame: CGRect(
-                origin: CGPoint(x: Int(0.0), y: yStart),
-                size: CGSize(width: Int(maxWidth), height: 10)))
-            // Add the view to the view hierarchy so that it shows up on screen
-            self.videoView.addSubview(k)
-        }
-        else {
+
             // Draw the last video
             let k = VideoView(frame: CGRect(
-                origin: CGPoint(x: Int(0), y: yStart),
+                origin: CGPoint(x: Int(0), y: self.yStart),
                 size: CGSize(width: Int(maxWidth), height: 10)))
             self.videoView.addSubview(k)
             // We have extended clips
+            if !videoBreaks.isEmpty {
             var lastBreak:Float = 0.0
-            for (scaledSTime, scaledDuration) in videoBreaks {
-                // draw from last break to scaledStartTime
-                let k = VideoView(frame: CGRect(
-                    origin: CGPoint(x: Int(scaledSTime), y: yStart),
-                    size: CGSize(width: Int(scaledDuration), height: 10)))
-                k.color = UIColor.groupTableViewBackground
-                // Add the view to the view hierarchy so that it shows up on screen
-                self.videoView.addSubview(k)
-                lastBreak = scaledSTime + scaledDuration
+                for (scaledSTime, scaledDuration) in videoBreaks {
+                    // draw from last break to scaledStartTime
+                    let k = VideoView(frame: CGRect(
+                        origin: CGPoint(x: Int(scaledSTime), y: self.yStart),
+                        size: CGSize(width: Int(scaledDuration), height: 10)))
+                    k.color = UIColor.groupTableViewBackground
+                    // Add the view to the view hierarchy so that it shows up on screen
+                    self.videoView.addSubview(k)
+                    lastBreak = scaledSTime + scaledDuration
+                }
             }
+            self.videoView.setNeedsDisplay()
+            self.audioView.setNeedsDisplay()
         }
     }
+
+    func getMarkerPositions() -> [Float] {
+        var positions: [Float] = []
+        let maxWidth: Float = Float(self.videoView.frame.width - 4.0)
+        var videoExtendedDuration: Float = self.videoDuration
+        for clip in self.audioClips {
+            if !clip.isInline {
+                videoExtendedDuration += clip.duration
+            }
+        }
+
+        let stepSize: Float = maxWidth / videoExtendedDuration
+
+        print("Step size is \(stepSize)")
+        var second: Int = 0
+        var viewUnit: Float = 0.0
+        while second <= Int(self.videoDuration) {
+            positions.append(viewUnit)
+            second += 1
+            viewUnit += stepSize
+        }
+
+        var extendedStartTimes: [Float] = []
+        var prevOffset: Float = 0.0
+        for clip in self.audioClips {
+            extendedStartTimes.append(clip.startTime)
+            if !clip.isInline {
+                prevOffset += clip.duration
+            }
+        }
+        // offset all the positions
+        if self.audioClips.count > 0 {
+            for clipIndex in 0...self.audioClips.count-1 {
+                if !self.audioClips[clipIndex].isInline {
+                    // offset all the subsequent positions
+                    var positionIndex: Int = Int(extendedStartTimes[clipIndex]) + 1
+                    while positionIndex < positions.count {
+                        positions[positionIndex] += ((stepSize) * self.audioClips[clipIndex].duration)
+                        positionIndex += 1
+                    }
+                }
+            }
+        }
+        print("The positions are ")
+        print(positions)
+        return positions
+    }
     
+    
+    func reloadForAuthoring() {
+        youTubeApi.getInfo(mediaId: self.mediaId, finished: { item in
+            self.youTubeInfo = item
+            if self.movieId != "" {
+                let oldAudioClips: [AudioClip] = self.audioClips
+                self.clipData = self.dvxApi.getClips(["Movie": self.movieId, "UserId": self.authorId])
+                print("The movie ID is \(self.movieId)")
+                print("The author id is \(self.authorId)")
+                print(self.youTubeInfo)
+                print(self.clipData)
+                print("Making audio clip data")
+                self.makeAudioClipData(self.clipData)
+                print("Doing download")
+                self.doDownload()
+                
+                self.findClipDuration()
+                self.postMarkerPositions(self.getMarkerPositions())
+            }
+        })
+    }
 }

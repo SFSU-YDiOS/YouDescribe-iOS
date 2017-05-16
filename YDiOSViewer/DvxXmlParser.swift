@@ -16,6 +16,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
 
     func makeRequest(_ url:String, separator:String) -> Array<AnyObject> {
 
+        URLCache.shared.removeAllCachedResponses()
         let urlToSend: URL = URL(string: url)!
         self.separator = separator
         // Parse the XML
@@ -33,6 +34,7 @@ class DvxXmlParser: NSObject, XMLParserDelegate {
         return Array()
     }
 
+    
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         keyName = elementName
         //print("Element's name is \(elementName)")

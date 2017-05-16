@@ -21,6 +21,8 @@ class VideoItemTableViewCell: UITableViewCell {
     @IBOutlet weak var btnDetail: UIButton!
     @IBOutlet weak var durationLabel: UILabel!
 
+    @IBOutlet weak var durationAccessible: UILabel!
+
     var mediaId: String!
     var author: String!
     var movieId: String!
@@ -31,6 +33,8 @@ class VideoItemTableViewCell: UITableViewCell {
         // Initialization code
         self.btnDetail.accessibilityLabel = "Menu"
         self.durationLabel.sizeToFit()
+        
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

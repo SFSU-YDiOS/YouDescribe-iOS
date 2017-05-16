@@ -16,6 +16,7 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
     var allDurations: [String:String] = [:]
     var preferredAuthor: String = ""
     var isUserLoggedIn: Bool = false
+    let dvxApi = Constants.DVX_API
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -162,8 +163,10 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
         if segue.identifier == "ShowAuthorVideoDetailSegue" {
             let videoDetailViewController = segue.destination as! ViewController
             let selectedRow = self.tableView.indexPathForSelectedRow
+            let cell = self.tableView.cellForRow(at: selectedRow!) as! AuthorMoviesTableViewCell
             let row : AnyObject? = self.filteredMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
+            videoDetailViewController.movieIdLocal = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: videoDetailViewController.movieID!)
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             if (row?["userHandle"] as? String != nil) {
                 videoDetailViewController.displayAuthor = row?["userHandle"] as? String!
@@ -171,6 +174,12 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
             else {
                 videoDetailViewController.displayAuthor = "None"
             }
+            
+            videoDetailViewController.videoDurationInSeconds = (cell.lblDuration.text?.durationInSeconds())!
+            videoDetailViewController.videoDurationString = cell.lblDuration.text!
+            videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+            videoDetailViewController.displayAuthor = row?["userHandle"] as? String
+            videoDetailViewController.displayAuthorID = (row?["clipAuthor"] as? String)!
         }
         else if segue.identifier == "ShowCreateDescriptionSegue" {
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
@@ -178,6 +187,12 @@ class AuthorMoviesTableViewController: UITableViewController, AuthorMoviesTableV
             createDescriptionViewController.mediaId = mysender.mediaId
             createDescriptionViewController.allMovies = self.allMovies
             createDescriptionViewController.isEditMode = mysender.isEditMode
+            createDescriptionViewController.allMoviesSearch = self.allMoviesSearch
+            createDescriptionViewController.movieName = ""
+            createDescriptionViewController.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: mysender.mediaId)
+            createDescriptionViewController.videoDurationInSeconds = (self.allDurations[mysender.mediaId]?.durationInSeconds())!
+            createDescriptionViewController.videoDurationString = self.allDurations[mysender.mediaId]!
+            
         }
     }
 }

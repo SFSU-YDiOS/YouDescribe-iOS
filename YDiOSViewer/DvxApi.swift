@@ -42,9 +42,15 @@ class DvxApi {
 
     func getClips(_ params: [String: String]) -> Array<AnyObject> {
         let url: String! = getConstructedUrl("clip/metadata", params: params)
-        print("The URL IS \(url)")
-        return DvxXmlParser().makeRequest(url, separator: "clip")
+        var clips: Array<AnyObject> =  DvxXmlParser().makeRequest(url, separator: "clip")
+        // sort clips based on the start time
+        func sortFilter(this:AnyObject, that:AnyObject) -> Bool {
+            return Float((this["clipStartTime"]!! as AnyObject).description)! < Float((that["clipStartTime"]!! as AnyObject).description)!
+        }
+        clips.sort(by: sortFilter)
+        return clips
     }
+    
 
     func getAudioClipUrl(_ params: [String: String]) -> String {
         let url: String = getConstructedUrl("clip", params: params)
@@ -105,6 +111,19 @@ class DvxApi {
         return "" // No movie is found
     }
 
+    func isRecordInSearchTable(allMovies: Array<AnyObject>, mediaId: String, userHandle: String) -> Bool {
+        for movie in allMovies {
+            if movie.allKeys.contains(where: {$0 as? String == "movieMediaId" }) {
+                if movie["movieMediaId"]  as? String == mediaId {
+                    if movie["userHandle"] as? String == userHandle {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
     func prepareForDeleteClip(_ params: [String: String]) -> NSMutableURLRequest {
          return self.getPostRequest(urlString: apiBaseUrl + "clip/delete", params: params)
     }

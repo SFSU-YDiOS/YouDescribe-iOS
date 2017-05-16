@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,22 +20,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="3" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eWX-Wh-a58">
-                                <rect key="frame" x="16" y="183" width="343" height="20.5"/>
-                                <rect key="contentStretch" x="0.59999999999999998" y="0.0" width="1" height="1"/>
-                                <attributedString key="attributedText">
-                                    <fragment content="An accessibility tool for adding audio descriptions to YouTube videos">
-                                        <attributes>
-                                            <font key="NSFont" metaFont="system" size="17"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <nil key="highlightedColor"/>
-                                <size key="shadowOffset" width="0.0" height="1"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dUC-eU-6LV">
-                                <rect key="frame" x="105.5" y="144" width="164" height="31"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dUC-eU-6LV">
+                                <rect key="frame" x="105.5" y="318" width="164" height="31"/>
                                 <attributedString key="attributedText">
                                     <fragment content="YouDescribe">
                                         <attributes>
@@ -45,16 +30,18 @@
                                         </attributes>
                                     </fragment>
                                 </attributedString>
-                                <nil key="highlightedColor"/>
+                                <color key="highlightedColor" red="0.33725490200000002" green="0.2470588235" blue="0.90588235289999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </label>
+                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A7k-N8-S1L">
+                                <rect key="frame" x="94" y="318.5" width="187" height="30"/>
+                                <state key="normal" image="logo_sm"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="leadingMargin" secondItem="eWX-Wh-a58" secondAttribute="leading" id="FkD-NS-g4V"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="eWX-Wh-a58" secondAttribute="trailing" id="Fux-dv-jIU"/>
-                            <constraint firstItem="dUC-eU-6LV" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="124" id="LLm-FY-LTb"/>
-                            <constraint firstItem="eWX-Wh-a58" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="lPb-Ph-LkD"/>
-                            <constraint firstItem="eWX-Wh-a58" firstAttribute="top" secondItem="dUC-eU-6LV" secondAttribute="bottom" constant="8" id="lnO-zu-fDQ"/>
+                            <constraint firstItem="A7k-N8-S1L" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Wwe-bn-HjC"/>
+                            <constraint firstItem="dUC-eU-6LV" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="afU-Rt-j1M"/>
+                            <constraint firstItem="A7k-N8-S1L" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="lvK-6v-UXW"/>
                             <constraint firstItem="dUC-eU-6LV" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="vGf-Z3-tX7"/>
                         </constraints>
                     </view>
@@ -64,4 +51,7 @@
             <point key="canvasLocation" x="52" y="374.66266866566718"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo_sm" width="187" height="30"/>
+    </resources>
 </document>

@@ -20,9 +20,19 @@ class TwitterViewController: UIViewController, UIWebViewDelegate {
             let request = URLRequest(url: url)
             webView.loadRequest(request)
         }
-        webView.allowsLinkPreview = false
+        self.navigationItem.hidesBackButton = true
+        let newBackButton = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.bordered, target: self, action: Selector(("back:")))
+        self.navigationItem.leftBarButtonItem = newBackButton;
+        //webView.allowsLinkPreview = false
     }
 
+    func back(sender: UIBarButtonItem) {
+        if(webView.canGoBack) {
+            webView.goBack()
+        } else {
+            self.navigationController?.popViewController(animated:true)
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

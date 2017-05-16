@@ -15,7 +15,7 @@ class DetailInfoTableViewController: UITableViewController {
     var currentAuthor: String = ""
     var audioClips: [AnyObject] = []
     var videoDuration: Float = 0.0
-    var apiKey: String = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
+    var apiKey: String = Constants.YOUTUBE_API_KEY
     var ytItem:[String:String] = [:]
     var prevRowHeight: CGFloat = 0.0
 

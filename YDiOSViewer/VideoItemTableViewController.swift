@@ -10,7 +10,7 @@ import UIKit
 
 class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate, UINavigationControllerDelegate {
 
-    let dvxApi = DvxApi()
+    let dvxApi = Constants.DVX_API
     let youtubeApi = YouTubeApi()
     var allMovies: [AnyObject] = []
     var allMoviesSearch: [AnyObject] = []
@@ -23,7 +23,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
     var currentUser: String = ""
     var startEditMode: Bool = false
     lazy var searchBar = UISearchBar()
-
+    @IBOutlet weak var durationAccessible: UILabel!
     @IBOutlet weak var searchBarHeader: UIView!
     
     override func viewDidLoad() {
@@ -31,7 +31,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         //self.allMovies = dvxApi.getMovies([:])
         //self.allMovies.reverse()
         self.allAuthors = dvxApi.getUsers([:])
-        //self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
         self.authorMap = getAuthorMap()
         self.createSearchBar()
         self.navigationController?.delegate = self
@@ -41,6 +40,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        // handler for refresh
+        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
     }
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -62,6 +64,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         }
 
         self.searchBar.text = ""
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 
     func sortMovies() {
@@ -98,10 +103,16 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         // Dispose of any resources that can be recreated.
     }
 
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
+        self.tableView.reloadData()
+        refreshControl.endEditing(true)
+    }
+
     func createSearchBar() {
         // Add in the search bar
         searchBar.placeholder = "Search"
-        searchBar.showsSearchResultsButton = true
+        //searchBar.showsSearchResultsButton = true
         searchBar.sizeToFit()
         searchBar.searchBarStyle = .default
         searchBar.delegate = self
@@ -177,6 +188,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             if self.allDurations[mediaId] != nil {
                 DispatchQueue.main.async {
                     cell.durationLabel.text = self.allDurations[mediaId]
+                    cell.durationAccessible.text = "Duration, " + cell.durationLabel.text!
                 }
             } else {
                 YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
@@ -190,6 +202,7 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
                     GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
                     DispatchQueue.main.async {
                         cell.durationLabel.text = self.allDurations[mediaId]
+                        cell.durationAccessible.text = "Duration: " + cell.durationLabel.text!
                     }
                 })
             }
@@ -312,8 +325,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.allMoviesSearch = self.allMoviesSearch
             createDescriptionViewController.isEditMode = self.startEditMode
-            createDescriptionViewController.movieName = "Rupal Khilari"
+            createDescriptionViewController.movieName = ""
             createDescriptionViewController.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.currentItem)
             createDescriptionViewController.videoDurationInSeconds = (self.allDurations[self.currentItem]?.durationInSeconds())!
             createDescriptionViewController.videoDurationString = self.allDurations[self.currentItem]!

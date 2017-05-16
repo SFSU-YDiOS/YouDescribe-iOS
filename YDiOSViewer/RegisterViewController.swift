@@ -108,7 +108,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         alertController.addAction(OKAction)
         self.present(alertController, animated: true, completion: nil)
     }
-    
+
     func showRegisteredMessage() {
         let alertController = UIAlertController(title: "Registration complete", message: "You have registered as \(txtUsername.text!). Make sure you click on the activation link sent to your email address", preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default) { (action:UIAlertAction) in
