@@ -1,18 +1,6 @@
 import Foundation
 import Alamofire
 
-// FileManager extensions for documents and cache directories
-extension FileManager {
-    class func documentsDir() -> String {
-        var paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as [String]
-        return paths[0]
-    }
-    
-    class func cachesDir() -> String {
-        var paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true) as [String]
-        return paths[0]
-    }
-}
 
 // Thread-safe counter for counting the the number of asynchronous audio downloads completed
 class AtomicCounter {
@@ -66,7 +54,9 @@ class DownloadAudio: NSObject, URLSessionDownloadDelegate {
         let backgroundSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "backgroundSession")
         backgroundSession = Foundation.URLSession(configuration: backgroundSessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
     }
-
+    deinit {
+        self.backgroundSession.finishTasksAndInvalidate();
+    }
     var Timestamp: String {
         return "\(NSDate().timeIntervalSince1970 * 1000)"
     }

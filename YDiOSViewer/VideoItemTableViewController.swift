@@ -10,18 +10,20 @@ import UIKit
 
 class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, VideoItemTableViewCellDelegate, UINavigationControllerDelegate {
 
-    let dvxApi = DvxApi()
+    let dvxApi = Constants.DVX_API
+    let youtubeApi = YouTubeApi()
     var allMovies: [AnyObject] = []
     var allMoviesSearch: [AnyObject] = []
     var allAuthors: [AnyObject] = []
     var authorMap: [String:String] = [:]
+    var allDurations: [String: String] = [:]
     var tableSize: Int = 25
     var currentItem: String = "" // TODO: Figure out how to perform segue with argument
     var currentAuthor: String = ""
     var currentUser: String = ""
     var startEditMode: Bool = false
     lazy var searchBar = UISearchBar()
-
+    @IBOutlet weak var durationAccessible: UILabel!
     @IBOutlet weak var searchBarHeader: UIView!
     
     override func viewDidLoad() {
@@ -29,7 +31,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         //self.allMovies = dvxApi.getMovies([:])
         //self.allMovies.reverse()
         self.allAuthors = dvxApi.getUsers([:])
-        //self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
         self.authorMap = getAuthorMap()
         self.createSearchBar()
         self.navigationController?.delegate = self
@@ -39,6 +40,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        // handler for refresh
+        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
     }
 
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -60,6 +64,9 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         }
 
         self.searchBar.text = ""
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 
     func sortMovies() {
@@ -96,10 +103,16 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         // Dispose of any resources that can be recreated.
     }
 
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.allMoviesSearch = dvxApi.getMoviesSearchTable([:])
+        self.tableView.reloadData()
+        refreshControl.endEditing(true)
+    }
+
     func createSearchBar() {
         // Add in the search bar
         searchBar.placeholder = "Search"
-        searchBar.showsSearchResultsButton = true
+        //searchBar.showsSearchResultsButton = true
         searchBar.sizeToFit()
         searchBar.searchBarStyle = .default
         searchBar.delegate = self
@@ -146,7 +159,6 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         
     }
 
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Table view cells are reused and should be dequeued using a cell identifier.
         let cellIdentifier = "VideoItemTableViewCell"
@@ -172,20 +184,28 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             else {
                 cell.describerLabel.text = "No description"
             }
-            var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
-
-            if thumbnailUrl == nil {
-                thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
+            cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/1.jpg")
+            if self.allDurations[mediaId] != nil {
+                DispatchQueue.main.async {
+                    cell.durationLabel.text = self.allDurations[mediaId]
+                    cell.durationAccessible.text = "Duration, " + cell.durationLabel.text!
+                }
             } else {
-                var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-                if data == nil {
-                    data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-                }
-                else {
-                    cell.thumbnailView.image = UIImage(data: data as! Data)
-                }
+                YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
+                    (result) in
+                    if result["duration"]?.range(of: ":") == nil {
+                        self.allDurations[mediaId] = "00:" + (result["duration"] ?? "00")
+                    }
+                    else {
+                        self.allDurations[mediaId] = result["duration"] ?? "00:00"
+                    }
+                    GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
+                    DispatchQueue.main.async {
+                        cell.durationLabel.text = self.allDurations[mediaId]
+                        cell.durationAccessible.text = "Duration: " + cell.durationLabel.text!
+                    }
+                })
             }
-
             // Setup for accessibility
             let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(VideoItemTableViewController.onMoreActions(_:)))
             moreAction.mediaId = mediaId
@@ -284,12 +304,15 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
         if segue.identifier == "ShowVideoDetail" {
             let videoDetailViewController = segue.destination as! ViewController
             let selectedRow = self.tableView.indexPathForSelectedRow
+            let cell = self.tableView.cellForRow(at: selectedRow!) as! VideoItemTableViewCell
             let row : AnyObject? = self.allMoviesSearch[(selectedRow?.row)!]
             videoDetailViewController.movieID =  row?["movieMediaId"] as? String
-
+            videoDetailViewController.movieIdLocal = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: videoDetailViewController.movieID!)
+            videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
+            videoDetailViewController.videoDurationString = cell.durationLabel.text!
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
             videoDetailViewController.displayAuthor = row?["userHandle"] as? String
-            videoDetailViewController.displayAuthorID = row?["clipAuthor"] as? String
+            videoDetailViewController.displayAuthorID = (row?["clipAuthor"] as? String)!
         }
         else if segue.identifier == "DisplaySearchResultsSegue" {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
@@ -302,7 +325,12 @@ class VideoItemTableViewController: UITableViewController, UISearchBarDelegate, 
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.allMoviesSearch = self.allMoviesSearch
             createDescriptionViewController.isEditMode = self.startEditMode
+            createDescriptionViewController.movieName = ""
+            createDescriptionViewController.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.currentItem)
+            createDescriptionViewController.videoDurationInSeconds = (self.allDurations[self.currentItem]?.durationInSeconds())!
+            createDescriptionViewController.videoDurationString = self.allDurations[self.currentItem]!
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {
             let authorMoviesViewController = segue.destination as! AuthorMoviesTableViewController

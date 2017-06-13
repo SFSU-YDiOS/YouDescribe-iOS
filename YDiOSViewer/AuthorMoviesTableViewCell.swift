@@ -18,6 +18,7 @@ class AuthorMoviesTableViewCell: UITableViewCell {
     @IBOutlet weak var lblAuthorName: UILabel!
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var btnMenu: UIButton!
+    @IBOutlet weak var lblDuration: UILabel!
 
     var delegate: AuthorMoviesTableViewCellDelegate!
     var mediaId: String!
@@ -26,6 +27,7 @@ class AuthorMoviesTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.lblDuration.sizeToFit()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

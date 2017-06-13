@@ -13,5 +13,12 @@ class GlobalCache {
     private init() {}
 
     static let cache:NSCache = NSCache<NSString, AnyObject>()
+    static let durationCacheKey: NSString = "duration"
 
+    /*static func getCacheDuration(_ durationMap: [String:String]) -> AnyObject {
+        if let cachedVersion = cache.object(forKey: "duration") {
+            return cache.object(forKey: "duration")!
+        }
+        return AnyObject()
+    }*/
 }

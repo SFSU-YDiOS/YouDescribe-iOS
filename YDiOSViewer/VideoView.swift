@@ -11,6 +11,7 @@ import UIKit
 class VideoView: UIView {
 
     
+    var color: UIColor = UIColor.red
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -25,7 +26,7 @@ class VideoView: UIView {
         context?.setStrokeColor(UIColor.blue.cgColor)
         context?.addRect(rect)
         context?.strokePath()
-        context?.setFillColor(UIColor.red.cgColor)
+        context?.setFillColor(self.color.cgColor)
         context?.fill(rect)
     }
 }

@@ -19,14 +19,22 @@ class VideoItemTableViewCell: UITableViewCell {
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var describerLabel: UILabel!
     @IBOutlet weak var btnDetail: UIButton!
+    @IBOutlet weak var durationLabel: UILabel!
+
+    @IBOutlet weak var durationAccessible: UILabel!
+
     var mediaId: String!
     var author: String!
+    var movieId: String!
     var delegate: VideoItemTableViewCellDelegate!
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         self.btnDetail.accessibilityLabel = "Menu"
+        self.durationLabel.sizeToFit()
+        
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

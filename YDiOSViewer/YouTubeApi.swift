@@ -11,10 +11,9 @@ import SwiftyJSON
 
 class YouTubeApi {
     
-    var apiKey: String = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
-    
+
     func getInfo(mediaId: String, finished: @escaping (_ item: [String:String]) ->Void) {
-        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=statistics%2Csnippet&key=\(apiKey)")
+        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=statistics%2Csnippet&key=\(Constants.YOUTUBE_API_KEY)")
         print("\n\nURL\n\n: ",newUrl)
         print("Item Details")
         var ytItem: [String:String] = [:]
@@ -35,6 +34,56 @@ class YouTubeApi {
             finished(ytItem)
         }
         
+        task.resume()
+    }
+
+    func matches(for regex: String, in text: String) -> [String] {
+        
+        do {
+            let regex = try NSRegularExpression(pattern: regex)
+            let nsString = text as NSString
+            let results = regex.matches(in: text, range: NSRange(location: 0, length: nsString.length))
+            return results.map { nsString.substring(with: $0.range)}
+        } catch let error {
+            print("invalid regex: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // Function courtesy: http://stackoverflow.com/questions/37048139/how-to-convert-duration-form-youtube-api-in-swift
+    func getYoutubeFormattedDuration(_ durationYT: String) -> String {
+        let formattedDuration = durationYT.replacingOccurrences(of: "PT", with: "").replacingOccurrences(of: "H", with:":").replacingOccurrences(of: "M", with: ":").replacingOccurrences(of: "S", with: "")
+        
+        let components = formattedDuration.components(separatedBy: ":")
+        var duration = ""
+        for component in components {
+            duration = duration.characters.count > 0 ? duration + ":" : duration
+            if component.characters.count < 2 {
+                duration += "0" + component
+                continue
+            }
+            duration += component
+        }
+        
+        return duration
+        
+    }
+    func getContentDetails(mediaId: String, finished: @escaping (_ item: [String:String]) ->Void) {
+        let newUrl = URL(string: "https://www.googleapis.com/youtube/v3/videos?id=\(mediaId)&part=contentDetails&key=\(Constants.YOUTUBE_API_KEY)")
+        print("\n\nURL\n\n: ",newUrl)
+        print("Item Details")
+        var ytItem: [String:String] = [:]
+        let task = URLSession.shared.dataTask(with: newUrl! as URL) { (data, response, error) in
+            let json = JSON(data: data!)
+            if let items = json["items"].array{
+                for item in items {
+                    ytItem["isYTResult"] = "1"
+                    ytItem["duration"] = self.getYoutubeFormattedDuration(item["contentDetails"]["duration"].stringValue)
+                    ytItem["liscencedContent"] = item["contentDetails"]["liscencedContent"].stringValue
+                }
+            }
+            finished(ytItem)
+        }
         task.resume()
     }
 }

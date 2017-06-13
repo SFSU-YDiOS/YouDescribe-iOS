@@ -10,13 +10,13 @@ import UIKit
 import AVFoundation
 import MediaPlayer
 
-class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UITableViewDelegate, UITableViewDataSource, YTPlayerViewDelegate {
+class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UITableViewDelegate, UITableViewDataSource {
 
     let dvxApi = DvxApi()
     let youTubeApi = YouTubeApi()
     let audioHelper = AudioHelper()
-    var mediaId: String!
-    var movieId: String!
+    var mediaId: String = ""
+    var movieId: String = ""
     var youTubeInfo: [String:String] = [:]
     var audioRecorder: AVAudioRecorder!
     var audioPlayer: AVAudioPlayer?
@@ -29,13 +29,20 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     var yPos: Int!
     var audioClips: [AudioClip]!
     var allMovies: [AnyObject] = []
+    var allMoviesSearch: [AnyObject] = []
     var userId: String = ""
     var userToken: String = ""
+    var userName: String = ""
     var isEditMode: Bool  = false
     var doPlay: Bool = true
     var doRecord: Bool = false
+    var movieName: String = ""
+    var youtubePlayer: YTPlayerView!
+    var videoDetailViewController: ViewController!
+    var videoDurationInSeconds: Float = 0.0
+    var videoDurationString: String = ""
+    var doRefresh: Bool = false
 
-    @IBOutlet weak var youtubePlayer: YTPlayerView!
     @IBOutlet weak var btnPlayPause: UIButton!
     @IBOutlet weak var btnRecord: UIButton!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -44,17 +51,18 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     @IBOutlet weak var btnPreview: UIButton!
     @IBOutlet weak var btnPlayVideo: UIButton!
     @IBOutlet weak var btnPreviewTimeline: UIButton!
+    @IBOutlet weak var playerContainer: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let options = ["playsinline" : 1]
-        youtubePlayer.load(withVideoId: mediaId, playerVars: options)
+        //youtubePlayer.load(withVideoId: mediaId, playerVars: options)
         // Do any additional setup after loading the view.
         audioPlayer?.delegate = self
         audioRecorder?.delegate = self
         audioClipsTableView.delegate = self
         audioClipsTableView.dataSource = self
-        youtubePlayer.delegate = self
+        //youtubePlayer.delegate = self
 
         self.sessionRecordingName = self.generateUniqueId()
         self.totalUploadedClips = 0
@@ -65,11 +73,12 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         self.yPos = 0
         self.audioClips = []
 
-        youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
+        //youtubePlayer.setPlaybackQuality(YTPlaybackQuality.small)
         // Set the user ID
         let preferences = UserDefaults.standard
         if preferences.object(forKey: "session") != nil {
             let user = dvxApi.getUsers(["LoginName": preferences.object(forKey: "username") as! String ])[0]
+            self.userName = preferences.object(forKey: "username") as! String
             self.userId = dvxApi.getUserId(["LoginName": preferences.object(forKey: "username") as! String ])
             // self.userId = user["userId"] as! String
             self.userToken = preferences.object(forKey: "session") as! String
@@ -212,6 +221,10 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                                 self.audioClips.remove(at: index)
                                 self.audioClipsTableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .fade)
                                 self.audioClipsTableView.reloadData()
+                                DispatchQueue.main.async {
+                                    let vc = self.childViewControllers[0] as! ViewController
+                                    vc.reloadForAuthoring()
+                                }
                             }
                         }
                     }
@@ -229,7 +242,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         // Present Alert Controller
         self.present(alertController, animated: true, completion: nil)
     }
-    
+
     // Updates a clip as soon as it is changed in the UI
     func updateTableClip(_ notification: Notification) {
         if let args = notification.object as? [String:AnyObject] {
@@ -275,6 +288,10 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                             }
                             else {
                                 print("Successfully updated the clip")
+                                DispatchQueue.main.async {
+                                    let vc = self.childViewControllers[0] as! ViewController
+                                    vc.reloadForAuthoring()
+                                }
                             }
                         }
                     })
@@ -288,17 +305,26 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     func setOrCreateMovie() {
         self.movieId = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: self.mediaId)
         print("Returning an existing movie ID: \(self.movieId)")
+        if (dvxApi.isRecordInSearchTable(allMovies: self.allMoviesSearch, mediaId: self.mediaId, userHandle: self.userToken)) {
+            self.doRefresh = false
+            print("DO NOT REFRESH")
+        }
+        else {
+            self.doRefresh = true
+            print("DO REFRESH")
+        }
+    
         if self.movieId == "" {
             // Create a new movie and return the movie Id
             let request = dvxApi.prepareForAddMovie(["AppId": Constants.APP_ID,
-                                                     "MediaId": self.mediaId!,
+                                                     "MediaId": self.mediaId,
                                                      "Title": self.youTubeInfo["movieName"]!,
                                                      "Language": "English",
                                                      "Summary": "",
                                                      "Token": self.userToken,
                                                      "UserId": self.userId])
             print(request)
-            print("\(Constants.APP_ID) , \(self.mediaId!), \(self.youTubeInfo["movieName"]!), \(self.userToken), \(self.userId)")
+            print("\(Constants.APP_ID) , \(self.mediaId), \(self.youTubeInfo["movieName"]!), \(self.userToken), \(self.userId)")
             let session = URLSession.shared
             let task = session.dataTask(with: request as URLRequest, completionHandler: {
                 (data, response, error) in
@@ -321,6 +347,13 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                 }
             })
             task.resume()
+        }
+        else {
+            if self.doRefresh {
+                // invalidate the cache to refresh the back screen
+                GlobalCache.cache.removeObject(forKey: "allMoviesSearch")
+                GlobalCache.cache.removeObject(forKey: "allMovies")
+            }
         }
     }
 
@@ -386,7 +419,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                     // giving time for video to stop
                     sleep(1)
                     recorder.record()
-                    btnRecord.setTitle("Stop", for: UIControlState())
+                    btnRecord.setImage(#imageLiteral(resourceName: "Stop"), for: UIControlState())
                     print("Started recording..")
                 } catch let error {
                     print(error)
@@ -394,7 +427,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             } else {
                 // pause the recording
                 recorder.stop()
-                btnRecord.setTitle("Record", for: UIControlState())
+                btnRecord.setImage(#imageLiteral(resourceName: "Record"), for: UIControlState())
                 print("Stopped recording...")
                 // deactivate the audio session
                 do {
@@ -440,33 +473,38 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
     @IBAction func recordAction(_ sender: Any) {
         if audioHelper.isRecording {
             audioHelper.stopRecording(self.currentAudioTempURL)
-            btnRecord.setTitle("Record", for: UIControlState())
+            //btnRecord.setTitle("Record", for: UIControlState())
+            btnRecord.setImage(#imageLiteral(resourceName: "Record"), for: UIControlState())
             audioHelper.isRecording = false
             self.doRecord = false
         }
         else {
-            youtubePlayer.pauseVideo()
-            if youtubePlayer.playerState() != YTPlayerState.playing {
+            videoDetailViewController.youtubePlayer.pauseVideo()
+            if videoDetailViewController.youtubePlayer.playerState().rawValue == 3 {
+                print("Coming here")
                 audioHelper.startRecording()
+                //btnRecord.setTitle("Stop", for: UIControlState())
+                btnRecord.setImage(#imageLiteral(resourceName: "Stop"), for: UIControlState())
+                audioHelper.isRecording = true
             }
             else {
                 self.doRecord = true
             }
-            btnRecord.setTitle("Stop", for: UIControlState())
-            audioHelper.isRecording = true
         }
     }
 
     @IBAction func queueAction(_ sender: Any) {
+        print("Coming here")
         self.queueClip()
     }
 
     @IBAction func playVideoAction(_ sender: Any) {
         // Play action here
         if(doPlay) {
-            youtubePlayer.playVideo()
+            videoDetailViewController.playPauseControl()
+            btnPlayVideo.setImage(#imageLiteral(resourceName: "Pause"), for: UIControlState())
         } else {
-            youtubePlayer.pauseVideo()
+            videoDetailViewController.playPauseControl()
         }
     }
 
@@ -486,7 +524,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
 
     func queueClip() {
         // Create a clip request
-        self.createClip(startTime: youtubePlayer.currentTime())
+        self.createClip(startTime: videoDetailViewController.youtubePlayer.currentTime())
     }
 
     func createClip(startTime: Float) {
@@ -530,6 +568,14 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
                             print(clipData)
                             // Relayout the clips, since we need the new clip ID
                             self.layoutClips(clipData)
+                            // update the timeline
+                            // Attempting to reload
+                        DispatchQueue.main.async {
+                            sleep(2)
+                            let vc = self.childViewControllers[0] as! ViewController
+                            vc.reloadForAuthoring()
+                        }
+
                         //}
                     }
                     else {
@@ -627,45 +673,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         }
     }
 
-    func deleteClip(_ button: UIButton!) {
-        self.confirmDeleteClip(index: button.tag)
-    }
-
-    func nudgeLeftSecClip(_ button: UIButton!) {
-        let audioClip = self.audioClips[button.tag]
-        if audioClip.startSeconds > 0 {
-           audioClip.startSeconds = audioClip.startSeconds - 1
-           // update the label
-            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
-        }
-    }
-
-    func nudgeLeftMillisecClip(_ button: UIButton!) {
-        let audioClip = self.audioClips[button.tag]
-        if audioClip.startSeconds > 0 {
-            audioClip.startSeconds = audioClip.startSeconds - 0.1
-            // update the label
-            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
-        }
-    }
-
-    func nudgeRightSecClip(_ button: UIButton!) {
-        let audioClip = self.audioClips[button.tag]
-        if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip
-            audioClip.startSeconds = audioClip.startSeconds + 1
-            // update the label
-            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
-        }
-    }
-
-    func nudgeRightMillisecClip(_ button: UIButton!) {
-        let audioClip = self.audioClips[button.tag]
-        if audioClip.startSeconds >= 0 { // TODO: Change this to max duration of the clip
-            audioClip.startSeconds = audioClip.startSeconds + 0.1
-            // update the label
-            audioClip.timeLabelView.text = "\(audioClip.startHour!):\(audioClip.startMinutes!):\(audioClip.startSeconds!)"
-        }
-    }
 
     func redrawClips(deletedIndex: Int) {
         var yPos = CGFloat(0)
@@ -687,6 +694,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             self.audioClips[index].isDeleted = true
             self.audioClips[index].clipView.removeFromSuperview()
             self.redrawClips(deletedIndex: index)
+            let vc = self.childViewControllers[0] as! ViewController
         }
         
         let noAction = UIAlertAction(title: "No", style: .default) { (action) -> Void in
@@ -741,13 +749,27 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             }
             videoDetailViewController.displayAuthorID = self.userId
         }
-        else if segue.identifier == "ShowTimelineSegue" {
-            let timelineViewController = segue.destination as! TimelineViewController
-            timelineViewController.youTubeInfo = self.youTubeInfo
-            let clipData = self.dvxApi.getClips(["Movie": self.movieId,
-                                                 "UserId": self.userId])
-            timelineViewController.clipData = clipData
-            timelineViewController.videoDuration = Float(self.youtubePlayer.duration())
+        else if segue.identifier == "EmbedPlayerSegue" {
+            print("Calling this !!!!!!")
+            videoDetailViewController = segue.destination as! ViewController
+            videoDetailViewController.movieID =  self.mediaId
+            videoDetailViewController.movieIdLocal = self.movieId
+            videoDetailViewController.videoDurationInSeconds = self.videoDurationInSeconds
+            videoDetailViewController.videoDurationString = self.videoDurationString
+            videoDetailViewController.currentMovieTitle = self.movieName
+            print("THE EDIT MODE IS \(self.isEditMode)")
+            if self.isEditMode {
+                videoDetailViewController.displayAuthor = self.userName
+            } else {
+                videoDetailViewController.displayAuthor = ""
+            }
+            var localUserId: String = ""
+            if UserDefaults.standard.object(forKey: "session") != nil {
+                localUserId = dvxApi.getUserId(["LoginName": UserDefaults.standard.object(forKey: "username") as! String ])
+            }
+            videoDetailViewController.displayAuthorID = localUserId
+            videoDetailViewController.overrideAuthorId = localUserId
+            videoDetailViewController.isEmbedded = true
         }
     }
 
@@ -769,7 +791,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
         cell.lblStartTime.text = startTimeString
         cell.index = indexPath.row
         cell.startTime = clipItem.startTime
-        cell.videoDuration = Float(youtubePlayer.duration())
+        //cell.videoDuration = Float(youtubePlayer.duration())
         cell.clipId = clipItem.id
         cell.clipData = clipItem.data
         if clipItem.isInline == true {
@@ -788,7 +810,7 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             youtubePlayer.pauseVideo()
         }
     }
-    
+
     func reset() {
         youtubePlayer.stopVideo()
     }
@@ -827,12 +849,6 @@ class CreateDescriptionViewController: UIViewController, AVAudioRecorderDelegate
             doPlay = true
             self.reset()
         }
-    }
-    
-    
-    // Timeline preview
-    @IBAction func onTimelinePreviewAction(_ sender: Any) {
-        performSegue(withIdentifier: "ShowTimelineSegue", sender: sender)
     }
 
 

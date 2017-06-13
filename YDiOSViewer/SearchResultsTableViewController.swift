@@ -17,16 +17,18 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
     var youDescribeMovies: [AnyObject] = []
     var allMovies: [AnyObject] = []
     var displayMovies: [AnyObject] = []
+    var allDurations: [String:String] = [:]
     var authorMap:[String:String] = [:]
     var apiKey = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
     var startEditMode: Bool = false
     var currentAuthor: String = ""
     var currentItem : String = ""
+    let dvxApi = DvxApi()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getYouTubeResults()
-
+        self.allDurations = GlobalCache.cache.object(forKey: GlobalCache.durationCacheKey) as! [String:String]
         // Search from the second screen (using the same logic)
         NotificationCenter.default.addObserver(forName: NSNotification.Name("SearchAgainNotification"), object: nil, queue: nil) { notification in
             var myObject = notification.object as! [AnyObject]
@@ -50,6 +52,8 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             }
             self.tableView.reloadData()
         }
+        // Remove extra lines from the tableView
+        tableView.tableFooterView = UIView()
     }
 
     override func didReceiveMemoryWarning() {
@@ -98,18 +102,27 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             cell.descriptionLabel.text = "No description"
             cell.author = ""
         }
-        var thumbnailUrl: URL? = URL(string: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
-        
-        if thumbnailUrl == nil {
-            thumbnailUrl = URL(string: "https://i.stack.imgur.com/WFy1e.jpg")
+        cell.thumbnailView.imageFromServerURL(urlString: "http://img.youtube.com/vi/\(mediaId)/default.jpg")
+        // Durations
+        if self.allDurations[mediaId] != nil {
+            DispatchQueue.main.async {
+                cell.durationLabel.text = self.allDurations[mediaId]
+            }
+        } else {
+            YouTubeApi().getContentDetails(mediaId: mediaId, finished: {
+                (result) in
+                if result["duration"]?.range(of: ":") == nil {
+                    self.allDurations[mediaId] = "00:" + (result["duration"] ?? "00")
+                }
+                else {
+                    self.allDurations[mediaId] = result["duration"] ?? "00:00"
+                }
+                GlobalCache.cache.setObject(self.allDurations as AnyObject, forKey: GlobalCache.durationCacheKey)
+                DispatchQueue.main.async {
+                    cell.durationLabel.text = self.allDurations[mediaId]
+                }
+            })
         }
-        var data:NSData? =  NSData(contentsOf: thumbnailUrl!)
-        if data == nil {
-            data = NSData(contentsOf: URL(string: "https://i.stack.imgur.com/WFy1e.jpg")!)
-        }
-        
-        cell.thumbnailView.image = UIImage(data: data as! Data)
-
         // Setup for accessibility
         let moreAction = UIAccessibilityExtendedAction(name: "More Actions", target: self, selector: #selector(SearchResultsTableViewController.onMoreActions(_:)))
         moreAction.mediaId = mediaId
@@ -129,9 +142,9 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             NotificationCenter.default.post(name: NSNotification.Name("ActivityInProgressNotification"), object: nil)
             let youTubeSearchString = self.searchString.replacingOccurrences(of: " ", with: ",")
             let maxYouTubeResults:Int = 20
-
+            let encodedSearchString = youTubeSearchString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
             let config = URLSessionConfiguration.default
-            let url = URL(string: "https://www.googleapis.com/youtube/v3/search?part=snippet&fields=items(id,snippet(title,channelTitle,description,publishedAt))&q=\(youTubeSearchString)&type=video&maxResults=\(maxYouTubeResults)&key=\(apiKey)")
+            let url = URL(string: "https://www.googleapis.com/youtube/v3/search?part=snippet&fields=items(id,snippet(title,channelTitle,description,publishedAt))&q=\(encodedSearchString)&type=video&maxResults=\(maxYouTubeResults)&key=\(apiKey)")
             print("\n\nURL\n\n: ",url)
             print("YouTube Items")
             let task = URLSession.shared.dataTask(with: url! as URL) {(data, response, error) in
@@ -146,8 +159,17 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
                         ytItem["movieName"] = item["snippet"]["title"].stringValue
                         ytItem["movieCreator"] = item["snippet"]["channelTitle"].stringValue
                         ytItem["clipAuthor"] = ""
-                        self.filteredMovies.append(ytItem as AnyObject)
-                        self.displayMovies.append(ytItem as AnyObject)
+                        var isFound: Bool = false
+                        for filteredMovie in self.filteredMovies {
+                            if filteredMovie["movieMediaId"] as! String == ytItem["movieMediaId"] {
+                                isFound = true
+                            }
+                        }
+                        if !isFound {
+                            self.filteredMovies.append(ytItem as AnyObject)
+                            self.displayMovies.append(ytItem as AnyObject)
+                        }
+                        
                     }
                     print("\n\nSearched list of videos: ",self.filteredMovies)  
                     self.tableView.reloadData()
@@ -170,11 +192,25 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             let row : AnyObject? = self.filteredMovies[(selectedRow?.row)!]
             videoDetailViewController.movieID = row?["movieMediaId"] as? String
             videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+            let cell = self.tableView.cellForRow(at: selectedRow!) as! SearchResultsTableViewCell
+            videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
+            videoDetailViewController.videoDurationString = cell.durationLabel.text!
             if (self.authorMap.index(forKey: (row?["clipAuthor"] as? String)!) != nil) {
                 videoDetailViewController.displayAuthor = self.authorMap[(row?["clipAuthor"] as? String)!]
+                videoDetailViewController.hasDescription = true
+                
+                videoDetailViewController.movieIdLocal = dvxApi.getMovieIdFromMediaId(allMovies: self.allMovies, mediaId: videoDetailViewController.movieID!)
+                videoDetailViewController.videoDurationInSeconds = (cell.durationLabel.text?.durationInSeconds())!
+                videoDetailViewController.videoDurationString = cell.durationLabel.text!
+                videoDetailViewController.currentMovieTitle = row?["movieName"] as? String
+                videoDetailViewController.displayAuthor = row?["userHandle"] as? String
+                videoDetailViewController.displayAuthorID = (row?["clipAuthor"] as? String)!
             }
             else {
                 videoDetailViewController.displayAuthor = "None"
+                videoDetailViewController.hasDescription = false
+                videoDetailViewController.showTimeline = true
+                videoDetailViewController.allMovies = self.allMovies
             }
         }
         else if segue.identifier == "ShowAuthorMoviesSegue" {
@@ -187,7 +223,10 @@ class SearchResultsTableViewController: UITableViewController, SearchResultTable
             let createDescriptionViewController = segue.destination as! CreateDescriptionViewController
             createDescriptionViewController.mediaId = self.currentItem
             createDescriptionViewController.allMovies = self.allMovies
+            createDescriptionViewController.allMoviesSearch = self.allMoviesSearch
             createDescriptionViewController.isEditMode = self.startEditMode
+            createDescriptionViewController.videoDurationInSeconds = (self.allDurations[self.currentItem]?.durationInSeconds())!
+            createDescriptionViewController.videoDurationString = self.allDurations[self.currentItem]!
         }
     }
     

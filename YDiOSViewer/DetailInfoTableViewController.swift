@@ -15,7 +15,7 @@ class DetailInfoTableViewController: UITableViewController {
     var currentAuthor: String = ""
     var audioClips: [AnyObject] = []
     var videoDuration: Float = 0.0
-    var apiKey: String = "AIzaSyApPkoF9hjzHB6Wg7cGuOteLLGC3Cpj35s"
+    var apiKey: String = Constants.YOUTUBE_API_KEY
     var ytItem:[String:String] = [:]
     var prevRowHeight: CGFloat = 0.0
 
@@ -118,7 +118,21 @@ class DetailInfoTableViewController: UITableViewController {
         }
         task.resume()
     }
-    
+ 
+    // returns the greatest clip download count from among all the clips.
+    func getMaxViewCount() -> Int {
+        var count: Int = 0
+        for clip in self.audioClips {
+            if clip["clipAuthor"] as! String == self.currentAuthor {
+                if Int(clip["clipDownloadCount"] as! String)! > count {
+                    count = Int(clip["clipDownloadCount"] as! String)!
+                }
+            }
+        }
+        return count
+    }
+
+    // Returns a string representing the description completeness.
     func getDescriptionCompleteness() -> String {
         let effort = self.getDescriptionEffort()
         if effort < 0 {
@@ -133,19 +147,6 @@ class DetailInfoTableViewController: UITableViewController {
         else {
             return "Well Described"
         }
-    }
-    
-    // returns the greatest clip download count from among all the clips.
-    func getMaxViewCount() -> Int {
-        var count: Int = 0
-        for clip in self.audioClips {
-            if clip["clipAuthor"] as! String == self.currentAuthor {
-                if Int(clip["clipDownloadCount"] as! String)! > count {
-                    count = Int(clip["clipDownloadCount"] as! String)!
-                }
-            }
-        }
-        return count
     }
     
     // returns a description density to determine the quality

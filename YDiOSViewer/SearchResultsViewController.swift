@@ -9,26 +9,6 @@
 import Foundation
 import UIKit
 
-extension String {
-    func matchPattern(patStr:String)->Bool {
-        var isMatch:Bool = false
-        do {
-            let regex = try NSRegularExpression(pattern: patStr, options: [.caseInsensitive])
-            let result = regex.firstMatch(in: self, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, characters.count))
-            
-            if (result != nil)
-            {
-                isMatch = true
-            }
-        }
-        catch {
-            isMatch = false
-        }
-        return isMatch
-    }
-}
-
-
 protocol SearchResultsViewControllerDelegate {
     func readAndUpdateFilteredClips(newFilteredClips: [AnyObject])
 }
@@ -58,6 +38,8 @@ class SearchResultsViewController: UIViewController, UISearchBarDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ActivityCompletedNotification"), object: nil, queue: nil) { notification in
             self.activityIndicator.stopAnimating()
         }
+        // hide keyboard when tapped elsewhere
+        self.hideKeyboardWhenTappedAround()
     }
 
     override func didReceiveMemoryWarning() {
